@@ -4,16 +4,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+CAPSULE="runtime_source/plw-runtime-src.tar.gz"
 MANIFEST="runtime_source/CAPSULE_SHA256"
+
+if [[ ! -f "$CAPSULE" ]]; then
+  echo "runtime source capsule is missing: $CAPSULE" >&2
+  exit 2
+fi
+
 EXPECTED="$(awk '{print $1}' "$MANIFEST")"
-TMP_B64="$(mktemp)"
-TMP_TGZ="$(mktemp)"
-trap 'rm -f "$TMP_B64" "$TMP_TGZ"' EXIT
+ACTUAL="$(sha256sum "$CAPSULE" | awk '{print $1}')"
 
-cat runtime_source/part*.b64 > "$TMP_B64"
-base64 --decode "$TMP_B64" > "$TMP_TGZ"
-
-ACTUAL="$(sha256sum "$TMP_TGZ" | awk '{print $1}')"
 if [[ "$ACTUAL" != "$EXPECTED" ]]; then
   echo "runtime source capsule digest mismatch" >&2
   echo "expected=$EXPECTED" >&2
@@ -21,6 +22,6 @@ if [[ "$ACTUAL" != "$EXPECTED" ]]; then
   exit 1
 fi
 
-tar -xzf "$TMP_TGZ" -C "$ROOT"
+tar -xzf "$CAPSULE" -C "$ROOT"
 
 echo "RUNTIME_SOURCE_CAPSULE: PASS sha256:$ACTUAL"
