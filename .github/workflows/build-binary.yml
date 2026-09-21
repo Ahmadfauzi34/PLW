@@ -55,6 +55,9 @@ jobs:
       - name: Standalone smoke
         run: bash scripts/smoke_binary.sh artifacts/plw-linux-x86_64
 
+      - name: Standalone UI smoke
+        run: bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
+
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
