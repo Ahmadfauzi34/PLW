@@ -135,7 +135,7 @@ A release binary must pass from the **built executable**, not only from Python s
 10. target-repository pollution checks;
 11. SHA-256 verification before release publication.
 
-Pull requests produce temporary Actions artifacts. Version tags matching `v*` publish validated binaries to GitHub Releases.
+Pull requests produce temporary Actions artifacts. On `main`, a final semantic version in `VERSION` (for example `0.2.0`) publishes exactly one validated `v0.2.0` GitHub Release from the same CI run; `*-dev` versions do not publish. Tag-triggered release remains available as a fallback.
 
 ## Contributing
 

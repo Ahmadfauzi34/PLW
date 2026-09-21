@@ -86,3 +86,14 @@ target-project/
 ```
 
 PLW runtime source, build fixtures, audit bundles and caches must not be copied into the target.
+
+
+## Version publication
+
+`VERSION` is the canonical release intent:
+
+- values ending in `-dev` are development builds and never publish from a main push;
+- a final semantic version such as `0.2.0` may publish `v0.2.0` only after the main standalone binary job succeeds;
+- if that release already exists, CI refuses to replace its published assets.
+
+This keeps release assets tied to one validated main commit while retaining tag-triggered publication as a fallback.

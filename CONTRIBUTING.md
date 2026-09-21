@@ -44,3 +44,8 @@ Keep PRs scoped. Include:
 - tests run;
 - standalone binary impact;
 - known unsupported cases.
+
+
+## Versions and releases
+
+Keep `VERSION` on a `*-dev` value during ordinary development. A release PR changes it to a final semantic version only after feature validation is complete. Publication occurs from the validated main CI artifact; an existing version release is not replaced automatically.
