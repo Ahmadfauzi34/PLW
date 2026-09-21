@@ -1,0 +1,99 @@
+name: Build PLW binary
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-binary-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Unpack verified runtime source
+        run: bash scripts/unpack_runtime_source.sh
+
+      - name: Binary-safety guard
+        run: python scripts/check_binary_safety.py
+
+      - name: Source smoke before freeze
+        run: |
+          python plw_cli.py help >/dev/null
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/src"
+          printf 'export const value = 1;\n' > "$tmp/src/value.ts"
+          printf 'import { value } from "./value";\nconsole.log(value);\n' > "$tmp/src/main.ts"
+          HOME="$tmp/home" XDG_STATE_HOME="$tmp/state" XDG_CACHE_HOME="$tmp/cache" \
+            python plw_cli.py topology "$tmp" --json > "$tmp/topology.json"
+          python - "$tmp/topology.json" <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+          payload = json.loads(Path(sys.argv[1]).read_text())
+          if payload.get("error"):
+              raise SystemExit(payload["error"])
+          print("SOURCE_SMOKE: PASS")
+          PY
+
+      - name: Build standalone executable
+        run: bash scripts/build_binary.sh
+
+      - name: Standalone smoke
+        run: bash scripts/smoke_binary.sh artifacts/plw-linux-x86_64
+
+      - name: Standalone UI smoke
+        run: bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: |
+            artifacts/plw-linux-x86_64
+            artifacts/plw-linux-x86_64.sha256
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: linux-x86_64
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download validated binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: release
+
+      - name: Verify release checksum file
+        working-directory: release
+        run: sha256sum --check plw-linux-x86_64.sha256
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME"               release/plw-linux-x86_64               release/plw-linux-x86_64.sha256               --clobber
+          else
+            gh release create "$GITHUB_REF_NAME"               release/plw-linux-x86_64               release/plw-linux-x86_64.sha256               --title "PLW $GITHUB_REF_NAME"               --generate-notes
+          fi
