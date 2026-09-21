@@ -80,6 +80,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout release target
+        uses: actions/checkout@v4
+
       - name: Download validated binary artifact
         uses: actions/download-artifact@v4
         with:
