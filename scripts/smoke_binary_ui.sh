@@ -133,7 +133,46 @@ print("STANDALONE_UI_STATIC_SMOKE: PASS")
 PY
 
 if command -v chromium >/dev/null 2>&1 ||    command -v chromium-browser >/dev/null 2>&1 ||    command -v google-chrome >/dev/null 2>&1 ||    command -v google-chrome-stable >/dev/null 2>&1; then
-  ./plw ui reproduce "$TMP/diagnosis.json"     --root "$TMP/project"     --html-file "$TMP/project/page.html"     --json > "$TMP/reproduction.json"
+  for attempt in 1 2 3; do
+    ./plw ui reproduce "$TMP/diagnosis.json" \
+      --root "$TMP/project" \
+      --html-file "$TMP/project/page.html" \
+      --json > "$TMP/reproduction.json"
+
+    classification="$(python - "$TMP/reproduction.json" <<'PY'
+import json
+from pathlib import Path
+import sys
+
+result = json.loads(Path(sys.argv[1]).read_text())
+state = result.get("reproduction_state")
+reason = result.get("reason")
+error = str(result.get("error") or "")
+
+if state == "REPRODUCED":
+    print("REPRODUCED")
+elif (
+    state == "UNRESOLVED"
+    and reason == "browser_execution_unresolved"
+    and "timed out waiting for Chromium CDP endpoint" in error
+):
+    print("RETRYABLE_CDP_STARTUP")
+else:
+    print("HARD_FAILURE")
+PY
+)"
+
+    if [[ "$classification" == "REPRODUCED" ]]; then
+      break
+    fi
+    if [[ "$classification" != "RETRYABLE_CDP_STARTUP" ]]; then
+      break
+    fi
+    if [[ "$attempt" -lt 3 ]]; then
+      echo "Chromium CDP startup timed out on attempt $attempt; retrying." >&2
+      sleep 2
+    fi
+  done
 
   python - "$TMP/reproduction.json" <<'PY'
 import json
