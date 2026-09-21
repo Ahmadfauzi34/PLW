@@ -27,4 +27,4 @@ python -m PyInstaller "${ARGS[@]}" plw_cli.py
 mkdir -p artifacts
 cp dist/plw artifacts/plw-linux-x86_64
 chmod +x artifacts/plw-linux-x86_64
-sha256sum artifacts/plw-linux-x86_64 | tee artifacts/plw-linux-x86_64.sha256
+(cd artifacts && sha256sum plw-linux-x86_64 | tee plw-linux-x86_64.sha256)
