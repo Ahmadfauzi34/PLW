@@ -1,0 +1,41 @@
+name: Build PLW binary
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Binary-safety guard
+        run: python scripts/check_binary_safety.py
+
+      - name: Build standalone executable
+        run: bash scripts/build_binary.sh
+
+      - name: Standalone smoke
+        run: bash scripts/smoke_binary.sh artifacts/plw-linux-x86_64
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: |
+            artifacts/plw-linux-x86_64
+            artifacts/plw-linux-x86_64.sha256
+          if-no-files-found: error
