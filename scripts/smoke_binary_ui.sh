@@ -142,7 +142,11 @@ import sys
 
 result = json.loads(Path(sys.argv[1]).read_text())
 if result.get("reproduction_state") != "REPRODUCED":
-    raise SystemExit(f"expected REPRODUCED, got {result.get('reproduction_state')}")
+    raise SystemExit(
+        "expected REPRODUCED, "
+        f"got {result.get('reproduction_state')}; "
+        f"reason={result.get('reason')}; error={result.get('error')}"
+    )
 if result.get("execution", {}).get("browser_executed_by_plw") is not True:
     raise SystemExit("browser was not executed by PLW")
 if result.get("authority", {}).get("root_cause_proven") is not False:
