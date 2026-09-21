@@ -1,80 +1,142 @@
-# PLW
+# PLW — Proof Lattice Workbench
 
-Proof Lattice Workbench (PLW) is a codebase reference-machine and agent tooling project.
+PLW is a standalone codebase reference-machine and agent tooling CLI. It is designed to analyze a target repository without copying the PLW source tree into that repository.
 
-This repository is the clean build/distribution surface for PLW. Development audits, historical checkpoint fixtures, and transient runtime databases are intentionally excluded from the runtime distribution.
+Current binary target: **Linux x86_64**.
 
-## Primary distribution
+## Install
 
-The primary release target is a single Linux x86_64 executable:
+Download the latest release assets:
 
-```text
-plw-linux-x86_64
-```
+- `plw-linux-x86_64`
+- `plw-linux-x86_64.sha256`
 
-A target repository does **not** need a copy of the PLW Python source tree.
-
-Example installation:
+Verify and install:
 
 ```bash
+sha256sum --check plw-linux-x86_64.sha256
 chmod +x plw-linux-x86_64
 sudo install plw-linux-x86_64 /usr/local/bin/plw
 ```
 
-Then PLW can analyze an unrelated codebase directly:
+Then run PLW against any target codebase:
 
 ```bash
 plw topology /path/to/project --json
 plw impact src/example.ts /path/to/project --json
+plw simplify /path/to/project --json
 ```
 
-UI workflows remain available from the same executable:
+## What PLW provides
+
+PLW currently exposes several bounded analysis surfaces:
+
+- **Topology / impact** — codebase structure, dependencies, entrypoints, boundaries, consumers.
+- **Simplification** — mechanically witnessed simplification candidates; never automatic source mutation.
+- **UI mapping** — rendered geometry, overlap, clipping, viewport and ownership mapping.
+- **UI bug analysis** — cross-domain diagnosis from rendered symptom to bounded structural candidates.
+- **Runtime reproduction** — Chromium/CDP exact-scenario reproduction.
+- **Causal isolation / bounded fix verification** — counterfactual support and post-fix recapture without equating symptom removal with global proof.
+
+Important authority boundaries remain explicit:
+
+```text
+Candidate ≠ Patch
+Topology ≠ Causality
+Geometry ≠ Behavior
+Runtime reproduction ≠ Root-cause proof
+Fix verified in one scenario ≠ global regression proof
+```
+
+## TypeScript / JavaScript simplification
+
+The current JS-family frontend is **`js_structural_v2`**, shared across:
+
+```text
+.ts
+.tsx
+.js
+.jsx
+```
+
+It currently provides seven conservative rule families:
+
+1. try/catch identical terminal return;
+2. terminal literal temporary;
+3. direct forwarding wrapper;
+4. exact function-body duplication;
+5. redundant `else` after a terminal branch;
+6. boolean guard return;
+7. terminal expression temporary.
+
+Example:
 
 ```bash
-plw ui map snapshot.json /path/to/project --json
-plw ui diagnose candidate.json --baseline baseline.json --root /path/to/project --json
+plw simplify ./frontend --json
 ```
+
+Expected frontend metadata:
+
+```text
+semantic_frontend = python_ast+js_structural_v2
+ts_js_rule_count  = 7
+```
+
+See [docs/SIMPLIFY_JS_TS.md](docs/SIMPLIFY_JS_TS.md) for rule boundaries and deferred cases.
+
+## Browser-backed commands
+
+Static topology, impact, simplification, UI snapshot mapping and geometry analysis do not require an embedded browser.
+
+Commands that execute rendered scenarios use an externally installed Chromium/Chrome executable. Chromium is intentionally **not bundled** in the PLW binary.
 
 ## Runtime state
 
-PLW does not intentionally place mutable runtime state in the target codebase.
+PLW must not intentionally place mutable state in the analyzed target repository.
 
-Runtime state/cache resolve through:
+Runtime state/cache resolve through PLW/XDG locations such as:
 
-- `PLW_HOME` / explicit PLW state overrides when configured;
-- `XDG_STATE_HOME/plw`;
-- `XDG_CACHE_HOME/plw`;
-- Linux user-home fallbacks such as `~/.local/state/plw` and `~/.cache/plw`.
+```text
+PLW_HOME
+XDG_STATE_HOME/plw
+XDG_CACHE_HOME/plw
+~/.local/state/plw
+~/.cache/plw
+```
 
-## Browser-backed UI commands
+## Repository layout
 
-Static topology, impact, UI mapping, diffing, and bug analysis do not require an embedded browser.
+```text
+.github/workflows/      CI / binary release
+docs/                   user + architecture documentation
+runtime_source/         digest-pinned base runtime capsule
+runtime_overlay/        digest-pinned validated runtime overlays
+scripts/                build, safety and standalone smoke checks
+VERSION                 next development version
+```
 
-Commands that execute a rendered UI scenario—such as targeted reproduction, causal isolation, and post-fix verification—use an externally installed Chromium/Chrome executable. Chromium is intentionally **not** bundled into the PLW binary.
+The capsule/overlay layout is a reproducible build transport. Released users receive a single executable; target repositories do not need these files.
 
-## Supported binary target
-
-Binary Distribution V1 currently targets:
-
-- Linux x86_64
-- glibc-based runtime
-- one-file PyInstaller executable
-
-Additional OS/architecture targets can be added after the Linux release contract is stable.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [BINARY_DISTRIBUTION.md](BINARY_DISTRIBUTION.md).
 
 ## CI release contract
 
-Every binary build must pass, from the built executable rather than just source:
+A release binary must pass from the **built executable**, not only from Python source:
 
-1. verified runtime-source capsule extraction;
-2. binary-safety guard;
-3. source smoke;
-4. one-file executable build;
-5. standalone topology/impact smoke from a fresh directory;
-6. standalone UI mapping/diagnosis smoke;
-7. browser-backed UI reproduction when Chromium is available on the runner;
-8. target-repository pollution check.
+1. verified base runtime extraction;
+2. verified runtime overlay application;
+3. binary-safety guard;
+4. source smoke;
+5. one-file binary build;
+6. standalone topology/impact smoke;
+7. standalone JS/TS/TSX/JSX simplification smoke;
+8. standalone UI static analysis;
+9. Chromium/CDP reproduction when available;
+10. target-repository pollution checks;
+11. SHA-256 verification before release publication.
 
-Pull requests publish a GitHub Actions artifact. A version tag matching `v*` publishes the already-validated executable and its SHA-256 file to GitHub Releases.
+Pull requests produce temporary Actions artifacts. Version tags matching `v*` publish validated binaries to GitHub Releases.
 
-See [BINARY_DISTRIBUTION.md](BINARY_DISTRIBUTION.md) for the distribution invariants.
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).

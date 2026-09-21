@@ -25,3 +25,5 @@ fi
 tar -xzf "$CAPSULE" -C "$ROOT"
 
 echo "RUNTIME_SOURCE_CAPSULE: PASS sha256:$ACTUAL"
+
+bash scripts/apply_runtime_overlays.sh
