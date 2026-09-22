@@ -1,0 +1,100 @@
+name: Check JS/TS temp-worktree mutation adapter reference
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/check-js-ts-temp-worktree-mutation-adapter.yml"
+      - "qualification/js_ts_v2_temp_worktree_mutation_adapter_reference.json"
+      - "scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py"
+      - "scripts/check_js_ts_boolean_guard_temp_worktree_reference.py"
+      - "docs/JS_TS_V2_TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE.md"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  reference:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Download and verify mutation-boundary contract evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/contract-review
+          python - <<'PY' > evidence/prerequisite.tsv
+          import json
+          from pathlib import Path
+          data = json.loads(Path('qualification/js_ts_v2_temp_worktree_mutation_adapter_reference.json').read_text())
+          p = data['prerequisite']
+          print('\t'.join([
+              str(p['workflow_run_id']),
+              p['artifact_name'],
+              p['artifact_digest'],
+          ]))
+          PY
+          IFS=$'\t' read -r run_id artifact_name expected_digest < evidence/prerequisite.tsv
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/artifacts?per_page=100" > evidence/contract-review-meta.json
+          actual_digest="$(jq -r --arg name "$artifact_name" '.artifacts[] | select(.name == $name) | .digest' evidence/contract-review-meta.json)"
+          test -n "$actual_digest"
+          test "$actual_digest" = "$expected_digest"
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir evidence/contract-review
+          echo "MUTATION_BOUNDARY_CONTRACT_EVIDENCE_VERIFIED $actual_digest"
+
+      - name: Run reference adapter suite
+        run: |
+          mkdir -p evidence/reference
+          python scripts/check_js_ts_boolean_guard_temp_worktree_reference.py \
+            --index qualification/js_ts_v2_temp_worktree_mutation_adapter_reference.json \
+            --contract-report evidence/contract-review/review/report.json \
+            --output evidence/reference/report.json \
+            --summary evidence/reference/summary.md
+          cat evidence/reference/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert adapter stops before postcondition acceptance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('evidence/reference/report.json').read_text())
+          assert report['status'] == 'TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE_PASSED'
+          assert report['passed_case_count'] == report['case_count']
+          assert report['adapter_state_reached'] == 'TEMP_WORKTREE_APPLIED'
+          assert report['postcondition_acceptance_performed'] is False
+          assert report['authority']['reference_adapter_only'] is True
+          assert report['authority']['product_mutation_surface_exposed'] is False
+          assert report['authority']['automatic_patch_authority_granted'] is False
+          assert report['authority']['generic_mutation_authority_granted'] is False
+          assert report['authority']['upstream_mutation_authorized'] is False
+          assert report['authority']['postcondition_acceptance_authority_granted'] is False
+          assert report['next_gate'] == 'TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE'
+          print('BOOLEAN_GUARD_TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE: PASS')
+          PY
+
+      - name: Upload reference adapter evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-temp-worktree-mutation-adapter-reference
+          path: |
+            evidence/reference/report.json
+            evidence/reference/summary.md
+            evidence/contract-review-meta.json
+          if-no-files-found: error
