@@ -41,8 +41,7 @@ jobs:
       - name: Activate pinned target package manager
         shell: bash
         run: |
-          corepack enable
-          corepack prepare pnpm@12.4.2 --activate
+          npm install --global pnpm@12.4.2
           test "$(pnpm --version)" = "12.4.2"
 
       - name: Install target dependencies
