@@ -288,9 +288,36 @@ jobs:
               for x in (base/'retained-acceptance.jsonl').read_text().splitlines()
               if x.strip()
           ]
+          retained_replay_semantic_match = None
+          retained_record_digest = None
           if len(retained) == 2:
               assert retained[0] == first
-              assert retained[1] == second
+              retained_second = retained[1]
+              retained_record_digest = retained_second['record_digest']
+
+              stable_top_level = (
+                  'schema_version',
+                  'status',
+                  'rule',
+                  'candidate_id',
+                  'evidence_class',
+                  'previous_record_digest',
+              )
+              for key in stable_top_level:
+                  assert retained_second[key] == second[key]
+
+              for key in ('repository', 'revision', 'source_path'):
+                  assert retained_second['target'][key] == second['target'][key]
+
+              assert retained_second['validation_summary'] == second['validation_summary']
+              assert retained_second['authority'] == second['authority']
+
+              # Disposable execution identity is intentionally not stable:
+              # target_root_realpath_sha256 and all lineage/receipt digests may
+              # differ across fresh /tmp worktrees. Both records must remain
+              # independently canonical, but they are not expected to have
+              # the same record_digest.
+              retained_replay_semantic_match = True
 
           files = {}
           for path in sorted(Path('execution/evidence').rglob('*')):
@@ -312,6 +339,12 @@ jobs:
               'acceptance_record_digest': second['record_digest'],
               'acceptance_sequence': second['sequence'],
               'previous_acceptance_record_digest': second['previous_record_digest'],
+              'retained_replay_semantic_match': retained_replay_semantic_match,
+              'retained_acceptance_record_digest': retained_record_digest,
+              'execution_specific_record_digest_expected_to_differ': (
+                  retained_record_digest is not None
+                  and retained_record_digest != second['record_digest']
+              ),
               'worktree_disposed': validation['containment']['worktree_disposed'],
               'source_checkout_untouched': True,
               'reran_validation_during_acceptance': acceptance['reran_validation'],
