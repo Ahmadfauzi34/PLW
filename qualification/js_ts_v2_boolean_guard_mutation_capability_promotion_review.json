@@ -1,0 +1,122 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-mutation-capability-promotion-review-v1",
+  "rule": "js_boolean_guard_return",
+  "prerequisite": {
+    "synthesis_stage": "CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY",
+    "accepted_record_count": 2,
+    "repository_count": 2,
+    "candidate_count": 2,
+    "required_evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE",
+    "acceptance_record_digests": [
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+    ]
+  },
+  "evidence_coverage": {
+    "repositories": [
+      "prettier/prettier",
+      "vitejs/vite"
+    ],
+    "source_extensions": [
+      ".js",
+      ".ts"
+    ],
+    "transformations": [
+      "positive",
+      "inverse"
+    ],
+    "semicolon_styles": [
+      "semicolon",
+      "no_semicolon"
+    ],
+    "observed_condition_family": "IDENT_STRICT_EQUAL_STRING",
+    "observed_operator": "===",
+    "operator_complement_folding_observed": false,
+    "jsx_or_tsx_observed": false
+  },
+  "rejected_promotion_scopes": [
+    {
+      "scope": "ALL_JS_TS_SIMPLIFICATION_RULES",
+      "reason": "sealed accepted evidence is specific to js_boolean_guard_return"
+    },
+    {
+      "scope": "BOOLEAN_GUARD_FULL_PLANNER_OPERATOR_ALLOWLIST",
+      "reason": "sealed mutation evidence covers strict equality only"
+    },
+    {
+      "scope": "JSX_TSX_BOOLEAN_GUARD_MUTATION",
+      "reason": "sealed accepted evidence covers .js and .ts only"
+    },
+    {
+      "scope": "COMPARISON_OPERATOR_COMPLEMENT_FOLDING",
+      "reason": "Vite evidence explicitly preserves conservative !(C) form instead of acquiring !== folding authority"
+    },
+    {
+      "scope": "PRIMARY_WORKTREE_MUTATION",
+      "reason": "all accepted mutation evidence is disposable-worktree bounded"
+    },
+    {
+      "scope": "AUTOMATIC_PATCH_COMMIT_PUSH_OR_PR",
+      "reason": "no accepted evidence grants unattended or upstream mutation authority"
+    }
+  ],
+  "approved_for_implementation_scope": {
+    "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+    "implementation_review_approved": true,
+    "runtime_capability_enabled_by_this_review": false,
+    "rule": "js_boolean_guard_return",
+    "source_extensions": [
+      ".js",
+      ".ts"
+    ],
+    "condition_shape": {
+      "left_operand": "IDENT_OR_MEMBER_CHAIN",
+      "operator": "===",
+      "right_operand": "STRING_LITERAL",
+      "reversed_operand_order_allowed": false,
+      "optional_chaining_evidence_required_before_enablement": true
+    },
+    "transformations": [
+      "positive",
+      "inverse"
+    ],
+    "preserve_semicolon_style": true,
+    "exact_single_site_plan_required": true,
+    "comments_inside_rewrite_span_forbidden": true,
+    "logical_expression_conditions_forbidden": true,
+    "await_or_yield_forbidden": true,
+    "comparison_operator_complement_folding": false
+  },
+  "mandatory_execution_boundary": {
+    "disposable_temp_worktree_only": true,
+    "primary_worktree_forbidden": true,
+    "current_read_only_planner_required": true,
+    "plan_digest_binding_required": true,
+    "preflight_digest_binding_required": true,
+    "validation_spec_digest_binding_required": true,
+    "candidate_specific_external_authorization_required": true,
+    "authorization_single_use": true,
+    "all_postcondition_commands_must_pass_on_baseline_before_write": true,
+    "exact_planned_replacement_only": true,
+    "one_expected_changed_file_only": true,
+    "postcondition_validation_is_separate_transition": true,
+    "evidence_acceptance_is_separate_transition": true,
+    "failure_after_write_discards_worktree": true
+  },
+  "authority": {
+    "review_only": true,
+    "implementation_authorized_for_approved_scope": true,
+    "runtime_mutation_capability_enabled": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "status": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_APPROVED_FOR_IMPLEMENTATION",
+  "next_gate": "BOUNDED_BOOLEAN_GUARD_MUTATION_CAPABILITY_IMPLEMENTATION"
+}
