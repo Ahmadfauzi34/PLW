@@ -1,0 +1,96 @@
+name: Replicate JS/TS boolean guard on Vite
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/experiment-js-ts-vite-boolean-replication.yml"
+      - "scripts/experiment_js_ts_vite_boolean_replication.py"
+      - "scripts/finalize_js_ts_vite_boolean_replication.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-js-ts-vite-boolean-replication-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  replicate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout PLW replication harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned Vite target
+        uses: actions/checkout@v4
+        with:
+          repository: vitejs/vite
+          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          path: experiment/target
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+
+      - name: Activate pinned target package manager
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@12.4.2 --activate
+          test "$(pnpm --version)" = "12.4.2"
+
+      - name: Install target dependencies
+        working-directory: experiment/target
+        run: pnpm install --frozen-lockfile
+
+      - name: Baseline focused target-native test
+        working-directory: experiment/target
+        run: pnpm exec vitest run packages/vite/src/node/ssr/__tests__/ssrTransform.spec.ts
+
+      - name: Apply strict reviewed-candidate rewrite
+        shell: bash
+        run: |
+          mkdir -p experiment/evidence
+          python scripts/experiment_js_ts_vite_boolean_replication.py \
+            --target-root experiment/target \
+            --output experiment/evidence/rewrite.json
+          changed="$(git -C experiment/target status --porcelain --untracked-files=no)"
+          expected=" M packages/vite/src/node/ssr/ssrTransform.ts"
+          if [[ "$changed" != "$expected" ]]; then
+            echo "unexpected changed-path scope:" >&2
+            printf '%s\n' "$changed" >&2
+            exit 1
+          fi
+          git -C experiment/target diff --check
+          git -C experiment/target diff -- packages/vite/src/node/ssr/ssrTransform.ts > experiment/evidence/candidate.patch
+          test -s experiment/evidence/candidate.patch
+
+      - name: Post-rewrite focused target-native test
+        working-directory: experiment/target
+        run: pnpm exec vitest run packages/vite/src/node/ssr/__tests__/ssrTransform.spec.ts
+
+      - name: Post-rewrite Vite package typecheck
+        working-directory: experiment/target
+        run: pnpm --filter vite typecheck
+
+      - name: Finalize replication evidence
+        run: |
+          python scripts/finalize_js_ts_vite_boolean_replication.py \
+            --rewrite-evidence experiment/evidence/rewrite.json \
+            --diff experiment/evidence/candidate.patch \
+            --output experiment/evidence/result.json \
+            --summary experiment/evidence/summary.md
+          cat experiment/evidence/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload replication evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-vite-boolean-cross-repository-replication
+          path: experiment/evidence
+          if-no-files-found: error
