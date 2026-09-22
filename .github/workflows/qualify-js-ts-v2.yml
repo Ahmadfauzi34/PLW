@@ -84,10 +84,14 @@ jobs:
           for id in axios vite redux-toolkit prettier; do
             target="$GITHUB_WORKSPACE/qualification/corpora/$id"
             runtime="$RUNNER_TEMP/plw-$id"
+            test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
             mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache"
-            HOME="$runtime/home"             XDG_STATE_HOME="$runtime/state"             XDG_CACHE_HOME="$runtime/cache"               "$bin" simplify "$target" --json > "qualification/results/$id.json"
-            test ! -e "$target/data/runtime"
-            test ! -e "$target/data/codebase/cache"
+            HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" "$bin" simplify "$target" --json > "qualification/results/$id.json"
+            if [[ -n "$(git -C "$target" status --porcelain --untracked-files=all)" ]]; then
+              echo "target corpus mutated or polluted: $id" >&2
+              git -C "$target" status --porcelain --untracked-files=all >&2
+              exit 1
+            fi
           done
 
       - name: Build qualification ledger
