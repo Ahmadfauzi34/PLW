@@ -1,0 +1,177 @@
+name: Revalidate boolean-guard dry-run planner on real repositories
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/revalidate-js-ts-boolean-guard-dry-run.yml"
+      - "scripts/revalidate_js_ts_boolean_guard_dry_run.py"
+      - "scripts/plan_js_ts_boolean_guard_rewrite.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-js-ts-dry-run-cross-repo-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  revalidate:
+    name: revalidate-${{ matrix.case }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - case: prettier
+            repository: prettier/prettier
+            revision: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          - case: vite
+            repository: vitejs/vite
+            revision: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+
+    steps:
+      - name: Checkout PLW harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download exact PLW v0.2.0 release binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p revalidation/bin
+          downloaded=false
+          for attempt in 1 2 3 4 5; do
+            if gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir revalidation/bin --clobber; then
+              downloaded=true
+              break
+            fi
+            if [[ "$attempt" -lt 5 ]]; then sleep $((attempt * 2)); fi
+          done
+          test "$downloaded" = "true"
+          cd revalidation/bin
+          sha256sum --check plw-linux-x86_64.sha256
+          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
+          test "$actual" = "6763b6098ca84a906e7b3f239ae5f4f790d05a1e4f23091d499c3adaf1d53fbe"
+          chmod +x plw-linux-x86_64
+
+      - name: Checkout pinned target
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.revision }}
+          path: revalidation/target
+          persist-credentials: false
+
+      - name: Fresh structural candidate observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$GITHUB_WORKSPACE/revalidation/target"
+          runtime="$RUNNER_TEMP/plw-${{ matrix.case }}"
+          mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache" "revalidation/evidence/${{ matrix.case }}"
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" \
+            "$GITHUB_WORKSPACE/revalidation/bin/plw-linux-x86_64" simplify "$target" --json \
+            > "revalidation/evidence/${{ matrix.case }}/simplify.json"
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+
+      - name: Build real-candidate dry-run plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$GITHUB_WORKSPACE/revalidation/target"
+          python scripts/revalidate_js_ts_boolean_guard_dry_run.py \
+            --case "${{ matrix.case }}" \
+            --target-root "$target" \
+            --simplify-result "revalidation/evidence/${{ matrix.case }}/simplify.json" \
+            --output-dir "revalidation/evidence/${{ matrix.case }}/planner"
+          if [[ -n "$(git -C "$target" status --porcelain --untracked-files=all)" ]]; then
+            echo "dry-run planner mutated or polluted target: ${{ matrix.case }}" >&2
+            git -C "$target" status --porcelain --untracked-files=all >&2
+            exit 1
+          fi
+
+      - name: Assert bounded cross-repository relation
+        shell: bash
+        run: |
+          python - "revalidation/evidence/${{ matrix.case }}/planner/summary.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          row = json.loads(Path(sys.argv[1]).read_text())
+          assert row['status'] == 'DRY_RUN_CROSS_REPOSITORY_REVALIDATION_PASSED'
+          assert row['fresh_candidate_reproduced'] is True
+          assert row['planner_status'] == 'DRY_RUN_REWRITE_PLAN_READY'
+          assert row['source_sha256_before'] == row['source_sha256_after']
+          assert row['target_source_mutated'] is False
+          assert row['generic_rewrite_authority_granted'] is False
+          assert row['automatic_patch_authority_granted'] is False
+          assert row['upstream_mutation_authorized'] is False
+          print('REAL_CANDIDATE_DRY_RUN_REVALIDATION: PASS')
+          PY
+
+      - name: Upload per-repository revalidation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-dry-run-revalidation-${{ matrix.case }}
+          path: revalidation/evidence/${{ matrix.case }}
+          if-no-files-found: error
+
+  aggregate:
+    needs: revalidate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download revalidation evidence
+        uses: actions/download-artifact@v4
+        with:
+          pattern: js-ts-v2-dry-run-revalidation-*
+          path: evidence
+
+      - name: Synthesize cross-repository planner evidence
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          rows = []
+          for path in sorted(Path('evidence').glob('*/planner/summary.json')):
+              rows.append(json.loads(path.read_text()))
+          assert len(rows) == 2, rows
+          by_case = {row['case']: row for row in rows}
+          assert set(by_case) == {'prettier', 'vite'}
+          assert all(row['status'] == 'DRY_RUN_CROSS_REPOSITORY_REVALIDATION_PASSED' for row in rows)
+          assert all(row['target_source_mutated'] is False for row in rows)
+          assert by_case['prettier']['relation_to_mutation_experiment'] == 'EXACT_PLANNED_REWRITE_MATCH'
+          assert by_case['vite']['relation_to_mutation_experiment'] == 'SEMANTICALLY_BOUNDED_PLAN_INTENTIONALLY_MORE_CONSERVATIVE'
+          report = {
+              'schema_version': 'plw-js-ts-v2-dry-run-cross-repo-synthesis-v1',
+              'status': 'DRY_RUN_PLANNER_CROSS_REPOSITORY_REVALIDATED',
+              'repositories': sorted(row['repository'] for row in rows),
+              'candidate_count': len(rows),
+              'fresh_candidate_reproduction': True,
+              'target_source_mutation': False,
+              'prettier_relation': by_case['prettier']['relation_to_mutation_experiment'],
+              'vite_relation': by_case['vite']['relation_to_mutation_experiment'],
+              'generic_rewrite_authority_granted': False,
+              'automatic_patch_authority_granted': False,
+              'upstream_mutation_authorized': False,
+              'next_gate': 'DRY_RUN_PLANNER_EVIDENCE_SYNTHESIS',
+          }
+          Path('evidence/cross-repo-report.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+          print(json.dumps(report, sort_keys=True))
+          PY
+
+      - name: Upload aggregate revalidation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-dry-run-cross-repo-revalidation
+          path: evidence/cross-repo-report.json
+          if-no-files-found: error
