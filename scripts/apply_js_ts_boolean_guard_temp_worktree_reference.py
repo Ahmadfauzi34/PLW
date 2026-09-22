@@ -293,6 +293,7 @@ def apply_reference_mutation(
     _assert_system_temp_target(root, disposable_parent)
 
     for path, label in (
+        (plan_path, "dry-run plan"),
         (preflight_path, "preflight evidence"),
         (authorization_path, "authorization receipt"),
         (boundary_path, "disposable-boundary receipt"),
