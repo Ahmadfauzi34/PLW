@@ -1,0 +1,74 @@
+{
+  "schema_version": "plw-interactive-audit-record-v1",
+  "audit": "BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_REVIEW",
+  "execution_mode": "INTERACTIVE_SESSION",
+  "ci_used_as_audit_authority": false,
+  "cases": [
+    {
+      "name": "historical_only",
+      "expected": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "observed": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "reason": "NO_ACCEPTED_RECORDS",
+      "pass": true
+    },
+    {
+      "name": "one_accepted",
+      "expected": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "observed": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "reason": "CROSS_REPOSITORY_ACCEPTED_EVIDENCE_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "two_same_repo",
+      "expected": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "observed": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+      "reason": "CROSS_REPOSITORY_ACCEPTED_EVIDENCE_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "two_cross_repo",
+      "expected": "CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY",
+      "observed": "CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY",
+      "next_gate": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_REVIEW",
+      "pass": true
+    },
+    {
+      "name": "authority_tamper",
+      "expected": "INVALID_ACCEPTED_EVIDENCE_LEDGER",
+      "observed": "INVALID_ACCEPTED_EVIDENCE_LEDGER",
+      "pass": true
+    },
+    {
+      "name": "broken_chain",
+      "expected": "REJECTED",
+      "observed": "REJECTED",
+      "pass": true
+    }
+  ],
+  "result": {
+    "passed": 6,
+    "total": 6,
+    "status": "INTERACTIVE_BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_AUDIT_PASSED"
+  },
+  "artifact": {
+    "filename": "INTERACTIVE_BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_AUDIT_v1.txt",
+    "sha256": "sha256:2218e671398d9077a4807704620f9d02f47223dd1d7f548cc00ce42bc3fc64cd"
+  },
+  "current_project_interpretation": {
+    "historical_boolean_guard_repositories": [
+      "prettier/prettier",
+      "vitejs/vite"
+    ],
+    "historical_records_are_pre_seal": true,
+    "historical_records_count_toward_accepted_threshold": false,
+    "current_sealed_accepted_record_count": 0,
+    "promotion_review_ready": false
+  },
+  "authority": {
+    "review_only": true,
+    "mutation_capability_granted": false,
+    "automatic_patch_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "truth_commit": false
+  }
+}
