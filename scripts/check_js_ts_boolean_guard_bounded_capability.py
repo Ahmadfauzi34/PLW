@@ -404,9 +404,6 @@ def run_negative(
         except CapabilityError as exc:
             rejected = True
             error = str(exc)
-        except AdapterError as exc:
-            rejected = True
-            error = str(exc)
         after = fixture["source"].read_bytes()
         result = {
             "case": name,
