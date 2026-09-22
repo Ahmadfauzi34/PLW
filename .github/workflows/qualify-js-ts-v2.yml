@@ -18,7 +18,90 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  qualify:
+  observe:
+    name: observe-${{ matrix.corpus.id }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        corpus:
+          - id: axios
+            repository: axios/axios
+            revision: 5fc40e1c7478d342ec64c4e865ed4cd1a334207c
+          - id: vite
+            repository: vitejs/vite
+            revision: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          - id: redux-toolkit
+            repository: reduxjs/redux-toolkit
+            revision: c9dac937d77adc3bf04842a43955e81d0e7a46da
+          - id: prettier
+            repository: prettier/prettier
+            revision: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+    steps:
+      - name: Checkout PLW qualification harness
+        uses: actions/checkout@v4
+
+      - name: Download exact PLW v0.2.0 release binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p qualification/bin
+          gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir qualification/bin
+          cd qualification/bin
+          sha256sum --check plw-linux-x86_64.sha256
+          expected="$(python -c 'import json; print(json.load(open("../js_ts_v2_external_corpus.json"))["baseline"]["binary_sha256"])')"
+          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
+          test "$actual" = "$expected"
+          chmod +x plw-linux-x86_64
+          echo "QUALIFICATION_BINARY: PASS sha256:$actual"
+
+      - name: Checkout pinned corpus
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.corpus.repository }}
+          ref: ${{ matrix.corpus.revision }}
+          path: qualification/corpus
+          persist-credentials: false
+
+      - name: Run structural observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$GITHUB_WORKSPACE/qualification/corpus"
+          runtime="$RUNNER_TEMP/plw-${{ matrix.corpus.id }}"
+          result="$GITHUB_WORKSPACE/qualification/${{ matrix.corpus.id }}.json"
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache"
+          HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" "$GITHUB_WORKSPACE/qualification/bin/plw-linux-x86_64" simplify "$target" --json > "$result"
+          if [[ -n "$(git -C "$target" status --porcelain --untracked-files=all)" ]]; then
+            echo "target corpus mutated or polluted: ${{ matrix.corpus.id }}" >&2
+            git -C "$target" status --porcelain --untracked-files=all >&2
+            exit 1
+          fi
+          python - "$result" <<'PY'
+          import json, sys
+          from pathlib import Path
+          payload = json.loads(Path(sys.argv[1]).read_text())
+          bridge = payload.get("canonical_anatomy_bridge", {})
+          scope = bridge.get("semantic_frontend_scope", {})
+          if bridge.get("semantic_frontend") != "python_ast+js_structural_v2":
+              raise SystemExit("unexpected semantic frontend")
+          if scope.get("ts_js_rule_count") != 7:
+              raise SystemExit("unexpected JS/TS rule count")
+          print("STRUCTURAL_OBSERVATION: PASS")
+          PY
+
+      - name: Upload corpus observation
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-${{ matrix.corpus.id }}
+          path: qualification/${{ matrix.corpus.id }}.json
+          if-no-files-found: error
+
+  aggregate:
+    needs: observe
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout PLW qualification harness
@@ -29,74 +112,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Download exact PLW v0.2.0 release binary
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p qualification/bin
-          gh release download v0.2.0             --repo "$GITHUB_REPOSITORY"             --pattern "plw-linux-x86_64*"             --dir qualification/bin
-          cd qualification/bin
-          sha256sum --check plw-linux-x86_64.sha256
-          expected="$(python -c 'import json; print(json.load(open("../js_ts_v2_external_corpus.json"))["baseline"]["binary_sha256"])')"
-          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
-          test "$actual" = "$expected"
-          chmod +x plw-linux-x86_64
-          echo "QUALIFICATION_BINARY: PASS sha256:$actual"
-
-      - name: Checkout Axios corpus
-        uses: actions/checkout@v4
+      - name: Download corpus observations
+        uses: actions/download-artifact@v4
         with:
-          repository: axios/axios
-          ref: 5fc40e1c7478d342ec64c4e865ed4cd1a334207c
-          path: qualification/corpora/axios
-          persist-credentials: false
-
-      - name: Checkout Vite corpus
-        uses: actions/checkout@v4
-        with:
-          repository: vitejs/vite
-          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
-          path: qualification/corpora/vite
-          persist-credentials: false
-
-      - name: Checkout Redux Toolkit corpus
-        uses: actions/checkout@v4
-        with:
-          repository: reduxjs/redux-toolkit
-          ref: c9dac937d77adc3bf04842a43955e81d0e7a46da
-          path: qualification/corpora/redux-toolkit
-          persist-credentials: false
-
-      - name: Checkout Prettier corpus
-        uses: actions/checkout@v4
-        with:
-          repository: prettier/prettier
-          ref: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
-          path: qualification/corpora/prettier
-          persist-credentials: false
-
-      - name: Run structural observations
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p qualification/results
-          bin="$GITHUB_WORKSPACE/qualification/bin/plw-linux-x86_64"
-          for id in axios vite redux-toolkit prettier; do
-            target="$GITHUB_WORKSPACE/qualification/corpora/$id"
-            runtime="$RUNNER_TEMP/plw-$id"
-            test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
-            mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache"
-            HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" "$bin" simplify "$target" --json > "qualification/results/$id.json"
-            if [[ -n "$(git -C "$target" status --porcelain --untracked-files=all)" ]]; then
-              echo "target corpus mutated or polluted: $id" >&2
-              git -C "$target" status --porcelain --untracked-files=all >&2
-              exit 1
-            fi
-          done
+          pattern: js-ts-v2-*
+          path: qualification/results
+          merge-multiple: true
 
       - name: Build qualification ledger
         run: |
-          python scripts/qualify_js_ts_external_corpus.py             --manifest qualification/js_ts_v2_external_corpus.json             --results-dir qualification/results             --output qualification/results/report.json             --summary qualification/results/summary.md
+          python scripts/qualify_js_ts_external_corpus.py --manifest qualification/js_ts_v2_external_corpus.json --results-dir qualification/results --output qualification/results/report.json --summary qualification/results/summary.md
           cat qualification/results/summary.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload qualification evidence
