@@ -60,9 +60,9 @@ def _sample(candidate: Dict[str, Any]) -> Dict[str, Any]:
 
 def _classify_recommendation(value: str) -> str:
     if value.startswith("candidate"):
-        return "candidate"
+        return "recommended"
     if value.startswith("defer"):
-        return "defer"
+        return "deferred"
     return "other"
 
 
