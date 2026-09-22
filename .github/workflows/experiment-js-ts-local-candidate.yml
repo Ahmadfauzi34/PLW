@@ -1,0 +1,94 @@
+name: Experiment JS/TS local candidate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/experiment-js-ts-local-candidate.yml"
+      - "scripts/experiment_js_ts_local_candidate.py"
+      - "scripts/finalize_js_ts_local_experiment.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-js-ts-local-experiment-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  redux-immutable-middleware:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout PLW experiment harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned Redux Toolkit target
+        uses: actions/checkout@v4
+        with:
+          repository: reduxjs/redux-toolkit
+          ref: c9dac937d77adc3bf04842a43955e81d0e7a46da
+          path: experiment/target
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Activate target package manager
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.23.0 --activate
+          pnpm --version
+
+      - name: Install bounded target dependencies
+        working-directory: experiment/target
+        run: pnpm install --frozen-lockfile --filter @reduxjs/toolkit...
+
+      - name: Baseline focused target-native test
+        working-directory: experiment/target
+        run: pnpm --filter @reduxjs/toolkit exec vitest --typecheck --run src/tests/immutableStateInvariantMiddleware.test.ts
+
+      - name: Apply strict temporary-worktree rewrite
+        shell: bash
+        run: |
+          mkdir -p experiment/evidence
+          python scripts/experiment_js_ts_local_candidate.py             --target-root experiment/target             --output experiment/evidence/rewrite.json
+          changed="$(git -C experiment/target status --porcelain --untracked-files=no)"
+          expected=" M packages/toolkit/src/immutableStateInvariantMiddleware.ts"
+          if [[ "$changed" != "$expected" ]]; then
+            echo "unexpected changed-path scope:" >&2
+            printf '%s\n' "$changed" >&2
+            exit 1
+          fi
+          git -C experiment/target diff --check
+          git -C experiment/target diff -- packages/toolkit/src/immutableStateInvariantMiddleware.ts > experiment/evidence/candidate.patch
+          test -s experiment/evidence/candidate.patch
+
+      - name: Post-rewrite focused target-native test
+        working-directory: experiment/target
+        run: pnpm --filter @reduxjs/toolkit exec vitest --typecheck --run src/tests/immutableStateInvariantMiddleware.test.ts
+
+      - name: Post-rewrite target-native type tests
+        working-directory: experiment/target
+        run: pnpm --filter @reduxjs/toolkit type-tests
+
+      - name: Finalize bounded experiment evidence
+        run: |
+          python scripts/finalize_js_ts_local_experiment.py             --rewrite-evidence experiment/evidence/rewrite.json             --diff experiment/evidence/candidate.patch             --output experiment/evidence/result.json             --summary experiment/evidence/summary.md
+          cat experiment/evidence/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload experiment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-local-candidate-worktree-experiment
+          path: |
+            experiment/evidence/rewrite.json
+            experiment/evidence/candidate.patch
+            experiment/evidence/result.json
+            experiment/evidence/summary.md
+          if-no-files-found: error
