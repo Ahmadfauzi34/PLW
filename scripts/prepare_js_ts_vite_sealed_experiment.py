@@ -31,9 +31,11 @@ FOCUSED_COMMAND = [
 ]
 PARSE_COMMAND = [
     "pnpm",
+    "--filter",
+    "vite",
     "exec",
     "esbuild",
-    SOURCE_PATH,
+    "src/node/ssr/ssrTransform.ts",
     "--format=esm",
     "--platform=node",
     "--log-level=error",
