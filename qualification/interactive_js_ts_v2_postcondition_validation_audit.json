@@ -1,0 +1,78 @@
+{
+  "schema_version": "plw-interactive-audit-record-v1",
+  "audit": "TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE",
+  "rule": "js_boolean_guard_return",
+  "execution_mode": "INTERACTIVE_SESSION",
+  "ci_used_as_audit_authority": false,
+  "local_environment": {
+    "node": "v22.16.0",
+    "typescript": "5.8.3",
+    "git": "2.47.3",
+    "python": "3.13.5"
+  },
+  "cases": [
+    {
+      "name": "pass",
+      "expected": "POSTCONDITIONS_VALIDATED",
+      "observed": "POSTCONDITIONS_VALIDATED",
+      "worktree_disposed": true,
+      "upstream_unchanged": true,
+      "authorization_consumed": true
+    },
+    {
+      "name": "focused_validation_failure",
+      "expected": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "observed": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "worktree_disposed": true,
+      "upstream_unchanged": true,
+      "authorization_consumed": true
+    },
+    {
+      "name": "typecheck_failure",
+      "expected": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "observed": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "worktree_disposed": true,
+      "upstream_unchanged": true,
+      "authorization_consumed": true
+    },
+    {
+      "name": "validation_spec_tamper",
+      "expected": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "observed": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "worktree_disposed": true,
+      "upstream_unchanged": true,
+      "authorization_consumed": true
+    },
+    {
+      "name": "focused_command_substitution",
+      "expected": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "observed": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "worktree_disposed": true,
+      "upstream_unchanged": true,
+      "authorization_consumed": true
+    }
+  ],
+  "result": {
+    "passed": 5,
+    "total": 5,
+    "status": "INTERACTIVE_POSTCONDITION_AUDIT_PASSED"
+  },
+  "artifact": {
+    "filename": "INTERACTIVE_POSTCONDITION_AUDIT_v1.txt",
+    "sha256": "sha256:4014a5a06b2d94b3000a25c8ad77f2e2ffb16bd335a194fd38a889625d43e4b2"
+  },
+  "findings": [
+    "postcondition validation commands must be bound before mutation",
+    "focused postcondition command must equal the preflight baseline command",
+    "validation-spec substitution must fail closed after mutation and dispose the worktree",
+    "typecheck failure after a successful source write must not become partial success",
+    "authorization remains consumed after any execution attempt"
+  ],
+  "authority": {
+    "audit_evidence_only": true,
+    "source_mutation_authority_granted": false,
+    "experiment_evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  }
+}
