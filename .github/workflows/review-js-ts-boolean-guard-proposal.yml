@@ -1,0 +1,62 @@
+name: Review JS/TS boolean-guard rewrite proposal
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/review-js-ts-boolean-guard-proposal.yml"
+      - "qualification/js_ts_v2_boolean_guard_rewrite_proposal.json"
+      - "qualification/js_ts_v2_local_rule_evidence.json"
+      - "scripts/synthesize_js_ts_local_rule_evidence.py"
+      - "scripts/review_js_ts_boolean_guard_rewrite_proposal.py"
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Review bounded proposal
+        run: |
+          mkdir -p qualification/proposal-review
+          python scripts/review_js_ts_boolean_guard_rewrite_proposal.py \
+            --index qualification/js_ts_v2_local_rule_evidence.json \
+            --proposal qualification/js_ts_v2_boolean_guard_rewrite_proposal.json \
+            --output qualification/proposal-review/report.json \
+            --summary qualification/proposal-review/summary.md
+          cat qualification/proposal-review/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert authority remains proposal-only
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('qualification/proposal-review/report.json').read_text())
+          assert report['status'] == 'BOOLEAN_GUARD_REWRITE_PROPOSAL_REVIEW_READY'
+          assert report['evidence']['repository_count'] == 2
+          assert report['evidence']['candidate_count'] == 2
+          assert report['proposal']['next_gate'] == 'DRY_RUN_REWRITE_PLANNER'
+          assert report['proposal']['comparison_operator_complement_folding'] is False
+          assert report['authority']['generic_rewrite_authority_granted'] is False
+          assert report['authority']['automatic_patch_authority_granted'] is False
+          assert report['authority']['upstream_mutation_authorized'] is False
+          print('BOOLEAN_GUARD_REWRITE_PROPOSAL_REVIEW: PASS')
+          PY
+
+      - name: Upload proposal review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-boolean-guard-rewrite-proposal-review
+          path: qualification/proposal-review
+          if-no-files-found: error
