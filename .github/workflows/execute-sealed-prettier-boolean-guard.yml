@@ -1,0 +1,240 @@
+name: Execute sealed Prettier boolean-guard evidence collection
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/execute-sealed-prettier-boolean-guard.yml"
+      - "scripts/prepare_js_ts_prettier_sealed_experiment.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-sealed-prettier-boolean-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  execute:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout PLW harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Download exact PLW v0.2.0 observation binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution/bin execution/evidence
+          downloaded=false
+          for attempt in 1 2 3 4 5; do
+            if gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir execution/bin --clobber; then
+              downloaded=true
+              break
+            fi
+            if [[ "$attempt" -lt 5 ]]; then sleep $((attempt * 2)); fi
+          done
+          test "$downloaded" = "true"
+          cd execution/bin
+          sha256sum --check plw-linux-x86_64.sha256
+          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
+          test "$actual" = "6763b6098ca84a906e7b3f239ae5f4f790d05a1e4f23091d499c3adaf1d53fbe"
+          chmod +x plw-linux-x86_64
+
+      - name: Checkout pinned Prettier source
+        uses: actions/checkout@v4
+        with:
+          repository: prettier/prettier
+          ref: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          path: execution/source
+          persist-credentials: false
+
+      - name: Create disposable secondary worktree
+        id: worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          parent="/tmp/plw-prettier-sealed-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          target="$parent/target"
+          rm -rf "$parent"
+          mkdir -p "$parent"
+          git -C execution/source worktree add --detach "$target" 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          test "$(git -C "$target" rev-parse HEAD)" = "6176846ed3c8bde9cdbdab9c1dc3294fc15d0942"
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          printf 'parent=%s\n' "$parent" >> "$GITHUB_OUTPUT"
+          printf 'target=%s\n' "$target" >> "$GITHUB_OUTPUT"
+
+      - name: Install pinned target dependencies
+        working-directory: ${{ steps.worktree.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          corepack enable
+          test "$(yarn --version)" = "4.18.0"
+          yarn install --immutable
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Fresh structural candidate observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ steps.worktree.outputs.target }}"
+          runtime="$RUNNER_TEMP/plw-prettier-observation"
+          rm -rf "$runtime"
+          mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache" execution/evidence/observation
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" \
+            "$GITHUB_WORKSPACE/execution/bin/plw-linux-x86_64" simplify "$target" --json \
+            > execution/evidence/observation/simplify.json
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+
+      - name: Reproduce reviewed candidate and build dry-run plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/revalidate_js_ts_boolean_guard_dry_run.py \
+            --case prettier \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --simplify-result execution/evidence/observation/simplify.json \
+            --output-dir execution/evidence/planner
+          test -z "$(git -C "${{ steps.worktree.outputs.target }}" status --porcelain --untracked-files=all)"
+
+      - name: Interactive-scope preflight and authorization preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/prepare_js_ts_prettier_sealed_experiment.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --candidate execution/evidence/planner/candidate.json \
+            --plan execution/evidence/planner/plan.json \
+            --output-dir execution/evidence/sealed
+
+      - name: Apply exact authorized mutation in disposable worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --target-repository prettier/prettier \
+            --plan execution/evidence/planner/plan.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --disposable-boundary execution/evidence/sealed/disposable-boundary.json \
+            --consumption-ledger execution/evidence/sealed/authorization-consumption.jsonl \
+            --output execution/evidence/sealed/mutation-receipt.json \
+            --allow-reference-mutation
+
+      - name: Validate postconditions and seal emitted receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/validate_js_ts_boolean_guard_temp_worktree_postconditions.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --plan execution/evidence/planner/plan.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --mutation-receipt execution/evidence/sealed/mutation-receipt.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --issuance-ledger execution/evidence/sealed/postcondition-issuance.jsonl \
+            --output execution/evidence/sealed/postcondition-validation-receipt.json \
+            --timeout-seconds 600
+          test ! -e "${{ steps.worktree.outputs.target }}"
+
+      - name: Accept sealed bounded experiment evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/accept_js_ts_boolean_guard_temp_worktree_experiment_evidence.py \
+            --plan execution/evidence/planner/plan.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --mutation-receipt execution/evidence/sealed/mutation-receipt.json \
+            --validation-receipt execution/evidence/sealed/postcondition-validation-receipt.json \
+            --issuance-ledger execution/evidence/sealed/postcondition-issuance.jsonl \
+            --acceptance-ledger execution/evidence/sealed/acceptance.jsonl \
+            --output execution/evidence/sealed/acceptance-result.json
+
+      - name: Verify source checkout remained untouched and summarize evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C execution/source worktree prune
+          test -z "$(git -C execution/source status --porcelain --untracked-files=all)"
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+
+          base = Path('execution/evidence/sealed')
+          validation = json.loads((base/'postcondition-validation-receipt.json').read_text())
+          acceptance = json.loads((base/'acceptance-result.json').read_text())
+          issuance = [json.loads(x) for x in (base/'postcondition-issuance.jsonl').read_text().splitlines() if x.strip()]
+          accepted = [json.loads(x) for x in (base/'acceptance.jsonl').read_text().splitlines() if x.strip()]
+
+          assert validation['status'] == 'POSTCONDITIONS_VALIDATED'
+          assert validation['postconditions']['validated'] is True
+          assert validation['postconditions']['evidence_acceptance_granted'] is False
+          assert validation['containment']['worktree_disposed'] is True
+          assert validation['containment']['target_exists_after'] is False
+          assert acceptance['status'] == 'EXPERIMENT_EVIDENCE_ACCEPTED'
+          assert acceptance['evidence_class'] == 'BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE'
+          assert acceptance['reran_validation'] is False
+          assert acceptance['inspected_disposed_worktree'] is False
+          assert acceptance['authority']['truth_commit'] is False
+          assert len(issuance) == 1
+          assert len(accepted) == 1
+
+          files = {}
+          for path in sorted(Path('execution/evidence').rglob('*')):
+              if path.is_file():
+                  files[str(path.relative_to('execution/evidence'))] = 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+
+          summary = {
+              'schema_version': 'plw-js-ts-v2-prettier-sealed-accepted-experiment-v1',
+              'status': 'SEALED_REAL_WORLD_EXPERIMENT_ACCEPTED',
+              'repository': 'prettier/prettier',
+              'revision': '6176846ed3c8bde9cdbdab9c1dc3294fc15d0942',
+              'candidate_id': 'sha256:2fb4fc47394645dd1dada20e09c329ff23ae9cf1ef499176e0ba0658b04690c4',
+              'rule': 'js_boolean_guard_return',
+              'validation_status': validation['status'],
+              'acceptance_status': acceptance['status'],
+              'evidence_class': acceptance['evidence_class'],
+              'validation_receipt_digest': acceptance['validation_receipt_digest'],
+              'issuance_record_digest': acceptance['issuance_record_digest'],
+              'acceptance_record_digest': acceptance['acceptance_record']['record_digest'],
+              'worktree_disposed': validation['containment']['worktree_disposed'],
+              'source_checkout_untouched': True,
+              'reran_validation_during_acceptance': acceptance['reran_validation'],
+              'truth_commit': acceptance['authority']['truth_commit'],
+              'file_digests': files,
+              'next_gate': 'INTERACTIVE_EVIDENCE_ADJUDICATION',
+          }
+          (base/'collection-summary.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
+          print(json.dumps({k: summary[k] for k in ('status','validation_status','acceptance_status','truth_commit')}, sort_keys=True))
+          PY
+
+      - name: Upload sealed evidence bundle for interactive adjudication
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-sealed-prettier-boolean-guard-evidence
+          path: execution/evidence
+          if-no-files-found: error

@@ -1,0 +1,104 @@
+{
+  "schema_version": "plw-interactive-real-world-evidence-adjudication-v1",
+  "status": "INTERACTIVE_REAL_WORLD_EVIDENCE_ADJUDICATION_PASSED",
+  "execution": {
+    "workflow_run_id": 35776161761,
+    "workflow_artifact_id": 10716297130,
+    "workflow_artifact_name": "js-ts-v2-sealed-prettier-boolean-guard-evidence",
+    "workflow_artifact_digest": "sha256:d6c5e8f2bb7341989c2bc1fc2455cf51307b2319212e0c12bdc29e0399380c92",
+    "artifact_zip_sha256": "sha256:d6c5e8f2bb7341989c2bc1fc2455cf51307b2319212e0c12bdc29e0399380c92",
+    "workflow_head_sha": "2d565135999a39fa98cc332bd9be00f16e3c0eba",
+    "ci_role": "DETERMINISTIC_EXECUTION_RUNNER_ONLY"
+  },
+  "target": {
+    "repository": "prettier/prettier",
+    "revision": "6176846ed3c8bde9cdbdab9c1dc3294fc15d0942",
+    "candidate_id": "sha256:2fb4fc47394645dd1dada20e09c329ff23ae9cf1ef499176e0ba0658b04690c4",
+    "rule": "js_boolean_guard_return",
+    "source_path": "src/language-css/utilities/index.js"
+  },
+  "interactive_checks": {
+    "checked_in_session": true,
+    "invariant_check_count": 29,
+    "invariant_failures": 0,
+    "candidate_identity": true,
+    "target_identity": true,
+    "validation_lineage_digests": true,
+    "mutation_lineage_digests": true,
+    "preflight_validation_spec_binding": true,
+    "authorization_lineage": true,
+    "issuance_exact_receipt_digest": true,
+    "issuance_hash_chain": true,
+    "issuance_lineage": true,
+    "acceptance_exact_receipt_digest": true,
+    "acceptance_issuance_binding": true,
+    "acceptance_hash_chain": true,
+    "acceptance_lineage": true,
+    "acceptance_evidence_class": true,
+    "focused_command_equals_baseline": true,
+    "parse_command_equals_bound_spec": true,
+    "typecheck_command_equals_bound_spec": true,
+    "all_validation_commands_exit_zero": true,
+    "mutation_after_hash_matches_plan_and_validation": true,
+    "mutation_diff_matches_plan_and_validation": true,
+    "authorization_consumed": true,
+    "worktree_disposed": true,
+    "truth_false_everywhere": true,
+    "upstream_authority_false": true,
+    "acceptance_did_not_rerun_validation": true,
+    "acceptance_did_not_inspect_disposed_worktree": true,
+    "collection_file_digest_manifest": true
+  },
+  "validated_behavior": {
+    "baseline_command": [
+      "yarn",
+      "jest",
+      "tests/format/scss/map/format.test.js",
+      "tests/format/scss/trailing-comma/format.test.js",
+      "--runInBand"
+    ],
+    "baseline_exit_code": 0,
+    "parse_command": [
+      "node",
+      "--check",
+      "src/language-css/utilities/index.js"
+    ],
+    "parse_exit_code": 0,
+    "focused_post_exit_code": 0,
+    "typecheck_command": [
+      "yarn",
+      "lint:typecheck"
+    ],
+    "typecheck_exit_code": 0,
+    "changed_paths": [
+      "src/language-css/utilities/index.js"
+    ],
+    "untracked_target_paths": [],
+    "git_diff_check": "PASS"
+  },
+  "accepted_evidence": {
+    "evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE",
+    "validation_receipt_digest": "sha256:99989cc4fe39f7fb1d72d47e53382237e21cc34d2fc5221e547bdf6cfdb3bb9f",
+    "issuance_record_digest": "sha256:7132c52c3227fc80e454cc91ca57e0893edebad29ffc89dc37ef559909438d67",
+    "acceptance_record_digest": "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c"
+  },
+  "authority": {
+    "evidence_count_increment_authorized": true,
+    "mutation_capability_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "synthesis_effect": {
+    "previous_sealed_accepted_count": 0,
+    "new_sealed_accepted_count": 1,
+    "repository_count": 1,
+    "candidate_count": 1,
+    "stage": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+    "reason": "CROSS_REPOSITORY_ACCEPTED_EVIDENCE_REQUIRED",
+    "promotion_review_ready": false,
+    "next_gate": "COLLECT_CROSS_REPOSITORY_SEALED_ACCEPTED_EXPERIMENTS"
+  }
+}
