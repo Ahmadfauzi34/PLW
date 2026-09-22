@@ -460,6 +460,32 @@ def mutate_wrong_capability_id(fixture: Dict[str, Any]) -> None:
     write_json(fixture["authorization_path"], auth)
 
 
+def mutate_wrong_capability_contract_digest(fixture: Dict[str, Any]) -> None:
+    auth = json.loads(fixture["authorization_path"].read_text())
+    auth["binding"]["capability_contract_digest"] = digest_text(
+        "wrong-capability-contract"
+    )
+    write_json(fixture["authorization_path"], auth)
+
+
+def mutate_shell_baseline_command(fixture: Dict[str, Any]) -> None:
+    shell_command = ["bash", "-c", "true"]
+    spec = json.loads(fixture["spec_path"].read_text())
+    spec["commands"]["parse_after_rewrite"] = shell_command
+    write_json(fixture["spec_path"], spec)
+    preflight = json.loads(fixture["preflight_path"].read_text())
+    preflight["postcondition_baseline_validation"]["parse_after_rewrite"] = {
+        "command": shell_command,
+        "exit_code": 0,
+    }
+    write_json(fixture["preflight_path"], preflight)
+    rebind_preflight_and_authorization(fixture)
+
+
+def mutate_invalid_disposable_parent(fixture: Dict[str, Any]) -> None:
+    fixture["base"] = fixture["evidence"]
+
+
 def mutate_actual_baseline_failure(fixture: Dict[str, Any]) -> None:
     spec = json.loads(fixture["spec_path"].read_text())
     spec["commands"]["parse_after_rewrite"] = failing_command()
@@ -596,6 +622,36 @@ def main() -> int:
                 "semicolon": True,
             },
             mutate_wrong_capability_id,
+        ),
+        run_negative(
+            "wrong_capability_contract_digest_rejected",
+            {
+                "extension": ".js",
+                "condition": 'value.kind === "ok"',
+                "inverse": False,
+                "semicolon": True,
+            },
+            mutate_wrong_capability_contract_digest,
+        ),
+        run_negative(
+            "shell_baseline_command_rejected",
+            {
+                "extension": ".js",
+                "condition": 'value.kind === "ok"',
+                "inverse": False,
+                "semicolon": True,
+            },
+            mutate_shell_baseline_command,
+        ),
+        run_negative(
+            "invalid_disposable_parent_rejected",
+            {
+                "extension": ".js",
+                "condition": 'value.kind === "ok"',
+                "inverse": False,
+                "semicolon": True,
+            },
+            mutate_invalid_disposable_parent,
         ),
         run_negative(
             "actual_baseline_failure_rejected",
