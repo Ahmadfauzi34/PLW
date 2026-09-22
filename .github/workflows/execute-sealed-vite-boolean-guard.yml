@@ -261,6 +261,7 @@ jobs:
           PY
 
       - name: Upload sealed evidence bundle for interactive adjudication
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: js-ts-v2-sealed-vite-boolean-guard-evidence
