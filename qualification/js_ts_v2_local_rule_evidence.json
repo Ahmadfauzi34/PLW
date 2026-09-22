@@ -1,0 +1,92 @@
+{
+  "schema_version": "plw-js-ts-v2-local-rule-evidence-index-v1",
+  "baseline": {
+    "development_version": "0.2.1-dev",
+    "released_runtime": "v0.2.0"
+  },
+  "authority": {
+    "index_only": true,
+    "evidence_index_is_not_rewrite_authority": true,
+    "proposal_review_ready_is_not_patch_authorization": true,
+    "upstream_mutation_authorized": false,
+    "truth_commit": false
+  },
+  "records": [
+    {
+      "evidence_id": "redux-redundant-else-001",
+      "rule": "js_redundant_else_after_terminal",
+      "candidate_id": "sha256:c27d04409b63ff0100535ec7b9129b4c01133235e6a4f0b22b3d3fb6ba7fc6f6",
+      "repository": "reduxjs/redux-toolkit",
+      "revision": "c9dac937d77adc3bf04842a43955e81d0e7a46da",
+      "source_path": "packages/toolkit/src/immutableStateInvariantMiddleware.ts",
+      "status": "EXPERIMENT_VALIDATION_PASSED",
+      "merged_commit": "a277fc9dd094a82d7ea81ece6276116aeee4d46d",
+      "workflow_run_id": 35745968677,
+      "artifact_digest": "sha256:11872f5f9bf7c4560eefbbfa7f797f6505c3abd2d0abc008ef5476bada8f656e",
+      "validation": {
+        "baseline_focused_test": "PASS",
+        "post_rewrite_focused_test": "PASS",
+        "typecheck_or_type_tests": "PASS",
+        "git_diff_check": "PASS",
+        "changed_path_scope": "PASS_ONE_EXPECTED_FILE"
+      }
+    },
+    {
+      "evidence_id": "prettier-boolean-guard-001",
+      "rule": "js_boolean_guard_return",
+      "candidate_id": "sha256:2fb4fc47394645dd1dada20e09c329ff23ae9cf1ef499176e0ba0658b04690c4",
+      "repository": "prettier/prettier",
+      "revision": "6176846ed3c8bde9cdbdab9c1dc3294fc15d0942",
+      "source_path": "src/language-css/utilities/index.js",
+      "status": "RULE_DIVERSITY_EXPERIMENT_PASSED",
+      "merged_commit": "fa2b3ac09796455209d2ff41ddb450d235b132d9",
+      "workflow_run_id": 35749858083,
+      "artifact_digest": "sha256:7d8d0549401a68bd50926b9e4d723f2338e90080dba36fa1f31905b09d3fa1ef",
+      "validation": {
+        "baseline_focused_test": "PASS",
+        "post_rewrite_focused_test": "PASS",
+        "typecheck_or_type_tests": "PASS",
+        "git_diff_check": "PASS",
+        "changed_path_scope": "PASS_ONE_EXPECTED_FILE"
+      }
+    },
+    {
+      "evidence_id": "prettier-terminal-expression-001",
+      "rule": "js_terminal_expression_temporary",
+      "candidate_id": "sha256:31288793325b8227864f6b0254307a27991c7823dcade80e6235efad7b9c4798",
+      "repository": "prettier/prettier",
+      "revision": "6176846ed3c8bde9cdbdab9c1dc3294fc15d0942",
+      "source_path": "src/cli/find-cache-file.js",
+      "status": "RULE_DIVERSITY_EXPERIMENT_PASSED",
+      "merged_commit": "fa2b3ac09796455209d2ff41ddb450d235b132d9",
+      "workflow_run_id": 35749858083,
+      "artifact_digest": "sha256:9863cb9164bbbb3a08c066d236d569b1689fb23205cb092c4b5e9ae2f9b4654c",
+      "validation": {
+        "baseline_focused_test": "PASS",
+        "post_rewrite_focused_test": "PASS",
+        "typecheck_or_type_tests": "PASS",
+        "git_diff_check": "PASS",
+        "changed_path_scope": "PASS_ONE_EXPECTED_FILE"
+      }
+    },
+    {
+      "evidence_id": "vite-boolean-guard-001",
+      "rule": "js_boolean_guard_return",
+      "candidate_id": "sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0",
+      "repository": "vitejs/vite",
+      "revision": "1544bb1b7ac92f775e9d0dea97954c99cc6cbd43",
+      "source_path": "packages/vite/src/node/ssr/ssrTransform.ts",
+      "status": "CROSS_REPOSITORY_REPLICATION_PASSED",
+      "merged_commit": "557d2f0d537aa71391a21a3c37abcc53677491ac",
+      "workflow_run_id": 35752285669,
+      "artifact_digest": "sha256:4aea5e8c9c63a1f7d365ccb17d10be542c1f8c3c803f1e94df936db6c690ed59",
+      "validation": {
+        "baseline_focused_test": "PASS",
+        "post_rewrite_focused_test": "PASS",
+        "typecheck_or_type_tests": "PASS",
+        "git_diff_check": "PASS",
+        "changed_path_scope": "PASS_ONE_EXPECTED_FILE"
+      }
+    }
+  ]
+}
