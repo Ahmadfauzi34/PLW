@@ -70,5 +70,28 @@
     "status": "INTERACTIVE_VITE_SEALED_EVIDENCE_ADJUDICATION_PASSED",
     "artifact_digest": "sha256:74f3d76ccac00e199ee2aec2c06e44054a3273db09e4d22074c8e583d60bc2e7",
     "acceptance_record_digest": "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+  },
+  "promotion_review": {
+    "status": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_APPROVED_FOR_IMPLEMENTATION",
+    "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+    "implementation_authorized": true,
+    "runtime_capability_enabled": false,
+    "scope": {
+      "source_extensions": [
+        ".js",
+        ".ts"
+      ],
+      "condition_operator": "===",
+      "left_operand": "IDENT_OR_MEMBER_CHAIN",
+      "right_operand": "STRING_LITERAL",
+      "transformations": [
+        "positive",
+        "inverse"
+      ],
+      "comparison_operator_complement_folding": false,
+      "disposable_temp_worktree_only": true
+    },
+    "interactive_audit_status": "INTERACTIVE_BOUNDED_MUTATION_CAPABILITY_PROMOTION_AUDIT_PASSED",
+    "next_gate": "BOUNDED_BOOLEAN_GUARD_MUTATION_CAPABILITY_IMPLEMENTATION"
   }
 }
