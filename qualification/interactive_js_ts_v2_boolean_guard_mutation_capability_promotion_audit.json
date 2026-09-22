@@ -1,0 +1,106 @@
+{
+  "schema_version": "plw-interactive-bounded-mutation-capability-promotion-audit-v1",
+  "audit": "JS_TS_V2_BOOLEAN_GUARD_MUTATION_CAPABILITY_PROMOTION",
+  "execution_mode": "INTERACTIVE_SESSION",
+  "ci_is_not_audit_authority": true,
+  "cases": [
+    {
+      "case": "prettier_positive_js_strict_equality_string",
+      "expected": "APPROVED_SCOPE",
+      "observed": "APPROVED_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "vite_inverse_ts_strict_equality_string",
+      "expected": "APPROVED_SCOPE",
+      "observed": "APPROVED_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "new_js_strict_equality_string_candidate",
+      "expected": "IMPLEMENTATION_SCOPE_ONLY",
+      "observed": "IMPLEMENTATION_SCOPE_ONLY",
+      "ok": true
+    },
+    {
+      "case": "strict_inequality_operator",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "relational_operator",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "tsx_source",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "primary_worktree_execution",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "automatic_patch_or_upstream_action",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "comparison_operator_complement_folding",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    },
+    {
+      "case": "postcondition_commands_not_baseline_qualified",
+      "expected": "REJECT_SCOPE",
+      "observed": "REJECT_SCOPE",
+      "ok": true
+    }
+  ],
+  "result": {
+    "passed": 10,
+    "total": 10,
+    "status": "INTERACTIVE_BOUNDED_MUTATION_CAPABILITY_PROMOTION_AUDIT_PASSED",
+    "approved_capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+    "runtime_capability_enabled": false,
+    "next_gate": "BOUNDED_BOOLEAN_GUARD_MUTATION_CAPABILITY_IMPLEMENTATION"
+  },
+  "evidence_basis": {
+    "accepted_record_count": 2,
+    "repositories": [
+      "prettier/prettier",
+      "vitejs/vite"
+    ],
+    "transformations": [
+      "positive",
+      "inverse"
+    ],
+    "source_extensions": [
+      ".js",
+      ".ts"
+    ],
+    "semicolon_styles": [
+      "semicolon",
+      "no_semicolon"
+    ],
+    "observed_operator": "===",
+    "right_operand_family": "STRING_LITERAL"
+  },
+  "authority": {
+    "review_only": true,
+    "implementation_authorized_for_approved_scope": true,
+    "runtime_mutation_capability_enabled": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "truth_commit": false
+  }
+}
