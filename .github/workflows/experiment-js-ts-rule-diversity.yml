@@ -1,0 +1,112 @@
+name: Experiment JS/TS local rule diversity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/experiment-js-ts-rule-diversity.yml"
+      - "scripts/experiment_js_ts_prettier_candidates.py"
+      - "scripts/finalize_js_ts_rule_diversity_experiment.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-js-ts-rule-diversity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  experiment:
+    name: experiment-${{ matrix.case }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - case: scss-boolean-guard
+            source: src/language-css/utilities/index.js
+            test: tests/format/scss/map/format.test.js tests/format/scss/trailing-comma/format.test.js
+          - case: cache-terminal-expression
+            source: src/cli/find-cache-file.js
+            test: tests/integration/__tests__/cache.js
+
+    steps:
+      - name: Checkout PLW experiment harness
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned Prettier target
+        uses: actions/checkout@v4
+        with:
+          repository: prettier/prettier
+          ref: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          path: experiment/target
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Activate pinned target package manager
+        working-directory: experiment/target
+        shell: bash
+        run: |
+          corepack enable
+          yarn --version
+          test "$(yarn --version)" = "4.18.0"
+
+      - name: Install target dependencies
+        working-directory: experiment/target
+        run: yarn install --immutable
+
+      - name: Baseline focused target-native test
+        working-directory: experiment/target
+        shell: bash
+        run: yarn jest ${{ matrix.test }} --runInBand
+
+      - name: Apply strict reviewed-candidate rewrite
+        shell: bash
+        run: |
+          mkdir -p "experiment/evidence/${{ matrix.case }}"
+          python scripts/experiment_js_ts_prettier_candidates.py \
+            --case "${{ matrix.case }}" \
+            --target-root experiment/target \
+            --output "experiment/evidence/${{ matrix.case }}/rewrite.json"
+          changed="$(git -C experiment/target status --porcelain --untracked-files=no)"
+          expected=" M ${{ matrix.source }}"
+          if [[ "$changed" != "$expected" ]]; then
+            echo "unexpected changed-path scope:" >&2
+            printf '%s\n' "$changed" >&2
+            exit 1
+          fi
+          git -C experiment/target diff --check
+          git -C experiment/target diff -- "${{ matrix.source }}" > "experiment/evidence/${{ matrix.case }}/candidate.patch"
+          test -s "experiment/evidence/${{ matrix.case }}/candidate.patch"
+
+      - name: Post-rewrite focused target-native test
+        working-directory: experiment/target
+        shell: bash
+        run: yarn jest ${{ matrix.test }} --runInBand
+
+      - name: Post-rewrite repository typecheck
+        working-directory: experiment/target
+        run: yarn lint:typecheck
+
+      - name: Finalize rule-diversity evidence
+        run: |
+          python scripts/finalize_js_ts_rule_diversity_experiment.py \
+            --rewrite-evidence "experiment/evidence/${{ matrix.case }}/rewrite.json" \
+            --diff "experiment/evidence/${{ matrix.case }}/candidate.patch" \
+            --output "experiment/evidence/${{ matrix.case }}/result.json" \
+            --summary "experiment/evidence/${{ matrix.case }}/summary.md"
+          cat "experiment/evidence/${{ matrix.case }}/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload experiment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-rule-diversity-${{ matrix.case }}
+          path: experiment/evidence/${{ matrix.case }}
+          if-no-files-found: error
