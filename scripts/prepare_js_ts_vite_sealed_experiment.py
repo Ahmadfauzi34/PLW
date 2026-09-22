@@ -231,18 +231,51 @@ def main() -> int:
     if "@" in origin.split("://", 1)[-1].split("/", 1)[0]:
         raise PreparationError("origin URL appears to contain embedded credentials")
 
-    baseline = _run(FOCUSED_COMMAND, cwd=root, timeout_seconds=1200)
-    baseline_record = {
-        "command": FOCUSED_COMMAND,
-        "exit_code": baseline.returncode,
-        "stdout_sha256": _digest_text(baseline.stdout),
-        "stderr_sha256": _digest_text(baseline.stderr),
-        "stdout_tail": baseline.stdout[-4000:],
-        "stderr_tail": baseline.stderr[-4000:],
-    }
-    if baseline.returncode != 0:
-        _write_json(out / "baseline-failure.json", baseline_record)
-        raise PreparationError("focused baseline validation failed")
+    baseline_records: Dict[str, Dict[str, Any]] = {}
+    for name, command, timeout in (
+        ("parse_after_rewrite", PARSE_COMMAND, 300),
+        ("focused_target_native_after", FOCUSED_COMMAND, 1200),
+        ("target_typecheck_or_type_tests_after", TYPECHECK_COMMAND, 1200),
+    ):
+        proc = _run(command, cwd=root, timeout_seconds=timeout)
+        record = {
+            "command": command,
+            "exit_code": proc.returncode,
+            "stdout_sha256": _digest_text(proc.stdout),
+            "stderr_sha256": _digest_text(proc.stderr),
+            "stdout_tail": proc.stdout[-4000:],
+            "stderr_tail": proc.stderr[-4000:],
+        }
+        baseline_records[name] = record
+        if proc.returncode != 0:
+            _write_json(
+                out / "baseline-failure.json",
+                {
+                    "failed_command": name,
+                    "records": baseline_records,
+                },
+            )
+            raise PreparationError(
+                f"postcondition baseline command failed before mutation: {name}"
+            )
+        live_status = _git(
+            root, "status", "--porcelain", "--untracked-files=all"
+        )
+        if live_status:
+            _write_json(
+                out / "baseline-failure.json",
+                {
+                    "failed_command": name,
+                    "failure": "baseline command changed target checkout",
+                    "git_status": live_status,
+                    "records": baseline_records,
+                },
+            )
+            raise PreparationError(
+                f"postcondition baseline command changed target checkout: {name}"
+            )
+
+    baseline_record = baseline_records["focused_target_native_after"]
 
     status_after = _git(root, "status", "--porcelain", "--untracked-files=all")
     if status_after:
@@ -314,6 +347,7 @@ def main() -> int:
             "baseline_validation_passed": True,
         },
         "baseline_validation": baseline_record,
+        "postcondition_baseline_validation": baseline_records,
         "authority": {
             "read_only": True,
             "source_mutation_allowed": False,
@@ -380,10 +414,22 @@ def main() -> int:
         "postcondition_validation_spec_digest": spec_digest,
         "preflight_evidence_digest": preflight_digest,
         "baseline_validation": {
-            "command": FOCUSED_COMMAND,
-            "exit_code": baseline.returncode,
-            "stdout_sha256": baseline_record["stdout_sha256"],
-            "stderr_sha256": baseline_record["stderr_sha256"],
+            "focused": {
+                "command": FOCUSED_COMMAND,
+                "exit_code": baseline_record["exit_code"],
+                "stdout_sha256": baseline_record["stdout_sha256"],
+                "stderr_sha256": baseline_record["stderr_sha256"],
+            },
+            "all_postcondition_commands_passed_before_mutation": True,
+            "commands": {
+                name: {
+                    "command": record["command"],
+                    "exit_code": record["exit_code"],
+                    "stdout_sha256": record["stdout_sha256"],
+                    "stderr_sha256": record["stderr_sha256"],
+                }
+                for name, record in baseline_records.items()
+            },
         },
         "planner_transformation": "inverse",
         "planner_after": rewrite.get("after"),
@@ -407,7 +453,8 @@ def main() -> int:
             {
                 "status": summary["status"],
                 "candidate_id": CANDIDATE_ID,
-                "baseline_exit_code": baseline.returncode,
+                "baseline_exit_code": baseline_record["exit_code"],
+                "all_postcondition_baselines_passed": True,
                 "clean_after_baseline": status_after == "",
                 "planner_transformation": "inverse",
             },
