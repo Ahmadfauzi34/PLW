@@ -1,0 +1,61 @@
+name: Check JS/TS boolean-guard dry-run planner
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/check-js-ts-boolean-guard-dry-run-planner.yml"
+      - "scripts/plan_js_ts_boolean_guard_rewrite.py"
+      - "scripts/check_js_ts_boolean_guard_dry_run_planner.py"
+      - "qualification/js_ts_v2_boolean_guard_rewrite_proposal.json"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run planner reference checks
+        run: |
+          mkdir -p qualification/planner-evidence
+          python scripts/check_js_ts_boolean_guard_dry_run_planner.py \
+            --evidence-dir qualification/planner-evidence
+
+      - name: Assert dry-run authority
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path('qualification/planner-evidence/summary.json').read_text())
+          positive = json.loads(Path('qualification/planner-evidence/positive-plan.json').read_text())
+          inverse = json.loads(Path('qualification/planner-evidence/inverse-plan.json').read_text())
+          assert summary['status'] == 'BOOLEAN_GUARD_DRY_RUN_PLANNER_REFERENCE_PASSED'
+          assert summary['negative_cases'] == 7
+          assert summary['source_mutation'] is False
+          assert positive['status'] == 'DRY_RUN_REWRITE_PLAN_READY'
+          assert inverse['status'] == 'DRY_RUN_REWRITE_PLAN_READY'
+          assert positive['source_integrity']['target_source_mutated'] is False
+          assert inverse['source_integrity']['target_source_mutated'] is False
+          assert positive['authority']['source_mutation_allowed'] is False
+          assert inverse['authority']['source_mutation_allowed'] is False
+          assert positive['next_gate'] == 'DRY_RUN_PLANNER_CROSS_REPOSITORY_REVALIDATION'
+          print('BOOLEAN_GUARD_DRY_RUN_PLANNER: PASS')
+          PY
+
+      - name: Upload planner evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-boolean-guard-dry-run-planner
+          path: qualification/planner-evidence
+          if-no-files-found: error
