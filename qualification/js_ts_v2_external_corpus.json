@@ -1,0 +1,40 @@
+{
+  "schema_version": "plw-js-ts-v2-external-corpus-v1",
+  "baseline": {
+    "release": "v0.2.0",
+    "commit": "82208d37018a886e5636ef8eaa4b8e52e4abe7d4",
+    "binary_asset": "plw-linux-x86_64",
+    "binary_sha256": "6763b6098ca84a906e7b3f239ae5f4f790d05a1e4f23091d499c3adaf1d53fbe",
+    "semantic_frontend": "python_ast+js_structural_v2",
+    "ts_js_rule_count": 7
+  },
+  "authority": {
+    "classification": "STRUCTURAL_CORPUS_OBSERVATION_ONLY",
+    "candidate_is_not_patch": true,
+    "candidate_is_not_behavioral_equivalence": true,
+    "false_positive_count_requires_review_or_behavioral_proof": true,
+    "source_mutation_allowed": false
+  },
+  "corpora": [
+    {
+      "id": "axios",
+      "repository": "axios/axios",
+      "revision": "5fc40e1c7478d342ec64c4e865ed4cd1a334207c"
+    },
+    {
+      "id": "vite",
+      "repository": "vitejs/vite",
+      "revision": "1544bb1b7ac92f775e9d0dea97954c99cc6cbd43"
+    },
+    {
+      "id": "redux-toolkit",
+      "repository": "reduxjs/redux-toolkit",
+      "revision": "c9dac937d77adc3bf04842a43955e81d0e7a46da"
+    },
+    {
+      "id": "prettier",
+      "repository": "prettier/prettier",
+      "revision": "6176846ed3c8bde9cdbdab9c1dc3294fc15d0942"
+    }
+  ]
+}
