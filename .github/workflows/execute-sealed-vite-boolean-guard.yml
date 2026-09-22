@@ -184,14 +184,48 @@ jobs:
           }, sort_keys=True))
           PY
 
-      - name: Seed global acceptance chain from committed Prettier evidence
+      - name: Seed reproducible global acceptance chain
+        id: acceptance_seed
         if: steps.validation.outputs.exit_code == '0'
         shell: bash
         run: |
           set -euo pipefail
-          cp qualification/js_ts_v2_accepted_mutation_evidence.jsonl \
-            execution/evidence/sealed/acceptance.jsonl
-          test "$(wc -l < execution/evidence/sealed/acceptance.jsonl | tr -d ' ')" = "1"
+          retained=qualification/js_ts_v2_accepted_mutation_evidence.jsonl
+          working=execution/evidence/sealed/acceptance.jsonl
+          retained_copy=execution/evidence/sealed/retained-acceptance.jsonl
+
+          cp "$retained" "$retained_copy"
+          retained_count="$(wc -l < "$retained_copy" | tr -d ' ')"
+          test "$retained_count" = "1" -o "$retained_count" = "2"
+
+          head -n 1 "$retained_copy" > "$working"
+          test "$(wc -l < "$working" | tr -d ' ')" = "1"
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          retained = [
+              json.loads(line)
+              for line in Path('execution/evidence/sealed/retained-acceptance.jsonl').read_text().splitlines()
+              if line.strip()
+          ]
+          first = retained[0]
+          assert first['sequence'] == 1
+          assert first['target']['repository'] == 'prettier/prettier'
+          assert first['record_digest'] == 'sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c'
+
+          if len(retained) == 2:
+              second = retained[1]
+              assert second['sequence'] == 2
+              assert second['previous_record_digest'] == first['record_digest']
+              assert second['target']['repository'] == 'vitejs/vite'
+              assert second['target']['revision'] == '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43'
+              assert second['candidate_id'] == 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0'
+              assert second['record_digest'] == 'sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc'
+          PY
+
+          echo "retained_count=$retained_count" >> "$GITHUB_OUTPUT"
 
       - name: Accept sealed Vite evidence as global sequence two
         if: steps.validation.outputs.exit_code == '0'
@@ -248,6 +282,15 @@ jobs:
           assert second['target']['revision'] == '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43'
           assert second['candidate_id'] == 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0'
           assert second['authority']['truth_commit'] is False
+
+          retained = [
+              json.loads(x)
+              for x in (base/'retained-acceptance.jsonl').read_text().splitlines()
+              if x.strip()
+          ]
+          if len(retained) == 2:
+              assert retained[0] == first
+              assert retained[1] == second
 
           files = {}
           for path in sorted(Path('execution/evidence').rglob('*')):
