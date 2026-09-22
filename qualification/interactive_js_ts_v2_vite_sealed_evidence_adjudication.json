@@ -1,0 +1,115 @@
+{
+  "schema_version": "plw-interactive-evidence-adjudication-v1",
+  "audit": "VITE_SEALED_BOOLEAN_GUARD_EVIDENCE",
+  "rule": "js_boolean_guard_return",
+  "execution_mode": "DETERMINISTIC_RUNNER_PLUS_INTERACTIVE_ADJUDICATION",
+  "ci_is_not_audit_authority": true,
+  "target": {
+    "repository": "vitejs/vite",
+    "revision": "1544bb1b7ac92f775e9d0dea97954c99cc6cbd43",
+    "candidate_id": "sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0",
+    "source_path": "packages/vite/src/node/ssr/ssrTransform.ts"
+  },
+  "precursor_failure": {
+    "workflow_run_id": 35781042158,
+    "artifact_digest": "sha256:70121f888016e4711ba8d817a0b108943f58ce131b6425c8411cb604fc7dd7c0",
+    "observed_status": "MUTATION_FAILED_WORKTREE_DISCARDED",
+    "failure": "parse_after_rewrite_failed",
+    "worktree_disposed": true,
+    "evidence_acceptance_granted": false,
+    "finding": "The initial root-scoped esbuild parse command was not a reliable Vite-native parse contract. Failure was contained and no acceptance record was created."
+  },
+  "corrected_execution": {
+    "workflow_run_id": 35781495015,
+    "workflow_artifact_id": 10718517208,
+    "artifact_digest": "sha256:74f3d76ccac00e199ee2aec2c06e44054a3273db09e4d22074c8e583d60bc2e7",
+    "downloaded_zip_sha256": "sha256:74f3d76ccac00e199ee2aec2c06e44054a3273db09e4d22074c8e583d60bc2e7",
+    "planner": {
+      "transformation": "inverse",
+      "planned_after": "  return !(id.name === 'arguments')",
+      "operator_complement_authority_acquired": false
+    },
+    "baseline_validation": {
+      "all_postcondition_commands_passed_before_mutation": true,
+      "parse_command": [
+        "pnpm",
+        "--filter",
+        "vite",
+        "exec",
+        "esbuild",
+        "src/node/ssr/ssrTransform.ts",
+        "--format=esm",
+        "--platform=node",
+        "--log-level=error",
+        "--outfile=/dev/null"
+      ],
+      "focused_command": [
+        "pnpm",
+        "exec",
+        "vitest",
+        "run",
+        "packages/vite/src/node/ssr/__tests__/ssrTransform.spec.ts"
+      ],
+      "typecheck_command": [
+        "pnpm",
+        "--filter",
+        "vite",
+        "typecheck"
+      ]
+    },
+    "validation": {
+      "status": "POSTCONDITIONS_VALIDATED",
+      "validation_receipt_digest": "sha256:7cd960cd9ef7e22f370fbb81050fd53077ddf4690693fe58b8641c9f820cc4ca",
+      "all_required_postconditions_passed": true,
+      "authorization_consumed": true,
+      "worktree_disposed": true,
+      "evidence_acceptance_granted_by_validator": false
+    },
+    "issuance": {
+      "record_digest": "sha256:793f41de096fa06df2d37559d6d6c494e2c9d84e868b092976b0060c24123299",
+      "canonical_digest_recomputed": true,
+      "exact_validation_receipt_bound": true
+    },
+    "acceptance": {
+      "status": "EXPERIMENT_EVIDENCE_ACCEPTED",
+      "evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE",
+      "sequence": 2,
+      "previous_record_digest": "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "record_digest": "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc",
+      "canonical_digest_recomputed": true,
+      "reran_validation": false,
+      "inspected_disposed_worktree": false
+    }
+  },
+  "interactive_recomputation": {
+    "candidate_exact": true,
+    "planner_status_and_current_conservative_rewrite": true,
+    "all_postcondition_baselines_passed": true,
+    "preflight_spec_digest_binding": true,
+    "authorization_lineage_binding": true,
+    "mutation_receipt_lineage_binding": true,
+    "validation_command_sequence_and_exit_codes": true,
+    "worktree_disposal": true,
+    "issuance_hash_chain": true,
+    "acceptance_hash_chain_sequence_one_to_two": true,
+    "all_summary_file_digests_match": true,
+    "truth_commit_false": true,
+    "failed_checks": []
+  },
+  "result": {
+    "status": "INTERACTIVE_VITE_SEALED_EVIDENCE_ADJUDICATION_PASSED",
+    "retained_as_project_accepted_evidence": true,
+    "accepted_record_sequence": 2,
+    "accepted_record_digest": "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+  },
+  "authority": {
+    "adjudication_only": true,
+    "mutation_capability_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_REVIEW"
+}
