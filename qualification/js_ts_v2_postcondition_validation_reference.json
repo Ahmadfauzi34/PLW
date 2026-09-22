@@ -1,0 +1,69 @@
+{
+  "schema_version": "plw-js-ts-v2-postcondition-validation-reference-v1",
+  "rule": "js_boolean_guard_return",
+  "prerequisite": {
+    "adapter_reference_status": "TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE_PASSED",
+    "adapter_reference_merged_commit": "73e9a22f6d399e803c5ac96ef39e8bcce4e30970",
+    "validation_spec_binding_extension_required": true,
+    "validation_spec_schema": "plw-js-ts-v2-postcondition-validation-spec-v1"
+  },
+  "interactive_audit": {
+    "mode": "INTERACTIVE_SESSION",
+    "ci_is_not_authority_for_this_audit": true,
+    "cases": 5,
+    "passed": 5,
+    "artifact_name": "INTERACTIVE_POSTCONDITION_AUDIT_v1.txt",
+    "artifact_sha256": "sha256:4014a5a06b2d94b3000a25c8ad77f2e2ffb16bd335a194fd38a889625d43e4b2",
+    "observed": [
+      "POSTCONDITIONS_VALIDATED",
+      "focused validation failure -> MUTATION_FAILED_WORKTREE_DISCARDED",
+      "typecheck failure -> MUTATION_FAILED_WORKTREE_DISCARDED",
+      "validation spec tamper -> MUTATION_FAILED_WORKTREE_DISCARDED",
+      "focused command substitution -> MUTATION_FAILED_WORKTREE_DISCARDED"
+    ],
+    "all_cases_authorization_consumed": true,
+    "all_cases_upstream_unchanged": true,
+    "all_cases_worktree_disposed": true
+  },
+  "binding_contract": {
+    "validation_spec_digest_bound_in_preflight": true,
+    "validation_spec_digest_bound_in_authorization": true,
+    "validation_spec_digest_bound_in_mutation_receipt": true,
+    "focused_after_command_must_equal_baseline_command": true,
+    "commands_are_argv_lists": true,
+    "shell_execution_forbidden": true,
+    "validation_spec_must_exist_outside_target_root": true
+  },
+  "success": {
+    "required_input_state": "TEMP_WORKTREE_APPLIED",
+    "output_state": "POSTCONDITIONS_VALIDATED",
+    "parse_after_rewrite_required": true,
+    "same_focused_target_native_validation_after_required": true,
+    "typecheck_or_type_tests_after_required": true,
+    "exact_after_hash_required": true,
+    "exact_diff_required": true,
+    "one_expected_changed_file_required": true,
+    "no_untracked_target_files_required": true,
+    "git_diff_check_required": true,
+    "worktree_disposed_after_evidence_capture": true,
+    "evidence_acceptance_granted": false
+  },
+  "failure": {
+    "terminal_state": "MUTATION_FAILED_WORKTREE_DISCARDED",
+    "authorization_remains_consumed": true,
+    "no_partial_success": true,
+    "disposable_worktree_must_be_absent": true,
+    "fresh_plan_and_authorization_required_for_retry": true
+  },
+  "authority": {
+    "reference_validation_only": true,
+    "product_mutation_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "experiment_evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+}
