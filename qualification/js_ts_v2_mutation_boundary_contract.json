@@ -1,0 +1,133 @@
+{
+  "schema_version": "plw-js-ts-v2-mutation-boundary-contract-v1",
+  "rule": "js_boolean_guard_return",
+  "prerequisite": {
+    "planner_promotion_status": "REUSABLE_READ_ONLY_PLANNER_READY",
+    "planner_promotion_workflow_run_id": 35755685087,
+    "planner_promotion_artifact_name": "js-ts-v2-boolean-guard-planner-evidence-synthesis",
+    "planner_promotion_artifact_digest": "sha256:5d2bb8df6bd48250a2e0022b91e57820253892e633ad088b0bc3beb9a5d5950a"
+  },
+  "state_machine": [
+    "READ_ONLY_PLAN_READY",
+    "PREFLIGHT_VALIDATED",
+    "MUTATION_AUTHORIZED",
+    "TEMP_WORKTREE_APPLIED",
+    "POSTCONDITIONS_VALIDATED",
+    "EXPERIMENT_EVIDENCE_ACCEPTED"
+  ],
+  "plan_binding": {
+    "required_plan_schema": "plw-js-ts-v2-boolean-guard-dry-run-plan-v1",
+    "required_plan_status": "DRY_RUN_REWRITE_PLAN_READY",
+    "required_candidate_kind": "js_boolean_guard_return",
+    "candidate_id_exact_match": true,
+    "target_repository_exact_match": true,
+    "target_revision_exact_match": true,
+    "source_path_exact_match": true,
+    "before_source_sha256_exact_match": true,
+    "planned_source_sha256_required": true,
+    "planned_diff_required": true,
+    "plan_digest_required": true,
+    "planner_source_integrity_must_show_no_mutation": true
+  },
+  "preflight": {
+    "clean_disposable_checkout_required": true,
+    "pinned_revision_required": true,
+    "upstream_push_credentials_disabled": true,
+    "target_source_sha256_must_match_plan_before_sha256": true,
+    "candidate_span_must_still_match_exactly_once": true,
+    "focused_target_native_validation_before_mutation": true,
+    "baseline_validation_must_pass": true,
+    "preflight_evidence_digest_required": true,
+    "preflight_is_read_only": true
+  },
+  "authorization": {
+    "explicit_literal_authorization_required": true,
+    "authorization_scope": "ONE_CANDIDATE_ONE_TARGET_ONE_PLAN",
+    "authorization_receipt_required": true,
+    "receipt_must_bind": [
+      "candidate_id",
+      "target_repository",
+      "target_revision",
+      "source_path",
+      "before_source_sha256",
+      "planned_source_sha256",
+      "plan_digest",
+      "preflight_evidence_digest"
+    ],
+    "wildcard_authorization_forbidden": true,
+    "rule_wide_authorization_forbidden": true,
+    "authorization_reuse_forbidden": true,
+    "authorization_does_not_imply_behavioral_equivalence": true,
+    "authorization_issuer_must_be_external_to_planner": true,
+    "planner_self_authorization_forbidden": true
+  },
+  "execution": {
+    "environment": "DISPOSABLE_TEMP_WORKTREE_ONLY",
+    "source_write_scope": "ONE_EXPECTED_FILE",
+    "apply_exact_planned_replacement_only": true,
+    "before_source_sha256_recheck_immediately_before_write": true,
+    "candidate_span_recheck_immediately_before_write": true,
+    "actual_after_sha256_must_equal_planned_source_sha256": true,
+    "actual_diff_must_equal_planned_diff": true,
+    "git_diff_check_required": true,
+    "unexpected_changed_paths_fail_closed": true,
+    "unexpected_untracked_target_files_fail_closed": true,
+    "commit_creation_forbidden": true,
+    "push_forbidden": true,
+    "pull_request_creation_forbidden": true,
+    "primary_worktree_forbidden": true,
+    "evidence_output_outside_target_root": true
+  },
+  "postconditions": {
+    "parse_after_rewrite_required": true,
+    "same_focused_target_native_validation_after_mutation": true,
+    "target_typecheck_or_type_tests_after_mutation": true,
+    "changed_path_scope_must_equal_one_expected_file": true,
+    "actual_after_sha256_must_equal_planned_source_sha256": true,
+    "actual_diff_must_equal_planned_diff": true,
+    "all_required_postconditions_must_pass": true,
+    "passing_postconditions_do_not_prove_global_equivalence": true
+  },
+  "failure_policy": {
+    "fail_closed": true,
+    "no_partial_success_promotion": true,
+    "discard_disposable_worktree_on_failure": true,
+    "authorization_receipt_consumed_on_execution_attempt": true,
+    "fresh_plan_and_authorization_required_for_retry": true,
+    "upstream_repository_must_remain_untouched": true,
+    "rollback_strategy": "DISCARD_DISPOSABLE_WORKTREE",
+    "rollback_or_disposal_verification_required": true
+  },
+  "evidence": {
+    "record_target_repository_and_revision": true,
+    "record_candidate_id": true,
+    "record_plan_digest": true,
+    "record_authorization_receipt_digest": true,
+    "record_preflight_evidence_digest": true,
+    "record_before_and_after_source_sha256": true,
+    "record_planned_and_actual_diff_digest": true,
+    "record_validation_commands_and_results": true,
+    "record_changed_path_scope": true,
+    "record_worktree_disposal_status": true,
+    "append_only_experiment_receipt": true,
+    "evidence_output_outside_target_root": true,
+    "record_authorization_consumption_status": true,
+    "record_failure_or_rollback_status": true
+  },
+  "authority": {
+    "contract_review_only": true,
+    "generic_mutation_adapter_implemented": false,
+    "source_mutation_authority_granted_by_contract": false,
+    "automatic_patch_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE",
+  "terminal_states": {
+    "success": "EXPERIMENT_EVIDENCE_ACCEPTED",
+    "rejected_before_write": "MUTATION_BOUNDARY_REJECTED",
+    "failed_after_write_contained": "MUTATION_FAILED_WORKTREE_DISCARDED",
+    "containment_failure": "MUTATION_BOUNDARY_CONTAINMENT_FAILED"
+  }
+}
