@@ -9,6 +9,7 @@ on:
       - ".github/workflows/qualify-js-ts-v2.yml"
       - "qualification/js_ts_v2_external_corpus.json"
       - "scripts/qualify_js_ts_external_corpus.py"
+      - "scripts/classify_js_ts_candidate_economics.py"
 
 permissions:
   contents: read
@@ -124,6 +125,11 @@ jobs:
           python scripts/qualify_js_ts_external_corpus.py --manifest qualification/js_ts_v2_external_corpus.json --results-dir qualification/results --output qualification/results/report.json --summary qualification/results/summary.md
           cat qualification/results/summary.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Build economic / ownership ledger
+        run: |
+          python scripts/classify_js_ts_candidate_economics.py --results-dir qualification/results --output qualification/results/economic-report.json --summary qualification/results/economic-summary.md
+          cat qualification/results/economic-summary.md >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload qualification evidence
         uses: actions/upload-artifact@v4
         with:
@@ -131,4 +137,5 @@ jobs:
           path: |
             qualification/results/*.json
             qualification/results/summary.md
+            qualification/results/economic-summary.md
           if-no-files-found: error
