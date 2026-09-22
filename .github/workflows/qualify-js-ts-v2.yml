@@ -10,6 +10,7 @@ on:
       - "qualification/js_ts_v2_external_corpus.json"
       - "scripts/qualify_js_ts_external_corpus.py"
       - "scripts/classify_js_ts_candidate_economics.py"
+      - "scripts/build_js_ts_bounded_review_pack.py"
 
 permissions:
   contents: read
@@ -152,4 +153,76 @@ jobs:
             qualification/results/*.json
             qualification/results/summary.md
             qualification/results/economic-summary.md
+          if-no-files-found: error
+
+  bounded-review-pack:
+    needs: aggregate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout PLW review harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download qualification evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: js-ts-v2-external-corpus-qualification
+          path: qualification/results
+
+      - name: Checkout Axios review corpus
+        uses: actions/checkout@v4
+        with:
+          repository: axios/axios
+          ref: 5fc40e1c7478d342ec64c4e865ed4cd1a334207c
+          path: qualification/review-corpora/axios
+          persist-credentials: false
+
+      - name: Checkout Vite review corpus
+        uses: actions/checkout@v4
+        with:
+          repository: vitejs/vite
+          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          path: qualification/review-corpora/vite
+          persist-credentials: false
+
+      - name: Checkout Redux Toolkit review corpus
+        uses: actions/checkout@v4
+        with:
+          repository: reduxjs/redux-toolkit
+          ref: c9dac937d77adc3bf04842a43955e81d0e7a46da
+          path: qualification/review-corpora/redux-toolkit
+          persist-credentials: false
+
+      - name: Checkout Prettier review corpus
+        uses: actions/checkout@v4
+        with:
+          repository: prettier/prettier
+          ref: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          path: qualification/review-corpora/prettier
+          persist-credentials: false
+
+      - name: Build bounded production review pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          for id in axios vite redux-toolkit prettier; do
+            test -z "$(git -C "qualification/review-corpora/$id" status --porcelain --untracked-files=all)"
+          done
+          python scripts/build_js_ts_bounded_review_pack.py             --results-dir qualification/results             --corpora-root qualification/review-corpora             --output qualification/review/review-pack.json             --summary qualification/review/review-summary.md
+          for id in axios vite redux-toolkit prettier; do
+            test -z "$(git -C "qualification/review-corpora/$id" status --porcelain --untracked-files=all)"
+          done
+          cat qualification/review/review-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload bounded review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-bounded-production-review
+          path: |
+            qualification/review/review-pack.json
+            qualification/review/review-summary.md
           if-no-files-found: error
