@@ -1,0 +1,79 @@
+{
+  "schema_version": "plw-js-ts-v2-boolean-guard-rewrite-proposal-v1",
+  "rule": "js_boolean_guard_return",
+  "proposal_stage": "REUSABLE_REWRITE_PROPOSAL_REVIEW",
+  "evidence_requirements": {
+    "synthesis_stage": "CROSS_REPOSITORY_EVIDENCE_READY",
+    "minimum_repositories": 2,
+    "minimum_validated_candidates": 2
+  },
+  "applicability": {
+    "same_function": true,
+    "return_literals_must_be_exact_booleans": true,
+    "terminal_returns_must_be_opposite": true,
+    "condition_evaluated_once_before_and_after": true,
+    "condition_must_be_syntactically_boolean_proven": true,
+    "allowed_boolean_binary_operators": [
+      "===",
+      "!==",
+      "==",
+      "!=",
+      "<",
+      ">",
+      "<=",
+      ">=",
+      "in",
+      "instanceof"
+    ],
+    "allowed_boolean_unary_operators": [
+      "!"
+    ],
+    "logical_expression_direct_return": false,
+    "await_or_yield_in_condition": false,
+    "comments_inside_rewrite_span": "REJECT",
+    "binding_introduction_allowed": false,
+    "side_effect_reordering_allowed": false
+  },
+  "transformations": {
+    "positive": {
+      "before": "if (C) return true; return false;",
+      "after": "return C;",
+      "requires_boolean_condition_proof": true
+    },
+    "inverse": {
+      "before": "if (C) return false; return true;",
+      "after": "return !(C);",
+      "requires_boolean_condition_proof": true
+    },
+    "comparison_operator_complement_folding": {
+      "included": false,
+      "reason": "algebraic operator flipping is a separate rewrite authority"
+    }
+  },
+  "source_preservation": {
+    "preserve_semicolon_style": true,
+    "preserve_line_ending_style": true,
+    "preserve_outer_indentation": true,
+    "reject_if_internal_comments_would_move_or_drop": true,
+    "rewrite_span_must_be_exact_and_single_site": true
+  },
+  "validation_contract": {
+    "dry_run_first": true,
+    "parse_after_rewrite": true,
+    "changed_path_scope_one_expected_file": true,
+    "git_diff_check": true,
+    "focused_target_native_test_before": true,
+    "focused_target_native_test_after": true,
+    "target_typecheck_or_type_tests_after": true,
+    "candidate_specific_authorization_required_for_mutation": true
+  },
+  "authority": {
+    "proposal_only": true,
+    "generic_rewrite_authority_granted": false,
+    "automatic_patch_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "DRY_RUN_REWRITE_PLANNER"
+}
