@@ -19,13 +19,38 @@ chmod +x plw-linux-x86_64
 sudo install plw-linux-x86_64 /usr/local/bin/plw
 ```
 
-Then run PLW against any target codebase:
+Then verify that the standalone executable is ready:
+
+```bash
+plw doctor /path/to/project
+```
+
+For an agent encountering an unfamiliar repository, the official first-contact entrypoint is:
+
+```bash
+plw agent orient /path/to/project \
+  --task "describe the change or investigation" \
+  --json
+```
+
+The binary is self-describing. It can enumerate capability contracts and read the exact embedded skill handoff without a neighboring PLW source or skill directory:
+
+```bash
+plw capability list --json
+plw capability describe topology --json
+plw skill list --json
+plw skill show topology --json
+```
+
+Direct expert commands remain available:
 
 ```bash
 plw topology /path/to/project --json
 plw impact src/example.ts /path/to/project --json
 plw simplify /path/to/project --json
 ```
+
+Portable-agent commands are discovery/orientation surfaces only. They do not grant runtime execution, source mutation, external-repository mutation, or truth authority.
 
 ## What PLW provides
 
