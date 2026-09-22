@@ -4,15 +4,17 @@
   "accepted_evidence_source": {
     "schema": "plw-js-ts-v2-experiment-evidence-acceptance-v1",
     "committed_acceptance_ledger_present": true,
-    "current_sealed_accepted_record_count": 1,
+    "current_sealed_accepted_record_count": 2,
     "ledger_path": "qualification/js_ts_v2_accepted_mutation_evidence.jsonl",
-    "repository_count": 1,
-    "candidate_count": 1,
+    "repository_count": 2,
+    "candidate_count": 2,
     "repositories": [
-      "prettier/prettier"
+      "prettier/prettier",
+      "vitejs/vite"
     ],
     "acceptance_record_digests": [
-      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c"
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
     ]
   },
   "historical_context": {
@@ -42,10 +44,10 @@
     }
   },
   "current_review": {
-    "stage": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
-    "reason": "CROSS_REPOSITORY_ACCEPTED_EVIDENCE_REQUIRED",
-    "promotion_review_ready": false,
-    "next_gate": "COLLECT_CROSS_REPOSITORY_SEALED_ACCEPTED_EXPERIMENTS"
+    "stage": "CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY",
+    "reason": "THRESHOLD_SATISFIED_REVIEW_ONLY",
+    "promotion_review_ready": true,
+    "next_gate": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_REVIEW"
   },
   "promotion_threshold": {
     "minimum_accepted_records": 2,
@@ -61,5 +63,12 @@
     "generic_mutation_authority_granted": false,
     "upstream_mutation_authorized": false,
     "truth_commit": false
+  },
+  "interactive_adjudication": {
+    "latest_repository": "vitejs/vite",
+    "latest_candidate_id": "sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0",
+    "status": "INTERACTIVE_VITE_SEALED_EVIDENCE_ADJUDICATION_PASSED",
+    "artifact_digest": "sha256:74f3d76ccac00e199ee2aec2c06e44054a3273db09e4d22074c8e583d60bc2e7",
+    "acceptance_record_digest": "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
   }
 }

@@ -1,0 +1,62 @@
+{
+  "schema_version": "plw-interactive-cross-repository-sealed-evidence-synthesis-adjudication-v1",
+  "audit": "JS_TS_V2_BOOLEAN_GUARD_CROSS_REPOSITORY_SEALED_EVIDENCE_SYNTHESIS",
+  "execution_mode": "INTERACTIVE_SESSION",
+  "ci_is_not_audit_authority": true,
+  "rule": "js_boolean_guard_return",
+  "accepted_ledger": {
+    "record_count": 2,
+    "canonical_record_digests_recomputed": true,
+    "hash_chain_valid": true,
+    "sequences": [
+      1,
+      2
+    ],
+    "repositories": [
+      "prettier/prettier",
+      "vitejs/vite"
+    ],
+    "repository_count": 2,
+    "candidate_count": 2,
+    "evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE",
+    "record_digests": [
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+    ]
+  },
+  "interactive_checks": {
+    "exact_sequence_order": true,
+    "previous_record_digest_chain": true,
+    "canonical_record_digest": true,
+    "accepted_status": true,
+    "bounded_evidence_class": true,
+    "validation_summary_all_true": true,
+    "evidence_acceptance_only_true": true,
+    "source_mutation_allowed_false": true,
+    "automatic_patch_authority_false": true,
+    "generic_mutation_authority_false": true,
+    "upstream_mutation_authority_false": true,
+    "global_behavioral_equivalence_false": true,
+    "truth_commit_false": true,
+    "distinct_repositories_threshold": true,
+    "distinct_candidates_threshold": true,
+    "historical_records_excluded_from_threshold": true,
+    "failed_checks": []
+  },
+  "result": {
+    "status": "INTERACTIVE_CROSS_REPOSITORY_SEALED_EVIDENCE_SYNTHESIS_PASSED",
+    "stage": "CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY",
+    "promotion_review_ready": true,
+    "mutation_capability_granted": false,
+    "next_gate": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_REVIEW"
+  },
+  "authority": {
+    "review_only": true,
+    "mutation_capability_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  }
+}

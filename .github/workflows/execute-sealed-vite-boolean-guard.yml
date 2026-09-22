@@ -1,0 +1,296 @@
+name: Execute sealed Vite boolean-guard evidence collection
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/execute-sealed-vite-boolean-guard.yml"
+      - "scripts/prepare_js_ts_vite_sealed_experiment.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-sealed-vite-boolean-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  execute:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout PLW harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+
+      - name: Download exact PLW v0.2.0 observation binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p execution/bin execution/evidence
+          downloaded=false
+          for attempt in 1 2 3 4 5; do
+            if gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir execution/bin --clobber; then
+              downloaded=true
+              break
+            fi
+            if [[ "$attempt" -lt 5 ]]; then sleep $((attempt * 2)); fi
+          done
+          test "$downloaded" = "true"
+          cd execution/bin
+          sha256sum --check plw-linux-x86_64.sha256
+          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
+          test "$actual" = "6763b6098ca84a906e7b3f239ae5f4f790d05a1e4f23091d499c3adaf1d53fbe"
+          chmod +x plw-linux-x86_64
+
+      - name: Checkout pinned Vite source
+        uses: actions/checkout@v4
+        with:
+          repository: vitejs/vite
+          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          path: execution/source
+          persist-credentials: false
+
+      - name: Create disposable secondary worktree
+        id: worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          parent="/tmp/plw-vite-sealed-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          target="$parent/target"
+          rm -rf "$parent"
+          mkdir -p "$parent"
+          git -C execution/source worktree add --detach "$target" 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          test "$(git -C "$target" rev-parse HEAD)" = "1544bb1b7ac92f775e9d0dea97954c99cc6cbd43"
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          printf 'parent=%s\n' "$parent" >> "$GITHUB_OUTPUT"
+          printf 'target=%s\n' "$target" >> "$GITHUB_OUTPUT"
+
+      - name: Install pinned target dependencies
+        working-directory: ${{ steps.worktree.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --global pnpm@12.4.2
+          test "$(pnpm --version)" = "12.4.2"
+          pnpm install --frozen-lockfile
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build Vite package prerequisite
+        working-directory: ${{ steps.worktree.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm --filter vite build
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Fresh structural candidate observation
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${{ steps.worktree.outputs.target }}"
+          runtime="$RUNNER_TEMP/plw-vite-observation"
+          rm -rf "$runtime"
+          mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache" execution/evidence/observation
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+          HOME="$runtime/home" XDG_STATE_HOME="$runtime/state" XDG_CACHE_HOME="$runtime/cache" \
+            "$GITHUB_WORKSPACE/execution/bin/plw-linux-x86_64" simplify "$target" --json \
+            > execution/evidence/observation/simplify.json
+          test -z "$(git -C "$target" status --porcelain --untracked-files=all)"
+
+      - name: Reproduce reviewed candidate and build dry-run plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/revalidate_js_ts_boolean_guard_dry_run.py \
+            --case vite \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --simplify-result execution/evidence/observation/simplify.json \
+            --output-dir execution/evidence/planner
+          test -z "$(git -C "${{ steps.worktree.outputs.target }}" status --porcelain --untracked-files=all)"
+
+      - name: Interactive-scope preflight and authorization preparation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/prepare_js_ts_vite_sealed_experiment.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --candidate execution/evidence/planner/candidate.json \
+            --plan execution/evidence/planner/plan.json \
+            --output-dir execution/evidence/sealed
+
+      - name: Apply exact authorized mutation in disposable worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --target-repository vitejs/vite \
+            --plan execution/evidence/planner/plan.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --disposable-boundary execution/evidence/sealed/disposable-boundary.json \
+            --consumption-ledger execution/evidence/sealed/authorization-consumption.jsonl \
+            --output execution/evidence/sealed/mutation-receipt.json \
+            --allow-reference-mutation
+
+      - name: Validate postconditions and seal emitted receipt
+        id: validation
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          python scripts/validate_js_ts_boolean_guard_temp_worktree_postconditions.py \
+            --target-root "${{ steps.worktree.outputs.target }}" \
+            --disposable-parent "${{ steps.worktree.outputs.parent }}" \
+            --plan execution/evidence/planner/plan.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --mutation-receipt execution/evidence/sealed/mutation-receipt.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --issuance-ledger execution/evidence/sealed/postcondition-issuance.jsonl \
+            --output execution/evidence/sealed/postcondition-validation-receipt.json \
+            --timeout-seconds 600
+          rc=$?
+          set -e
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          test ! -e "${{ steps.worktree.outputs.target }}"
+          test -f execution/evidence/sealed/postcondition-validation-receipt.json
+          test -f execution/evidence/sealed/postcondition-issuance.jsonl
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path('execution/evidence/sealed/postcondition-validation-receipt.json').read_text())
+          print(json.dumps({
+              'status': receipt.get('status'),
+              'failure': (receipt.get('validation') or {}).get('failure'),
+              'worktree_disposed': (receipt.get('containment') or {}).get('worktree_disposed'),
+          }, sort_keys=True))
+          PY
+
+      - name: Seed global acceptance chain from committed Prettier evidence
+        if: steps.validation.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp qualification/js_ts_v2_accepted_mutation_evidence.jsonl \
+            execution/evidence/sealed/acceptance.jsonl
+          test "$(wc -l < execution/evidence/sealed/acceptance.jsonl | tr -d ' ')" = "1"
+
+      - name: Accept sealed Vite evidence as global sequence two
+        if: steps.validation.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/accept_js_ts_boolean_guard_temp_worktree_experiment_evidence.py \
+            --plan execution/evidence/planner/plan.json \
+            --preflight execution/evidence/sealed/preflight.json \
+            --authorization execution/evidence/sealed/authorization.json \
+            --postcondition-validation-spec execution/evidence/sealed/postcondition-validation-spec.json \
+            --mutation-receipt execution/evidence/sealed/mutation-receipt.json \
+            --validation-receipt execution/evidence/sealed/postcondition-validation-receipt.json \
+            --issuance-ledger execution/evidence/sealed/postcondition-issuance.jsonl \
+            --acceptance-ledger execution/evidence/sealed/acceptance.jsonl \
+            --output execution/evidence/sealed/acceptance-result.json
+
+      - name: Verify source checkout remained untouched and summarize evidence
+        if: steps.validation.outputs.exit_code == '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C execution/source worktree prune
+          test -z "$(git -C execution/source status --porcelain --untracked-files=all)"
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+
+          base = Path('execution/evidence/sealed')
+          validation = json.loads((base/'postcondition-validation-receipt.json').read_text())
+          acceptance = json.loads((base/'acceptance-result.json').read_text())
+          issuance = [json.loads(x) for x in (base/'postcondition-issuance.jsonl').read_text().splitlines() if x.strip()]
+          accepted = [json.loads(x) for x in (base/'acceptance.jsonl').read_text().splitlines() if x.strip()]
+
+          assert validation['status'] == 'POSTCONDITIONS_VALIDATED'
+          assert validation['postconditions']['validated'] is True
+          assert validation['postconditions']['evidence_acceptance_granted'] is False
+          assert validation['containment']['worktree_disposed'] is True
+          assert validation['containment']['target_exists_after'] is False
+          assert acceptance['status'] == 'EXPERIMENT_EVIDENCE_ACCEPTED'
+          assert acceptance['evidence_class'] == 'BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE'
+          assert acceptance['reran_validation'] is False
+          assert acceptance['inspected_disposed_worktree'] is False
+          assert acceptance['authority']['truth_commit'] is False
+          assert len(issuance) == 1
+          assert len(accepted) == 2
+          first, second = accepted
+          assert first['sequence'] == 1
+          assert first['target']['repository'] == 'prettier/prettier'
+          assert first['record_digest'] == 'sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c'
+          assert second['sequence'] == 2
+          assert second['previous_record_digest'] == first['record_digest']
+          assert second['target']['repository'] == 'vitejs/vite'
+          assert second['target']['revision'] == '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43'
+          assert second['candidate_id'] == 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0'
+          assert second['authority']['truth_commit'] is False
+
+          files = {}
+          for path in sorted(Path('execution/evidence').rglob('*')):
+              if path.is_file():
+                  files[str(path.relative_to('execution/evidence'))] = 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+
+          summary = {
+              'schema_version': 'plw-js-ts-v2-vite-sealed-accepted-experiment-v1',
+              'status': 'SEALED_REAL_WORLD_EXPERIMENT_ACCEPTED_PENDING_INTERACTIVE_ADJUDICATION',
+              'repository': 'vitejs/vite',
+              'revision': '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43',
+              'candidate_id': 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0',
+              'rule': 'js_boolean_guard_return',
+              'validation_status': validation['status'],
+              'acceptance_status': acceptance['status'],
+              'evidence_class': acceptance['evidence_class'],
+              'validation_receipt_digest': acceptance['validation_receipt_digest'],
+              'issuance_record_digest': acceptance['issuance_record_digest'],
+              'acceptance_record_digest': second['record_digest'],
+              'acceptance_sequence': second['sequence'],
+              'previous_acceptance_record_digest': second['previous_record_digest'],
+              'worktree_disposed': validation['containment']['worktree_disposed'],
+              'source_checkout_untouched': True,
+              'reran_validation_during_acceptance': acceptance['reran_validation'],
+              'truth_commit': acceptance['authority']['truth_commit'],
+              'file_digests': files,
+              'next_gate': 'INTERACTIVE_EVIDENCE_ADJUDICATION',
+          }
+          (base/'collection-summary.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
+          print(json.dumps({k: summary[k] for k in ('status','validation_status','acceptance_status','truth_commit')}, sort_keys=True))
+          PY
+
+      - name: Upload sealed evidence bundle for interactive adjudication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-sealed-vite-boolean-guard-evidence
+          path: execution/evidence
+          if-no-files-found: error
+
+      - name: Finalize deterministic execution status
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.validation.outputs.exit_code }}" = "0"
