@@ -20,6 +20,7 @@ ROLE_ORDER = (
     "tooling",
     "test",
     "fixture",
+    "template_scaffold",
     "example_playground",
     "generated_like",
     "docs",
@@ -49,6 +50,9 @@ FIXTURE_MARKERS = (
     "/fixture/",
     "/fixtures/",
     "/__fixtures__/",
+    "/__testfixtures__/",
+    "/testfixtures/",
+    "/test-fixtures/",
     "/testdata/",
     "/test-data/",
 )
@@ -58,6 +62,13 @@ TEST_MARKERS = (
     "/__tests__/",
     ".test.",
     ".spec.",
+)
+TEMPLATE_MARKERS = (
+    "/templates/",
+    "/template/",
+    "/scaffolds/",
+    "/scaffold/",
+    "/create-vite/template-",
 )
 EXAMPLE_MARKERS = (
     "/examples/",
@@ -108,6 +119,8 @@ def classify_path(path: str) -> str:
         return "fixture"
     if any(marker in text for marker in TEST_MARKERS):
         return "test"
+    if any(marker in text for marker in TEMPLATE_MARKERS):
+        return "template_scaffold"
     if any(marker in text for marker in EXAMPLE_MARKERS):
         return "example_playground"
     if any(marker in text for marker in DOC_MARKERS):
@@ -158,7 +171,7 @@ def review_disposition(candidate: Mapping[str, Any], role: str) -> str:
     if role == "mixed":
         return "OWNERSHIP_BOUNDARY_REVIEW"
 
-    if role in {"test", "fixture", "example_playground", "generated_like", "docs"}:
+    if role in {"test", "fixture", "template_scaffold", "example_playground", "generated_like", "docs"}:
         return "NON_PRODUCTION_CONTEXT_REVIEW"
 
     if role == "tooling":
