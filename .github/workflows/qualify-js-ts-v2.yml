@@ -49,7 +49,21 @@ jobs:
         shell: bash
         run: |
           mkdir -p qualification/bin
-          gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir qualification/bin
+          downloaded=false
+          for attempt in 1 2 3 4 5; do
+            if gh release download v0.2.0 --repo "$GITHUB_REPOSITORY" --pattern "plw-linux-x86_64*" --dir qualification/bin --clobber; then
+              downloaded=true
+              break
+            fi
+            if [[ "$attempt" -eq 5 ]]; then
+              break
+            fi
+            sleep $((attempt * 2))
+          done
+          if [[ "$downloaded" != "true" ]]; then
+            echo "failed to download PLW v0.2.0 release assets after retries" >&2
+            exit 1
+          fi
           cd qualification/bin
           sha256sum --check plw-linux-x86_64.sha256
           expected="$(python -c 'import json; print(json.load(open("../js_ts_v2_external_corpus.json"))["baseline"]["binary_sha256"])')"
