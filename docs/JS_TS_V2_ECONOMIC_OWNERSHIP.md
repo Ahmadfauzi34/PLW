@@ -15,6 +15,7 @@ classifies candidate paths into bounded review surfaces:
 - tooling;
 - test;
 - fixture;
+- template/scaffold;
 - example/playground;
 - generated-like;
 - docs;
