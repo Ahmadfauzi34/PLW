@@ -1,0 +1,105 @@
+name: Qualify JS/TS V2 external corpus
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/qualify-js-ts-v2.yml"
+      - "qualification/js_ts_v2_external_corpus.json"
+      - "scripts/qualify_js_ts_external_corpus.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plw-js-ts-v2-qualification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout PLW qualification harness
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download exact PLW v0.2.0 release binary
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p qualification/bin
+          gh release download v0.2.0             --repo "$GITHUB_REPOSITORY"             --pattern "plw-linux-x86_64*"             --dir qualification/bin
+          cd qualification/bin
+          sha256sum --check plw-linux-x86_64.sha256
+          expected="$(python -c 'import json; print(json.load(open("../js_ts_v2_external_corpus.json"))["baseline"]["binary_sha256"])')"
+          actual="$(sha256sum plw-linux-x86_64 | awk '{print $1}')"
+          test "$actual" = "$expected"
+          chmod +x plw-linux-x86_64
+          echo "QUALIFICATION_BINARY: PASS sha256:$actual"
+
+      - name: Checkout Axios corpus
+        uses: actions/checkout@v4
+        with:
+          repository: axios/axios
+          ref: 5fc40e1c7478d342ec64c4e865ed4cd1a334207c
+          path: qualification/corpora/axios
+          persist-credentials: false
+
+      - name: Checkout Vite corpus
+        uses: actions/checkout@v4
+        with:
+          repository: vitejs/vite
+          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          path: qualification/corpora/vite
+          persist-credentials: false
+
+      - name: Checkout Redux Toolkit corpus
+        uses: actions/checkout@v4
+        with:
+          repository: reduxjs/redux-toolkit
+          ref: c9dac937d77adc3bf04842a43955e81d0e7a46da
+          path: qualification/corpora/redux-toolkit
+          persist-credentials: false
+
+      - name: Checkout Prettier corpus
+        uses: actions/checkout@v4
+        with:
+          repository: prettier/prettier
+          ref: 6176846ed3c8bde9cdbdab9c1dc3294fc15d0942
+          path: qualification/corpora/prettier
+          persist-credentials: false
+
+      - name: Run structural observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p qualification/results
+          bin="$GITHUB_WORKSPACE/qualification/bin/plw-linux-x86_64"
+          for id in axios vite redux-toolkit prettier; do
+            target="$GITHUB_WORKSPACE/qualification/corpora/$id"
+            runtime="$RUNNER_TEMP/plw-$id"
+            mkdir -p "$runtime/home" "$runtime/state" "$runtime/cache"
+            HOME="$runtime/home"             XDG_STATE_HOME="$runtime/state"             XDG_CACHE_HOME="$runtime/cache"               "$bin" simplify "$target" --json > "qualification/results/$id.json"
+            test ! -e "$target/data/runtime"
+            test ! -e "$target/data/codebase/cache"
+          done
+
+      - name: Build qualification ledger
+        run: |
+          python scripts/qualify_js_ts_external_corpus.py             --manifest qualification/js_ts_v2_external_corpus.json             --results-dir qualification/results             --output qualification/results/report.json             --summary qualification/results/summary.md
+          cat qualification/results/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-external-corpus-qualification
+          path: |
+            qualification/results/*.json
+            qualification/results/summary.md
+          if-no-files-found: error
