@@ -1,0 +1,62 @@
+{
+  "schema_version": "plw-js-ts-v2-temp-worktree-mutation-adapter-reference-v1",
+  "rule": "js_boolean_guard_return",
+  "prerequisite": {
+    "contract_review_status": "MUTATION_BOUNDARY_CONTRACT_REVIEW_PASSED",
+    "contract_review_merged_commit": "f3d32e50a0cf6ad99b08a7b14e1e7f95fcc24f8d",
+    "workflow_run_id": 35763241641,
+    "artifact_name": "js-ts-v2-mutation-boundary-contract-review",
+    "artifact_digest": "sha256:2140beffbc13b1d80ae15c5950dcceaf531d281827d53b001dea966e631cb134"
+  },
+  "adapter_scope": {
+    "reference_only": true,
+    "required_plan_schema": "plw-js-ts-v2-boolean-guard-dry-run-plan-v1",
+    "required_plan_status": "DRY_RUN_REWRITE_PLAN_READY",
+    "required_preflight_status": "PREFLIGHT_VALIDATED",
+    "required_authorization_status": "MUTATION_AUTHORIZED",
+    "explicit_literal_allow_flag_required": true,
+    "target_must_be_under_system_temp_directory": true,
+    "disposable_boundary_receipt_required": true,
+    "primary_worktree_forbidden": true,
+    "exact_planned_replacement_only": true,
+    "one_expected_changed_file_only": true,
+    "authorization_single_use": true,
+    "consumption_ledger_outside_target_root": true,
+    "evidence_output_outside_target_root": true,
+    "stop_after_state": "TEMP_WORKTREE_APPLIED",
+    "postcondition_acceptance_performed_by_adapter": false
+  },
+  "authorization_binding": [
+    "candidate_id",
+    "target_repository",
+    "target_revision",
+    "source_path",
+    "before_source_sha256",
+    "planned_source_sha256",
+    "plan_digest",
+    "preflight_evidence_digest"
+  ],
+  "reference_checks": {
+    "positive_apply": true,
+    "missing_literal_allow_rejected": true,
+    "planner_self_authorization_rejected": true,
+    "wrong_plan_digest_rejected": true,
+    "wrong_preflight_digest_rejected": true,
+    "disposable_boundary_mismatch_rejected": true,
+    "dirty_checkout_rejected": true,
+    "stale_source_rejected": true,
+    "authorization_reuse_rejected": true,
+    "unexpected_changed_or_untracked_paths_rejected": true
+  },
+  "authority": {
+    "reference_adapter_only": true,
+    "product_mutation_surface_exposed": false,
+    "generic_mutation_authority_granted": false,
+    "automatic_patch_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "postcondition_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE"
+}
