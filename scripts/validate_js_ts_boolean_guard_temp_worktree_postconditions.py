@@ -125,6 +125,21 @@ def _git(root: Path, *args: str) -> str:
     return proc.stdout.strip()
 
 
+def _git_show_bytes(root: Path, rel: str) -> bytes:
+    proc = subprocess.run(
+        ["git", "-C", str(root), "show", f"HEAD:{rel}"],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if proc.returncode != 0:
+        raise ValidationError(
+            "git show failed: "
+            + proc.stderr.decode("utf-8", errors="replace").strip()
+        )
+    return proc.stdout
+
+
 def _safe_target_file(root: Path, rel: str) -> Path:
     path = (root / rel).resolve()
     try:
@@ -294,11 +309,13 @@ def _assert_live_mutation_state(
     rewrite = plan.get("planned_rewrite", {}) or {}
     mutation_state = mutation.get("mutation", {}) or {}
 
-    head_source = _git(root, "show", f"HEAD:{source_rel}")
-    head_bytes = (head_source + "\n").encode("utf-8")
-    # git show strips the final record separator from stdout. Use the plan's
-    # before hash as the authoritative baseline and only require the working
-    # tree to match the planned after hash.
+    before_bytes = _git_show_bytes(root, source_rel)
+    before_hash = _digest_bytes(before_bytes)
+    if before_hash != rewrite.get("before_source_sha256"):
+        raise ValidationError("HEAD source hash does not match the dry-run plan")
+    if before_hash != mutation_state.get("before_source_sha256"):
+        raise ValidationError("HEAD source hash does not match mutation receipt")
+
     current_bytes = source_path.read_bytes()
     current_hash = _digest_bytes(current_bytes)
     planned_after_hash = rewrite.get("planned_source_sha256")
@@ -326,10 +343,11 @@ def _assert_live_mutation_state(
 
     _git(root, "diff", "--check")
 
-    before_source = _git(root, "show", f"HEAD:{source_rel}")
-    if not before_source.endswith("\n"):
-        before_source += "\n"
-    after_source = current_bytes.decode("utf-8")
+    try:
+        before_source = before_bytes.decode("utf-8")
+        after_source = current_bytes.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValidationError("reference validation requires UTF-8 source") from exc
     actual_diff = "".join(
         difflib.unified_diff(
             before_source.splitlines(keepends=True),
