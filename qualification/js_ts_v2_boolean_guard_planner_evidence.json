@@ -1,0 +1,63 @@
+{
+  "schema_version": "plw-js-ts-v2-boolean-guard-planner-evidence-index-v1",
+  "rule": "js_boolean_guard_return",
+  "baseline": {
+    "released_runtime": "v0.2.0",
+    "development_version": "0.2.1-dev",
+    "planner_merged_commit": "d051ea39c3a6bbe22245e385c74e152f59dcefce",
+    "cross_repo_revalidation_merged_commit": "0e2e7beed808d42dbc9a38aaae0d89528b31e070"
+  },
+  "artifacts": [
+    {
+      "evidence_id": "proposal-review",
+      "workflow_run_id": 35753376861,
+      "artifact_name": "js-ts-v2-boolean-guard-rewrite-proposal-review",
+      "artifact_digest": "sha256:ada587034f8b0b12f4bc2ab2f4683cc445e7b4989f8b285567e9434184fd66a6",
+      "expected_status": "BOOLEAN_GUARD_REWRITE_PROPOSAL_REVIEW_READY"
+    },
+    {
+      "evidence_id": "planner-reference",
+      "workflow_run_id": 35754430729,
+      "artifact_name": "js-ts-v2-boolean-guard-dry-run-planner",
+      "artifact_digest": "sha256:e1d5e8df0101c2d160ca563d5695d42ca305b63a608538b33361c507aa9182ec",
+      "expected_status": "BOOLEAN_GUARD_DRY_RUN_PLANNER_REFERENCE_PASSED"
+    },
+    {
+      "evidence_id": "cross-repo-prettier",
+      "workflow_run_id": 35754955847,
+      "artifact_name": "js-ts-v2-dry-run-revalidation-prettier",
+      "artifact_digest": "sha256:09a3bb3a12627d69509b7a57cd2802f3351e294e72108514bfeef82b9ad50f44",
+      "expected_status": "DRY_RUN_CROSS_REPOSITORY_REVALIDATION_PASSED"
+    },
+    {
+      "evidence_id": "cross-repo-vite",
+      "workflow_run_id": 35754955847,
+      "artifact_name": "js-ts-v2-dry-run-revalidation-vite",
+      "artifact_digest": "sha256:6eb25b0446c93e868c16248f91587c4945da30d3608b09c804314509376aa6ad",
+      "expected_status": "DRY_RUN_CROSS_REPOSITORY_REVALIDATION_PASSED"
+    },
+    {
+      "evidence_id": "cross-repo-aggregate",
+      "workflow_run_id": 35754955847,
+      "artifact_name": "js-ts-v2-dry-run-cross-repo-revalidation",
+      "artifact_digest": "sha256:3be64fa316be1da39af8af0dc78c599e07e54542b8544d7f06651b3b131d59da",
+      "expected_status": "DRY_RUN_PLANNER_CROSS_REPOSITORY_REVALIDATED"
+    }
+  ],
+  "promotion_policy": {
+    "proposal_review_required": true,
+    "planner_reference_required": true,
+    "real_candidate_reproduction_required": true,
+    "minimum_real_repositories": 2,
+    "target_source_mutation_must_be_false": true,
+    "generic_mutation_authority_must_remain_false": true
+  },
+  "authority": {
+    "evidence_index_only": true,
+    "reusable_read_only_planning_authority_granted": false,
+    "source_mutation_allowed": false,
+    "automatic_patch_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "truth_commit": false
+  }
+}
