@@ -1,1 +1,103 @@
-name: Review JS/TS mutation boundary contract\n\non:\n  workflow_dispatch:\n  pull_request:\n    branches:\n      - main\n    paths:\n      - ".github/workflows/review-js-ts-mutation-boundary-contract.yml"\n      - "qualification/js_ts_v2_mutation_boundary_contract.json"\n      - "scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py"\n      - "docs/JS_TS_V2_MUTATION_BOUNDARY_CONTRACT.md"\n\npermissions:\n  contents: read\n  actions: read\n\njobs:\n  review:\n    runs-on: ubuntu-24.04\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v4\n\n      - name: Set up Python\n        uses: actions/setup-python@v5\n        with:\n          python-version: "3.12"\n\n      - name: Download and verify planner promotion evidence\n        env:\n          GH_TOKEN: ${{ github.token }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          mkdir -p evidence/planner-promotion\n          python - <<'PY' > evidence/prerequisite.tsv\n          import json\n          from pathlib import Path\n          data = json.loads(Path('qualification/js_ts_v2_mutation_boundary_contract.json').read_text())\n          p = data['prerequisite']\n          print('\t'.join([\n              str(p['planner_promotion_workflow_run_id']),\n              p['planner_promotion_artifact_name'],\n              p['planner_promotion_artifact_digest'],\n          ]))\n          PY\n          IFS=$'\t' read -r run_id artifact_name expected_digest < evidence/prerequisite.tsv\n          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/artifacts?per_page=100" > evidence/planner-promotion-meta.json\n          actual_digest="$(jq -r --arg name "$artifact_name" '.artifacts[] | select(.name == $name) | .digest' evidence/planner-promotion-meta.json)"\n          test -n "$actual_digest"\n          test "$actual_digest" = "$expected_digest"\n          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir evidence/planner-promotion\n          echo "PLANNER_PROMOTION_EVIDENCE_VERIFIED $actual_digest"\n\n      - name: Run contract fail-closed self-check\n        run: |\n          python scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py \\n            --contract qualification/js_ts_v2_mutation_boundary_contract.json \\n            --promotion-report evidence/planner-promotion/synthesis/report.json \\n            --self-check\n\n      - name: Review mutation boundary contract\n        run: |\n          mkdir -p evidence/review\n          python scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py \\n            --contract qualification/js_ts_v2_mutation_boundary_contract.json \\n            --promotion-report evidence/planner-promotion/synthesis/report.json \\n            --output evidence/review/report.json \\n            --summary evidence/review/summary.md\n          cat evidence/review/summary.md >> "$GITHUB_STEP_SUMMARY"\n\n      - name: Assert contract does not grant mutation authority\n        run: |\n          python - <<'PY'\n          import json\n          from pathlib import Path\n          report = json.loads(Path('evidence/review/report.json').read_text())\n          assert report['status'] == 'MUTATION_BOUNDARY_CONTRACT_REVIEW_PASSED'\n          assert report['boundary']['authorization_is_external_and_candidate_specific'] is True\n          assert report['boundary']['execution_environment'] == 'DISPOSABLE_TEMP_WORKTREE_ONLY'\n          assert report['boundary']['exact_plan_application_only'] is True\n          assert report['boundary']['primary_worktree_forbidden'] is True\n          assert report['boundary']['rollback_strategy'] == 'DISCARD_DISPOSABLE_WORKTREE'\n          assert report['boundary']['postconditions_required'] is True\n          assert report['boundary']['append_only_receipt_required'] is True\n          assert report['authority']['effectful_adapter_implemented'] is False\n          assert report['authority']['source_mutation_authority_granted'] is False\n          assert report['authority']['automatic_patch_authority_granted'] is False\n          assert report['authority']['upstream_mutation_authorized'] is False\n          assert report['next_gate'] == 'TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE'\n          print('BOOLEAN_GUARD_MUTATION_BOUNDARY_CONTRACT: PASS')\n          PY\n\n      - name: Upload contract review evidence\n        uses: actions/upload-artifact@v4\n        with:\n          name: js-ts-v2-mutation-boundary-contract-review\n          path: |\n            evidence/review/report.json\n            evidence/review/summary.md\n            evidence/planner-promotion-meta.json\n          if-no-files-found: error\n
+name: Review JS/TS mutation boundary contract
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/review-js-ts-mutation-boundary-contract.yml"
+      - "qualification/js_ts_v2_mutation_boundary_contract.json"
+      - "scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py"
+      - "docs/JS_TS_V2_MUTATION_BOUNDARY_CONTRACT.md"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download and verify planner promotion evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/planner-promotion
+          python - <<'PY' > evidence/prerequisite.tsv
+          import json
+          from pathlib import Path
+          data = json.loads(Path('qualification/js_ts_v2_mutation_boundary_contract.json').read_text())
+          p = data['prerequisite']
+          print('\t'.join([
+              str(p['planner_promotion_workflow_run_id']),
+              p['planner_promotion_artifact_name'],
+              p['planner_promotion_artifact_digest'],
+          ]))
+          PY
+          IFS=$'\t' read -r run_id artifact_name expected_digest < evidence/prerequisite.tsv
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/artifacts?per_page=100" > evidence/planner-promotion-meta.json
+          actual_digest="$(jq -r --arg name "$artifact_name" '.artifacts[] | select(.name == $name) | .digest' evidence/planner-promotion-meta.json)"
+          test -n "$actual_digest"
+          test "$actual_digest" = "$expected_digest"
+          gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir evidence/planner-promotion
+          echo "PLANNER_PROMOTION_EVIDENCE_VERIFIED $actual_digest"
+
+      - name: Run contract fail-closed self-check
+        run: |
+          python scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py \
+            --contract qualification/js_ts_v2_mutation_boundary_contract.json \
+            --promotion-report evidence/planner-promotion/synthesis/report.json \
+            --self-check
+
+      - name: Review mutation boundary contract
+        run: |
+          mkdir -p evidence/review
+          python scripts/review_js_ts_boolean_guard_mutation_boundary_contract.py \
+            --contract qualification/js_ts_v2_mutation_boundary_contract.json \
+            --promotion-report evidence/planner-promotion/synthesis/report.json \
+            --output evidence/review/report.json \
+            --summary evidence/review/summary.md
+          cat evidence/review/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert contract does not grant mutation authority
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('evidence/review/report.json').read_text())
+          assert report['status'] == 'MUTATION_BOUNDARY_CONTRACT_REVIEW_PASSED'
+          assert report['boundary']['authorization_is_external_and_candidate_specific'] is True
+          assert report['boundary']['execution_environment'] == 'DISPOSABLE_TEMP_WORKTREE_ONLY'
+          assert report['boundary']['exact_plan_application_only'] is True
+          assert report['boundary']['primary_worktree_forbidden'] is True
+          assert report['boundary']['rollback_strategy'] == 'DISCARD_DISPOSABLE_WORKTREE'
+          assert report['boundary']['postconditions_required'] is True
+          assert report['boundary']['append_only_receipt_required'] is True
+          assert report['authority']['effectful_adapter_implemented'] is False
+          assert report['authority']['source_mutation_authority_granted'] is False
+          assert report['authority']['automatic_patch_authority_granted'] is False
+          assert report['authority']['upstream_mutation_authorized'] is False
+          assert report['next_gate'] == 'TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE'
+          print('BOOLEAN_GUARD_MUTATION_BOUNDARY_CONTRACT: PASS')
+          PY
+
+      - name: Upload contract review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-mutation-boundary-contract-review
+          path: |
+            evidence/review/report.json
+            evidence/review/summary.md
+            evidence/planner-promotion-meta.json
+          if-no-files-found: error
