@@ -1,0 +1,58 @@
+name: Synthesize JS/TS local-rule evidence
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/synthesize-js-ts-local-rule-evidence.yml"
+      - "qualification/js_ts_v2_local_rule_evidence.json"
+      - "scripts/synthesize_js_ts_local_rule_evidence.py"
+
+permissions:
+  contents: read
+
+jobs:
+  synthesize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build evidence synthesis
+        run: |
+          mkdir -p qualification/synthesis
+          python scripts/synthesize_js_ts_local_rule_evidence.py \
+            --index qualification/js_ts_v2_local_rule_evidence.json \
+            --output qualification/synthesis/report.json \
+            --summary qualification/synthesis/summary.md
+          cat qualification/synthesis/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert current gate state
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('qualification/synthesis/report.json').read_text())
+          assert report['status'] == 'LOCAL_RULE_EVIDENCE_SYNTHESIS_READY'
+          assert report['proposal_review_ready_rules'] == ['js_boolean_guard_return']
+          assert report['rules']['js_boolean_guard_return']['repository_count'] == 2
+          assert report['rules']['js_boolean_guard_return']['authority']['generic_rewrite_authority_granted'] is False
+          assert report['rules']['js_redundant_else_after_terminal']['stage'] == 'SINGLE_REPOSITORY_EVIDENCE_READY'
+          assert report['rules']['js_terminal_expression_temporary']['stage'] == 'SINGLE_REPOSITORY_EVIDENCE_READY'
+          assert report['authority']['automatic_patch_authority_granted'] is False
+          print('LOCAL_RULE_EVIDENCE_SYNTHESIS: PASS')
+          PY
+
+      - name: Upload synthesis evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-local-rule-evidence-synthesis
+          path: qualification/synthesis
+          if-no-files-found: error
