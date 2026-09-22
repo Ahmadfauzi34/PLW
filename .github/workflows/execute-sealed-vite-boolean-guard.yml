@@ -19,7 +19,7 @@ concurrency:
 jobs:
   execute:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout PLW harness
         uses: actions/checkout@v4
@@ -167,7 +167,15 @@ jobs:
             --timeout-seconds 600
           test ! -e "${{ steps.worktree.outputs.target }}"
 
-      - name: Accept sealed bounded experiment evidence
+      - name: Seed global acceptance chain from committed Prettier evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp qualification/js_ts_v2_accepted_mutation_evidence.jsonl \
+            execution/evidence/sealed/acceptance.jsonl
+          test "$(wc -l < execution/evidence/sealed/acceptance.jsonl | tr -d ' ')" = "1"
+
+      - name: Accept sealed Vite evidence as global sequence two
         shell: bash
         run: |
           set -euo pipefail
@@ -209,7 +217,17 @@ jobs:
           assert acceptance['inspected_disposed_worktree'] is False
           assert acceptance['authority']['truth_commit'] is False
           assert len(issuance) == 1
-          assert len(accepted) == 1
+          assert len(accepted) == 2
+          first, second = accepted
+          assert first['sequence'] == 1
+          assert first['target']['repository'] == 'prettier/prettier'
+          assert first['record_digest'] == 'sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c'
+          assert second['sequence'] == 2
+          assert second['previous_record_digest'] == first['record_digest']
+          assert second['target']['repository'] == 'vitejs/vite'
+          assert second['target']['revision'] == '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43'
+          assert second['candidate_id'] == 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0'
+          assert second['authority']['truth_commit'] is False
 
           files = {}
           for path in sorted(Path('execution/evidence').rglob('*')):
@@ -218,7 +236,7 @@ jobs:
 
           summary = {
               'schema_version': 'plw-js-ts-v2-vite-sealed-accepted-experiment-v1',
-              'status': 'SEALED_REAL_WORLD_EXPERIMENT_ACCEPTED',
+              'status': 'SEALED_REAL_WORLD_EXPERIMENT_ACCEPTED_PENDING_INTERACTIVE_ADJUDICATION',
               'repository': 'vitejs/vite',
               'revision': '1544bb1b7ac92f775e9d0dea97954c99cc6cbd43',
               'candidate_id': 'sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0',
@@ -228,7 +246,9 @@ jobs:
               'evidence_class': acceptance['evidence_class'],
               'validation_receipt_digest': acceptance['validation_receipt_digest'],
               'issuance_record_digest': acceptance['issuance_record_digest'],
-              'acceptance_record_digest': acceptance['acceptance_record']['record_digest'],
+              'acceptance_record_digest': second['record_digest'],
+              'acceptance_sequence': second['sequence'],
+              'previous_acceptance_record_digest': second['previous_record_digest'],
               'worktree_disposed': validation['containment']['worktree_disposed'],
               'source_checkout_untouched': True,
               'reran_validation_during_acceptance': acceptance['reran_validation'],
