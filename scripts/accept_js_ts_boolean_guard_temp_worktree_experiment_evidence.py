@@ -219,6 +219,24 @@ def _verify_lineage(
         raise AcceptanceError("unexpected authorization schema")
     if authorization.get("status") != "MUTATION_AUTHORIZED":
         raise AcceptanceError("authorization receipt is not authorized")
+    if authorization.get("authorized") is not True:
+        raise AcceptanceError("authorization receipt requires literal true")
+    if authorization.get("single_use") is not True:
+        raise AcceptanceError("authorization receipt must be single-use")
+    issuer = authorization.get("issuer", {}) or {}
+    if issuer.get("external_to_planner") is not True:
+        raise AcceptanceError("authorization issuer was not external to planner")
+    if issuer.get("planner_self_authorized") is not False:
+        raise AcceptanceError("planner self-authorization detected")
+    auth_authority = authorization.get("authority", {}) or {}
+    for key in (
+        "generic_mutation_authority_granted",
+        "automatic_patch_authority_granted",
+        "upstream_mutation_authorized",
+        "global_behavioral_equivalence_proven",
+    ):
+        if auth_authority.get(key) is not False:
+            raise AcceptanceError(f"authorization unexpectedly grants {key}")
 
     if spec.get("schema_version") != SPEC_SCHEMA:
         raise AcceptanceError("unexpected validation spec schema")
@@ -306,6 +324,32 @@ def _verify_lineage(
     for key, value in expected_target.items():
         if spec_target.get(key) != value:
             raise AcceptanceError(f"validation spec target mismatch: {key}")
+    spec_policy = spec.get("policy", {}) or {}
+    if spec_policy.get("cwd") != "TARGET_ROOT":
+        raise AcceptanceError("validation spec cwd mismatch")
+    if spec_policy.get("shell") is not False:
+        raise AcceptanceError("validation spec unexpectedly enables shell")
+
+    spec_commands = spec.get("commands", {}) or {}
+    recorded_commands = (
+        validation.get("validation", {}) or {}
+    ).get("commands", []) or []
+    recorded_by_name = {
+        item.get("name"): item.get("argv")
+        for item in recorded_commands
+    }
+    for name in EXPECTED_COMMAND_NAMES:
+        if recorded_by_name.get(name) != spec_commands.get(name):
+            raise AcceptanceError(
+                f"validation command does not match bound spec: {name}"
+            )
+    baseline_command = (
+        preflight.get("baseline_validation", {}) or {}
+    ).get("command")
+    if spec_commands.get("focused_target_native_after") != baseline_command:
+        raise AcceptanceError(
+            "bound focused postcondition command differs from baseline"
+        )
 
     mutation_target = mutation.get("target", {}) or {}
     for key in ("repository", "revision", "source_path"):
@@ -392,9 +436,42 @@ def _append_or_recover_acceptance(
     if len(matches) > 1:
         raise AcceptanceError("duplicate acceptance records detected")
     if matches:
+        recovered = matches[0]
+        if recovered.get("status") != "EXPERIMENT_EVIDENCE_ACCEPTED":
+            raise AcceptanceError("existing acceptance record status mismatch")
+        if (
+            recovered.get("evidence_class")
+            != "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE"
+        ):
+            raise AcceptanceError("existing acceptance evidence class mismatch")
+        if recovered.get("issuance_record_digest") != issuance_record.get(
+            "record_digest"
+        ):
+            raise AcceptanceError("existing acceptance issuance binding mismatch")
+        if recovered.get("target") != validation.get("target"):
+            raise AcceptanceError("existing acceptance target mismatch")
+        if recovered.get("candidate_id") != (
+            validation.get("candidate", {}) or {}
+        ).get("candidate_id"):
+            raise AcceptanceError("existing acceptance candidate mismatch")
+        if recovered.get("lineage") != validation.get("bindings"):
+            raise AcceptanceError("existing acceptance lineage mismatch")
+        recovered_authority = recovered.get("authority", {}) or {}
+        for key in (
+            "source_mutation_allowed",
+            "automatic_patch_authority_granted",
+            "generic_mutation_authority_granted",
+            "upstream_mutation_authorized",
+            "global_behavioral_equivalence_proven",
+            "truth_commit",
+        ):
+            if recovered_authority.get(key) is not False:
+                raise AcceptanceError(
+                    f"existing acceptance record unexpectedly grants {key}"
+                )
         return {
             "status": "EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED",
-            "acceptance_record": matches[0],
+            "acceptance_record": recovered,
             "appended": False,
         }
 
