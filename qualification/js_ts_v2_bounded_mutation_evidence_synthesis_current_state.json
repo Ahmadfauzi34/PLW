@@ -3,8 +3,17 @@
   "development_version": "0.2.1-dev",
   "accepted_evidence_source": {
     "schema": "plw-js-ts-v2-experiment-evidence-acceptance-v1",
-    "committed_acceptance_ledger_present": false,
-    "current_sealed_accepted_record_count": 0
+    "committed_acceptance_ledger_present": true,
+    "current_sealed_accepted_record_count": 1,
+    "ledger_path": "qualification/js_ts_v2_accepted_mutation_evidence.jsonl",
+    "repository_count": 1,
+    "candidate_count": 1,
+    "repositories": [
+      "prettier/prettier"
+    ],
+    "acceptance_record_digests": [
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c"
+    ]
   },
   "historical_context": {
     "source": "qualification/js_ts_v2_local_rule_evidence.json",
@@ -34,9 +43,9 @@
   },
   "current_review": {
     "stage": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
-    "reason": "NO_ACCEPTED_RECORDS",
+    "reason": "CROSS_REPOSITORY_ACCEPTED_EVIDENCE_REQUIRED",
     "promotion_review_ready": false,
-    "next_gate": "COLLECT_SEALED_ACCEPTED_EXPERIMENTS"
+    "next_gate": "COLLECT_CROSS_REPOSITORY_SEALED_ACCEPTED_EXPERIMENTS"
   },
   "promotion_threshold": {
     "minimum_accepted_records": 2,
