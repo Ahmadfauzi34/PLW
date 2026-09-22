@@ -1,0 +1,94 @@
+name: Synthesize boolean-guard planner evidence
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/synthesize-js-ts-boolean-guard-planner-evidence.yml"
+      - "qualification/js_ts_v2_boolean_guard_planner_evidence.json"
+      - "scripts/synthesize_js_ts_boolean_guard_planner_evidence.py"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  synthesize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download and verify retained workflow artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          python - <<'PY' > evidence/index.tsv
+          import json
+          from pathlib import Path
+          data = json.loads(Path('qualification/js_ts_v2_boolean_guard_planner_evidence.json').read_text())
+          for row in data['artifacts']:
+              print('\t'.join([row['evidence_id'], str(row['workflow_run_id']), row['artifact_name'], row['artifact_digest']]))
+          PY
+          while IFS=$'\t' read -r evidence_id run_id artifact_name expected_digest; do
+            meta="evidence/${evidence_id}-meta.json"
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/artifacts?per_page=100" > "$meta"
+            actual_digest="$(jq -r --arg name "$artifact_name" '.artifacts[] | select(.name == $name) | .digest' "$meta")"
+            test -n "$actual_digest"
+            test "$actual_digest" = "$expected_digest"
+            mkdir -p "evidence/$evidence_id"
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir "evidence/$evidence_id"
+            echo "EVIDENCE_VERIFIED $evidence_id $actual_digest"
+          done < evidence/index.tsv
+
+      - name: Build planner evidence synthesis
+        run: |
+          mkdir -p evidence/synthesis
+          python scripts/synthesize_js_ts_boolean_guard_planner_evidence.py \
+            --index qualification/js_ts_v2_boolean_guard_planner_evidence.json \
+            --proposal-report evidence/proposal-review/report.json \
+            --reference-summary evidence/planner-reference/summary.json \
+            --prettier-summary evidence/cross-repo-prettier/planner/summary.json \
+            --vite-summary evidence/cross-repo-vite/planner/summary.json \
+            --aggregate-report evidence/cross-repo-aggregate/cross-repo-report.json \
+            --output evidence/synthesis/report.json \
+            --summary evidence/synthesis/summary.md
+          cat evidence/synthesis/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert read-only promotion boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('evidence/synthesis/report.json').read_text())
+          assert report['status'] == 'REUSABLE_READ_ONLY_PLANNER_READY'
+          assert report['capability']['reusable_read_only_planning_authority_granted'] is True
+          assert report['capability']['diff_generation_allowed'] is True
+          assert report['capability']['target_source_write_allowed'] is False
+          assert report['authority']['source_mutation_allowed'] is False
+          assert report['authority']['generic_mutation_authority_granted'] is False
+          assert report['authority']['automatic_patch_authority_granted'] is False
+          assert report['authority']['upstream_mutation_authorized'] is False
+          assert report['next_gate'] == 'MUTATION_BOUNDARY_CONTRACT_REVIEW'
+          print('BOOLEAN_GUARD_READ_ONLY_PLANNER_PROMOTION: PASS')
+          PY
+
+      - name: Upload planner synthesis evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-boolean-guard-planner-evidence-synthesis
+          path: |
+            evidence/synthesis/report.json
+            evidence/synthesis/summary.md
+            evidence/*-meta.json
+          if-no-files-found: error
