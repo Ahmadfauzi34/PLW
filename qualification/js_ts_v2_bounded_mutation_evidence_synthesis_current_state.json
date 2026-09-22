@@ -1,0 +1,56 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-mutation-evidence-synthesis-current-state-v1",
+  "development_version": "0.2.1-dev",
+  "accepted_evidence_source": {
+    "schema": "plw-js-ts-v2-experiment-evidence-acceptance-v1",
+    "committed_acceptance_ledger_present": false,
+    "current_sealed_accepted_record_count": 0
+  },
+  "historical_context": {
+    "source": "qualification/js_ts_v2_local_rule_evidence.json",
+    "record_count": 4,
+    "counts_toward_sealed_acceptance": false,
+    "rules": {
+      "js_redundant_else_after_terminal": {
+        "historical_record_count": 1,
+        "historical_repositories": [
+          "reduxjs/redux-toolkit"
+        ]
+      },
+      "js_boolean_guard_return": {
+        "historical_record_count": 2,
+        "historical_repositories": [
+          "prettier/prettier",
+          "vitejs/vite"
+        ]
+      },
+      "js_terminal_expression_temporary": {
+        "historical_record_count": 1,
+        "historical_repositories": [
+          "prettier/prettier"
+        ]
+      }
+    }
+  },
+  "current_review": {
+    "stage": "INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE",
+    "reason": "NO_ACCEPTED_RECORDS",
+    "promotion_review_ready": false,
+    "next_gate": "COLLECT_SEALED_ACCEPTED_EXPERIMENTS"
+  },
+  "promotion_threshold": {
+    "minimum_accepted_records": 2,
+    "minimum_distinct_repositories": 2,
+    "minimum_distinct_candidates": 2,
+    "required_evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE",
+    "historical_records_may_not_satisfy_threshold": true
+  },
+  "authority": {
+    "review_only": true,
+    "mutation_capability_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "truth_commit": false
+  }
+}
