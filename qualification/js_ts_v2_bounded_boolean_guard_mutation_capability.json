@@ -1,0 +1,70 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-boolean-guard-mutation-capability-v1",
+  "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+  "rule": "js_boolean_guard_return",
+  "implementation_status": "IMPLEMENTED_PENDING_INTERACTIVE_VALIDATION",
+  "promotion_review": {
+    "status": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_APPROVED_FOR_IMPLEMENTATION",
+    "merged_commit": "59880fdc03324b3e8237d67b7035748d31aaadce",
+    "accepted_record_digests": [
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+    ]
+  },
+  "scope": {
+    "source_extensions": [
+      ".js",
+      ".ts"
+    ],
+    "condition": {
+      "left_operand": "IDENT_OR_MEMBER_CHAIN_NO_OPTIONAL_CHAINING",
+      "operator": "===",
+      "right_operand": "STRING_LITERAL",
+      "reversed_operand_order_allowed": false
+    },
+    "transformations": [
+      "positive",
+      "inverse"
+    ],
+    "comparison_operator_complement_folding": false,
+    "exact_planner_text_required": true
+  },
+  "execution": {
+    "implementation_surface": "INTERNAL_SCRIPT_NOT_REGISTERED_IN_PLW_DISCOVERY",
+    "trusted_effect_primitive": "apply_js_ts_boolean_guard_temp_worktree_reference.apply_reference_mutation",
+    "disposable_temp_worktree_only": true,
+    "primary_worktree_forbidden": true,
+    "explicit_literal_allow_flag_required": true,
+    "capability_contract_digest_must_be_authorization_bound": true,
+    "candidate_specific_external_authorization_required": true,
+    "authorization_single_use": true,
+    "prewrite_baseline_revalidation_required": true,
+    "prewrite_baseline_commands": [
+      "parse_after_rewrite",
+      "focused_target_native_after",
+      "target_typecheck_or_type_tests_after"
+    ],
+    "validation_commands_shell_false": true,
+    "checkout_must_remain_clean_after_each_prewrite_command": true,
+    "stops_after_state": "BOUNDED_MUTATION_CAPABILITY_APPLIED",
+    "postcondition_validation_separate": true,
+    "evidence_acceptance_separate": true
+  },
+  "authority": {
+    "implementation_only": true,
+    "internal_capability_implemented": true,
+    "public_product_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "postcondition_acceptance_authority_granted": false,
+    "evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "INTERACTIVE_BOUNDED_MUTATION_CAPABILITY_IMPLEMENTATION_VALIDATION"
+}
