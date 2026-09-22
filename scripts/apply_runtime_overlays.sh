@@ -4,35 +4,42 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-OVERLAY_DIR="runtime_overlay/js_ts_v2"
-MANIFEST="$OVERLAY_DIR/OVERLAY_SHA256"
+apply_b64_overlay() {
+  local overlay_name="$1"
+  local overlay_dir="runtime_overlay/$overlay_name"
+  local manifest="$overlay_dir/OVERLAY_SHA256"
 
-if [[ ! -f "$MANIFEST" ]]; then
-  echo "RUNTIME_OVERLAY: none"
-  exit 0
-fi
+  if [[ ! -f "$manifest" ]]; then
+    echo "RUNTIME_OVERLAY_${overlay_name}: none"
+    return 0
+  fi
 
-TMP_B64="$(mktemp)"
-TMP_PATCH="$(mktemp)"
-trap 'rm -f "$TMP_B64" "$TMP_PATCH"' EXIT
+  local tmp_b64 tmp_patch expected actual
+  tmp_b64="$(mktemp)"
+  tmp_patch="$(mktemp)"
+  cat "$overlay_dir"/part*.b64 > "$tmp_b64"
+  tr -d '\r\n' < "$tmp_b64" | base64 --decode > "$tmp_patch"
 
-cat "$OVERLAY_DIR"/part*.b64 > "$TMP_B64"
-tr -d '\r\n' < "$TMP_B64" | base64 --decode > "$TMP_PATCH"
+  expected="$(awk '{print $1}' "$manifest")"
+  actual="$(sha256sum "$tmp_patch" | awk '{print $1}')"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "runtime overlay digest mismatch: $overlay_name" >&2
+    echo "expected=$expected" >&2
+    echo "actual=$actual" >&2
+    rm -f "$tmp_b64" "$tmp_patch"
+    exit 1
+  fi
 
-EXPECTED="$(awk '{print $1}' "$MANIFEST")"
-ACTUAL="$(sha256sum "$TMP_PATCH" | awk '{print $1}')"
+  patch --dry-run --batch --forward -p1 < "$tmp_patch" >/dev/null
+  patch --batch --forward -p1 < "$tmp_patch" >/dev/null
+  rm -f "$tmp_b64" "$tmp_patch"
+  echo "RUNTIME_OVERLAY_${overlay_name}: PASS sha256:$actual"
+}
 
-if [[ "$ACTUAL" != "$EXPECTED" ]]; then
-  echo "runtime overlay digest mismatch" >&2
-  echo "expected=$EXPECTED" >&2
-  echo "actual=$ACTUAL" >&2
-  exit 1
-fi
-
-patch --dry-run --batch --forward -p1 < "$TMP_PATCH" >/dev/null
-patch --batch --forward -p1 < "$TMP_PATCH" >/dev/null
-
+apply_b64_overlay "js_ts_v2"
 grep -q 'self-simplification-v14-js-structural-v2' core/simplification_analyzer.py
 grep -q 'python_ast+js_structural_v2' core/simplification_analyzer.py
 
-echo "RUNTIME_OVERLAY_JS_TS_V2: PASS sha256:$ACTUAL"
+apply_b64_overlay "portable_agent_v1"
+grep -q 'plw-portable-agent-v1' core/portable_agent.py
+grep -q 'plw agent orient' plw_cli.py
