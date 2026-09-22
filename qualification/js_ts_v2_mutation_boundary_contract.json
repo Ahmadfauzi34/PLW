@@ -57,7 +57,9 @@
     "wildcard_authorization_forbidden": true,
     "rule_wide_authorization_forbidden": true,
     "authorization_reuse_forbidden": true,
-    "authorization_does_not_imply_behavioral_equivalence": true
+    "authorization_does_not_imply_behavioral_equivalence": true,
+    "authorization_issuer_must_be_external_to_planner": true,
+    "planner_self_authorization_forbidden": true
   },
   "execution": {
     "environment": "DISPOSABLE_TEMP_WORKTREE_ONLY",
@@ -72,7 +74,9 @@
     "unexpected_untracked_target_files_fail_closed": true,
     "commit_creation_forbidden": true,
     "push_forbidden": true,
-    "pull_request_creation_forbidden": true
+    "pull_request_creation_forbidden": true,
+    "primary_worktree_forbidden": true,
+    "evidence_output_outside_target_root": true
   },
   "postconditions": {
     "parse_after_rewrite_required": true,
@@ -90,7 +94,9 @@
     "discard_disposable_worktree_on_failure": true,
     "authorization_receipt_consumed_on_execution_attempt": true,
     "fresh_plan_and_authorization_required_for_retry": true,
-    "upstream_repository_must_remain_untouched": true
+    "upstream_repository_must_remain_untouched": true,
+    "rollback_strategy": "DISCARD_DISPOSABLE_WORKTREE",
+    "rollback_or_disposal_verification_required": true
   },
   "evidence": {
     "record_target_repository_and_revision": true,
@@ -103,7 +109,10 @@
     "record_validation_commands_and_results": true,
     "record_changed_path_scope": true,
     "record_worktree_disposal_status": true,
-    "append_only_experiment_receipt": true
+    "append_only_experiment_receipt": true,
+    "evidence_output_outside_target_root": true,
+    "record_authorization_consumption_status": true,
+    "record_failure_or_rollback_status": true
   },
   "authority": {
     "contract_review_only": true,
@@ -114,5 +123,11 @@
     "global_behavioral_equivalence_proven": false,
     "truth_commit": false
   },
-  "next_gate": "TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE"
+  "next_gate": "TEMP_WORKTREE_MUTATION_ADAPTER_REFERENCE",
+  "terminal_states": {
+    "success": "EXPERIMENT_EVIDENCE_ACCEPTED",
+    "rejected_before_write": "MUTATION_BOUNDARY_REJECTED",
+    "failed_after_write_contained": "MUTATION_FAILED_WORKTREE_DISCARDED",
+    "containment_failure": "MUTATION_BOUNDARY_CONTAINMENT_FAILED"
+  }
 }
