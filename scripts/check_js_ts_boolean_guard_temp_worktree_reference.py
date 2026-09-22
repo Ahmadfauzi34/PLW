@@ -117,9 +117,34 @@ def build_fixture(base: Path) -> Dict[str, Any]:
         raise RuntimeError("reference baseline node --check failed")
 
     rewrite = plan["planned_rewrite"]
+    postcondition_spec = {
+        "schema_version": "plw-js-ts-v2-postcondition-validation-spec-v1",
+        "status": "POSTCONDITION_VALIDATION_SPEC_READY",
+        "target": {
+            "repository": REPOSITORY,
+            "revision": revision,
+            "source_path": SOURCE_PATH,
+            "candidate_id": candidate["candidate_id"],
+        },
+        "commands": {
+            "parse_after_rewrite": ["node", "--check", SOURCE_PATH],
+            "focused_target_native_after": ["node", "--check", SOURCE_PATH],
+            "target_typecheck_or_type_tests_after": ["node", "--check", SOURCE_PATH],
+        },
+        "policy": {
+            "cwd": "TARGET_ROOT",
+            "shell": False,
+            "stop_on_first_failure": True,
+        },
+    }
+    postcondition_spec_path = evidence / "postcondition-validation-spec.json"
+    write_json(postcondition_spec_path, postcondition_spec)
+    postcondition_spec_digest = digest_file(postcondition_spec_path)
+
     preflight = {
         "schema_version": "plw-js-ts-v2-mutation-preflight-v1",
         "status": "PREFLIGHT_VALIDATED",
+        "postcondition_validation_spec_digest": postcondition_spec_digest,
         "target": {
             "repository": REPOSITORY,
             "revision": revision,
@@ -187,6 +212,7 @@ def build_fixture(base: Path) -> Dict[str, Any]:
             "planned_source_sha256": rewrite["planned_source_sha256"],
             "plan_digest": plan_digest,
             "preflight_evidence_digest": preflight_digest,
+            "postcondition_validation_spec_digest": postcondition_spec_digest,
         },
         "authority": {
             "generic_mutation_authority_granted": False,
@@ -207,6 +233,7 @@ def build_fixture(base: Path) -> Dict[str, Any]:
         "candidate": candidate,
         "plan": plan,
         "plan_path": plan_path,
+        "postcondition_spec_path": postcondition_spec_path,
         "preflight_path": preflight_path,
         "authorization_path": authorization_path,
         "boundary_path": boundary_path,
@@ -227,6 +254,8 @@ def adapter_command(fixture: Mapping[str, Any], *, allow: bool = True, disposabl
         REPOSITORY,
         "--plan",
         str(fixture["plan_path"]),
+        "--postcondition-validation-spec",
+        str(fixture["postcondition_spec_path"]),
         "--preflight",
         str(fixture["preflight_path"]),
         "--authorization",
@@ -329,6 +358,46 @@ def mutate_self_authorization(fixture: Dict[str, Any]) -> None:
     payload["issuer"]["external_to_planner"] = False
     payload["issuer"]["planner_self_authorized"] = True
     write_json(fixture["authorization_path"], payload)
+
+
+def _rebind_validation_spec(fixture: Dict[str, Any]) -> None:
+    spec_digest = digest_file(fixture["postcondition_spec_path"])
+    preflight = json.loads(fixture["preflight_path"].read_text())
+    preflight["postcondition_validation_spec_digest"] = spec_digest
+    write_json(fixture["preflight_path"], preflight)
+
+    authorization = json.loads(fixture["authorization_path"].read_text())
+    authorization["binding"]["postcondition_validation_spec_digest"] = spec_digest
+    authorization["binding"]["preflight_evidence_digest"] = digest_file(
+        fixture["preflight_path"]
+    )
+    write_json(fixture["authorization_path"], authorization)
+
+
+def mutate_wrong_validation_spec_digest(fixture: Dict[str, Any]) -> None:
+    authorization = json.loads(fixture["authorization_path"].read_text())
+    authorization["binding"]["postcondition_validation_spec_digest"] = digest_text(
+        "wrong-validation-spec"
+    )
+    write_json(fixture["authorization_path"], authorization)
+
+
+def mutate_focused_command_substitution(fixture: Dict[str, Any]) -> None:
+    spec = json.loads(fixture["postcondition_spec_path"].read_text())
+    spec["commands"]["focused_target_native_after"] = [
+        "node",
+        "--check",
+        "package.json",
+    ]
+    write_json(fixture["postcondition_spec_path"], spec)
+    _rebind_validation_spec(fixture)
+
+
+def mutate_shell_validation_spec(fixture: Dict[str, Any]) -> None:
+    spec = json.loads(fixture["postcondition_spec_path"].read_text())
+    spec["policy"]["shell"] = True
+    write_json(fixture["postcondition_spec_path"], spec)
+    _rebind_validation_spec(fixture)
 
 
 def mutate_wrong_plan_digest(fixture: Dict[str, Any]) -> None:
@@ -466,6 +535,21 @@ def build_report(index: Mapping[str, Any], contract_report: Mapping[str, Any]) -
         run_case(
             "wrong_preflight_digest",
             mutate_fixture=mutate_wrong_preflight_digest,
+            expected_pass=False,
+        ),
+        run_case(
+            "wrong_validation_spec_digest",
+            mutate_fixture=mutate_wrong_validation_spec_digest,
+            expected_pass=False,
+        ),
+        run_case(
+            "focused_command_substitution",
+            mutate_fixture=mutate_focused_command_substitution,
+            expected_pass=False,
+        ),
+        run_case(
+            "shell_validation_spec",
+            mutate_fixture=mutate_shell_validation_spec,
             expected_pass=False,
         ),
         run_case(

@@ -38,7 +38,9 @@
     "focused_target_native_validation_before_mutation": true,
     "baseline_validation_must_pass": true,
     "preflight_evidence_digest_required": true,
-    "preflight_is_read_only": true
+    "preflight_is_read_only": true,
+    "postcondition_validation_spec_required_before_mutation": true,
+    "postcondition_validation_spec_digest_required": true
   },
   "authorization": {
     "explicit_literal_authorization_required": true,
@@ -52,7 +54,8 @@
       "before_source_sha256",
       "planned_source_sha256",
       "plan_digest",
-      "preflight_evidence_digest"
+      "preflight_evidence_digest",
+      "postcondition_validation_spec_digest"
     ],
     "wildcard_authorization_forbidden": true,
     "rule_wide_authorization_forbidden": true,
@@ -86,7 +89,11 @@
     "actual_after_sha256_must_equal_planned_source_sha256": true,
     "actual_diff_must_equal_planned_diff": true,
     "all_required_postconditions_must_pass": true,
-    "passing_postconditions_do_not_prove_global_equivalence": true
+    "passing_postconditions_do_not_prove_global_equivalence": true,
+    "validation_spec_schema": "plw-js-ts-v2-postcondition-validation-spec-v1",
+    "validation_spec_must_be_bound_before_mutation": true,
+    "validation_spec_commands_are_argv_no_shell": true,
+    "focused_post_command_must_equal_baseline_command": true
   },
   "failure_policy": {
     "fail_closed": true,
@@ -112,7 +119,8 @@
     "append_only_experiment_receipt": true,
     "evidence_output_outside_target_root": true,
     "record_authorization_consumption_status": true,
-    "record_failure_or_rollback_status": true
+    "record_failure_or_rollback_status": true,
+    "record_postcondition_validation_spec_digest": true
   },
   "authority": {
     "contract_review_only": true,

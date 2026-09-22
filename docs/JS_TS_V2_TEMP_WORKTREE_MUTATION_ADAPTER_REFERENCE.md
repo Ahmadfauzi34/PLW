@@ -8,6 +8,7 @@ It is not a product mutation API.
 The adapter consumes:
 
 - one reviewed dry-run plan;
+- one postcondition-validation spec frozen before mutation;
 - one read-only preflight receipt;
 - one explicit single-use authorization receipt;
 - one disposable-boundary receipt;
@@ -49,6 +50,7 @@ The primary worktree flag must be false.
 The following control/evidence files must remain outside the target root:
 
 - dry-run plan;
+- postcondition-validation spec;
 - preflight receipt;
 - authorization receipt;
 - disposable-boundary receipt;
@@ -67,6 +69,7 @@ It binds:
 - candidate ID;
 - resolved target-root digest;
 - plan digest;
+- postcondition-validation-spec digest;
 - before/planned source hashes;
 - planned diff digest.
 
@@ -97,9 +100,15 @@ It binds:
 - source path;
 - before/planned source SHA-256;
 - plan digest;
-- preflight-evidence digest.
+- preflight-evidence digest;
+- postcondition-validation-spec digest.
 
 Planner self-authorization is rejected.
+
+The postcondition-validation spec must already be fixed before authorization.
+Its focused post-mutation command must be byte-for-byte the same argv list as
+the focused baseline command recorded by preflight. Shell execution is
+forbidden.
 
 Before the source write begins, the authorization digest is appended to the
 consumption ledger as:
@@ -142,6 +151,9 @@ The negative suite covers:
 - planner self-authorization;
 - wrong plan digest;
 - wrong preflight digest;
+- wrong postcondition-validation-spec digest;
+- focused validation-command substitution;
+- shell-enabled validation spec;
 - disposable-boundary mismatch;
 - disposable-parent mismatch;
 - dirty checkout;

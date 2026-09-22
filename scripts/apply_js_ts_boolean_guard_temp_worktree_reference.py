@@ -24,6 +24,7 @@ PLAN_SCHEMA = "plw-js-ts-v2-boolean-guard-dry-run-plan-v1"
 PREFLIGHT_SCHEMA = "plw-js-ts-v2-mutation-preflight-v1"
 AUTH_SCHEMA = "plw-js-ts-v2-mutation-authorization-v1"
 BOUNDARY_SCHEMA = "plw-js-ts-v2-disposable-boundary-v1"
+POSTCONDITION_SPEC_SCHEMA = "plw-js-ts-v2-postcondition-validation-spec-v1"
 
 
 class AdapterError(ValueError):
@@ -129,6 +130,59 @@ def _assert_plan(plan: Mapping[str, Any]) -> None:
         raise AdapterError("input plan unexpectedly grants mutation authority")
 
 
+def _assert_postcondition_spec(
+    spec: Mapping[str, Any],
+    *,
+    repository: str,
+    revision: str,
+    plan: Mapping[str, Any],
+    preflight: Mapping[str, Any],
+) -> None:
+    if spec.get("schema_version") != POSTCONDITION_SPEC_SCHEMA:
+        raise AdapterError("unexpected postcondition validation spec schema")
+    if spec.get("status") != "POSTCONDITION_VALIDATION_SPEC_READY":
+        raise AdapterError("postcondition validation spec is not ready")
+
+    candidate = plan.get("candidate", {}) or {}
+    target = spec.get("target", {}) or {}
+    expected = {
+        "repository": repository,
+        "revision": revision,
+        "source_path": candidate.get("source_path"),
+        "candidate_id": candidate.get("candidate_id"),
+    }
+    for key, value in expected.items():
+        if target.get(key) != value:
+            raise AdapterError(f"postcondition validation spec target mismatch: {key}")
+
+    policy = spec.get("policy", {}) or {}
+    if policy.get("cwd") != "TARGET_ROOT":
+        raise AdapterError("postcondition validation spec cwd must be TARGET_ROOT")
+    if policy.get("shell") is not False:
+        raise AdapterError("postcondition validation spec shell must be false")
+
+    commands = spec.get("commands", {}) or {}
+    required = (
+        "parse_after_rewrite",
+        "focused_target_native_after",
+        "target_typecheck_or_type_tests_after",
+    )
+    for name in required:
+        argv = commands.get(name)
+        if not isinstance(argv, list) or not argv or not all(
+            isinstance(item, str) and item for item in argv
+        ):
+            raise AdapterError(
+                f"postcondition validation command must be non-empty argv list: {name}"
+            )
+
+    baseline = (preflight.get("baseline_validation", {}) or {}).get("command")
+    if commands.get("focused_target_native_after") != baseline:
+        raise AdapterError(
+            "focused postcondition command must equal preflight baseline command"
+        )
+
+
 def _assert_preflight(
     preflight: Mapping[str, Any],
     *,
@@ -137,11 +191,19 @@ def _assert_preflight(
     revision: str,
     plan: Mapping[str, Any],
     plan_digest: str,
+    postcondition_spec_digest: str,
 ) -> None:
     if preflight.get("schema_version") != PREFLIGHT_SCHEMA:
         raise AdapterError("unexpected preflight schema")
     if preflight.get("status") != "PREFLIGHT_VALIDATED":
         raise AdapterError("preflight is not validated")
+    if (
+        preflight.get("postcondition_validation_spec_digest")
+        != postcondition_spec_digest
+    ):
+        raise AdapterError(
+            "preflight postcondition validation spec digest mismatch"
+        )
 
     target = preflight.get("target", {}) or {}
     candidate = plan.get("candidate", {}) or {}
@@ -192,6 +254,7 @@ def _assert_authorization(
     plan: Mapping[str, Any],
     plan_digest: str,
     preflight_digest: str,
+    postcondition_spec_digest: str,
 ) -> None:
     if authorization.get("schema_version") != AUTH_SCHEMA:
         raise AdapterError("unexpected authorization schema")
@@ -221,6 +284,7 @@ def _assert_authorization(
         "planned_source_sha256": rewrite.get("planned_source_sha256"),
         "plan_digest": plan_digest,
         "preflight_evidence_digest": preflight_digest,
+        "postcondition_validation_spec_digest": postcondition_spec_digest,
     }
     binding = authorization.get("binding", {}) or {}
     for key, value in expected.items():
@@ -284,6 +348,7 @@ def apply_reference_mutation(
     disposable_parent: Path,
     repository: str,
     plan_path: Path,
+    postcondition_spec_path: Path,
     preflight_path: Path,
     authorization_path: Path,
     boundary_path: Path,
@@ -294,6 +359,7 @@ def apply_reference_mutation(
 
     for path, label in (
         (plan_path, "dry-run plan"),
+        (postcondition_spec_path, "postcondition validation spec"),
         (preflight_path, "preflight evidence"),
         (authorization_path, "authorization receipt"),
         (boundary_path, "disposable-boundary receipt"),
@@ -302,6 +368,7 @@ def apply_reference_mutation(
         _require_outside_target(root, path, label)
 
     plan = _load(plan_path)
+    postcondition_spec = _load(postcondition_spec_path)
     preflight = _load(preflight_path)
     authorization = _load(authorization_path)
     boundary = _load(boundary_path)
@@ -310,10 +377,18 @@ def apply_reference_mutation(
     _assert_boundary(boundary, root)
 
     plan_digest = _digest_file(plan_path)
+    postcondition_spec_digest = _digest_file(postcondition_spec_path)
     preflight_digest = _digest_file(preflight_path)
     authorization_digest = _digest_file(authorization_path)
 
     revision = _git(root, "rev-parse", "HEAD")
+    _assert_postcondition_spec(
+        postcondition_spec,
+        repository=repository,
+        revision=revision,
+        plan=plan,
+        preflight=preflight,
+    )
     _assert_preflight(
         preflight,
         root=root,
@@ -321,6 +396,7 @@ def apply_reference_mutation(
         revision=revision,
         plan=plan,
         plan_digest=plan_digest,
+        postcondition_spec_digest=postcondition_spec_digest,
     )
     _assert_authorization(
         authorization,
@@ -329,6 +405,7 @@ def apply_reference_mutation(
         plan=plan,
         plan_digest=plan_digest,
         preflight_digest=preflight_digest,
+        postcondition_spec_digest=postcondition_spec_digest,
     )
 
     if _authorization_consumed(ledger_path, authorization_digest):
@@ -441,6 +518,7 @@ def apply_reference_mutation(
             "preflight_evidence_digest": preflight_digest,
             "authorization_receipt_digest": authorization_digest,
             "disposable_boundary_digest": _digest_file(boundary_path),
+            "postcondition_validation_spec_digest": postcondition_spec_digest,
         },
         "mutation": {
             "before_source_sha256": rewrite.get("before_source_sha256"),
@@ -477,6 +555,7 @@ def main() -> int:
     parser.add_argument("--disposable-parent", required=True)
     parser.add_argument("--target-repository", required=True)
     parser.add_argument("--plan", required=True)
+    parser.add_argument("--postcondition-validation-spec", required=True)
     parser.add_argument("--preflight", required=True)
     parser.add_argument("--authorization", required=True)
     parser.add_argument("--disposable-boundary", required=True)
@@ -500,6 +579,9 @@ def main() -> int:
             disposable_parent=Path(args.disposable_parent),
             repository=args.target_repository,
             plan_path=Path(args.plan).resolve(),
+            postcondition_spec_path=Path(
+                args.postcondition_validation_spec
+            ).resolve(),
             preflight_path=Path(args.preflight).resolve(),
             authorization_path=Path(args.authorization).resolve(),
             boundary_path=Path(args.disposable_boundary).resolve(),
