@@ -235,6 +235,14 @@ def review_contract(contract: Mapping[str, Any], promotion: Mapping[str, Any]) -
         "evidence_output_outside_target_root",
         "record_authorization_consumption_status",
         "record_failure_or_rollback_status",
+        "postcondition_validation_receipt_must_be_sealed_at_issuance",
+        "issuance_ledger_hash_chain_required",
+        "acceptance_must_verify_exact_issued_receipt_digest",
+        "acceptance_must_recompute_lineage_digests",
+        "acceptance_must_not_rerun_validation",
+        "acceptance_must_not_require_disposed_worktree",
+        "exact_acceptance_replay_must_be_idempotent",
+        "accepted_evidence_is_not_truth",
     ):
         _require_true(errors, evidence, key, "evidence")
 
@@ -365,6 +373,14 @@ def run_self_check(contract: Mapping[str, Any], promotion: Mapping[str, Any]) ->
     cases.append(
         ("missing_postcondition_spec_binding", c, copy.deepcopy(promotion))
     )
+
+    c = copy.deepcopy(contract)
+    c["evidence"]["acceptance_must_not_rerun_validation"] = False
+    cases.append(("acceptance_reruns_validation", c, copy.deepcopy(promotion)))
+
+    c = copy.deepcopy(contract)
+    c["evidence"]["accepted_evidence_is_not_truth"] = False
+    cases.append(("evidence_becomes_truth", c, copy.deepcopy(promotion)))
 
     c = copy.deepcopy(contract)
     c["failure_policy"]["rollback_strategy"] = "KEEP_DIRTY_WORKTREE"
