@@ -1,0 +1,60 @@
+{
+  "schema_version": "plw-js-ts-v2-experiment-evidence-acceptance-reference-v1",
+  "rule": "js_boolean_guard_return",
+  "prerequisite": {
+    "required_validation_status": "POSTCONDITIONS_VALIDATED",
+    "validation_receipt_schema": "plw-js-ts-v2-postcondition-validation-receipt-v1",
+    "issuance_schema": "plw-js-ts-v2-postcondition-validation-issuance-v1",
+    "postcondition_validation_reference_commit": "c751f2807f813bae7cb4be0dbaa044f7cf0bbfe0"
+  },
+  "interactive_audit": {
+    "mode": "INTERACTIVE_SESSION",
+    "ci_is_not_authority_for_this_audit": true,
+    "cases": 6,
+    "passed": 6,
+    "artifact_name": "INTERACTIVE_EVIDENCE_ACCEPTANCE_AUDIT_v1.txt",
+    "artifact_sha256": "sha256:39a20adbd2e5079b528b022e9417f1506cda70d7af80b0b67fb6cf76f1a07d60",
+    "observed": [
+      "valid receipt -> EXPERIMENT_EVIDENCE_ACCEPTED",
+      "exact replay -> EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED without second append",
+      "tampered receipt after issuance -> rejected",
+      "failed validation receipt -> rejected",
+      "lineage digest mismatch -> rejected",
+      "broken issuance chain -> rejected"
+    ]
+  },
+  "acceptance_contract": {
+    "exact_validation_receipt_digest_must_be_issued": true,
+    "issuance_record_must_be_unique": true,
+    "issuance_hash_chain_must_verify": true,
+    "acceptance_hash_chain_must_verify": true,
+    "all_lineage_file_digests_must_be_recomputed": true,
+    "validation_commands_must_all_be_successful": true,
+    "authorization_must_be_consumed": true,
+    "successful_worktree_must_be_disposed": true,
+    "exact_replay_must_not_append": true,
+    "validation_must_not_be_rerun": true,
+    "disposed_worktree_must_not_be_reopened": true,
+    "accepted_evidence_class": "BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE"
+  },
+  "rejected_inputs": [
+    "unsealed validation receipt",
+    "tampered validation receipt",
+    "validation receipt with non-success status",
+    "lineage digest mismatch",
+    "broken issuance hash chain",
+    "duplicate issuance records for same validation receipt",
+    "validation receipt widening authority",
+    "validation receipt with nonzero or timed-out required command"
+  ],
+  "authority": {
+    "evidence_acceptance_only": true,
+    "source_mutation_allowed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_REVIEW"
+}

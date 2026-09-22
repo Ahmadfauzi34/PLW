@@ -1,0 +1,69 @@
+{
+  "schema_version": "plw-interactive-audit-record-v1",
+  "audit": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE",
+  "rule": "js_boolean_guard_return",
+  "execution_mode": "INTERACTIVE_SESSION",
+  "ci_used_as_audit_authority": false,
+  "cases": [
+    {
+      "name": "valid_accept",
+      "expected": "EXPERIMENT_EVIDENCE_ACCEPTED",
+      "observed": "EXPERIMENT_EVIDENCE_ACCEPTED",
+      "pass": true
+    },
+    {
+      "name": "exact_replay",
+      "expected": "EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED",
+      "observed": "EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED",
+      "acceptance_ledger_appended": false,
+      "pass": true
+    },
+    {
+      "name": "tampered_receipt_after_issuance",
+      "expected": "REJECTED",
+      "observed": "REJECTED",
+      "pass": true
+    },
+    {
+      "name": "failed_validation_receipt",
+      "expected": "REJECTED",
+      "observed": "REJECTED",
+      "pass": true
+    },
+    {
+      "name": "lineage_digest_mismatch",
+      "expected": "REJECTED",
+      "observed": "REJECTED",
+      "pass": true
+    },
+    {
+      "name": "broken_issuance_chain",
+      "expected": "REJECTED",
+      "observed": "REJECTED",
+      "pass": true
+    }
+  ],
+  "result": {
+    "passed": 6,
+    "total": 6,
+    "status": "INTERACTIVE_EVIDENCE_ACCEPTANCE_AUDIT_PASSED"
+  },
+  "artifact": {
+    "filename": "INTERACTIVE_EVIDENCE_ACCEPTANCE_AUDIT_v1.txt",
+    "sha256": "sha256:39a20adbd2e5079b528b022e9417f1506cda70d7af80b0b67fb6cf76f1a07d60"
+  },
+  "findings": [
+    "POSTCONDITIONS_VALIDATED receipts require an issuance-time seal before later acceptance",
+    "acceptance must verify the exact issued receipt digest rather than trust editable JSON",
+    "acceptance must recompute lineage file digests without rerunning validation",
+    "exact acceptance replay must recover the prior acceptance record without appending",
+    "accepted evidence remains bounded evidence and does not become truth"
+  ],
+  "authority": {
+    "audit_evidence_only": true,
+    "evidence_acceptance_authority_granted_by_audit": false,
+    "source_mutation_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  }
+}

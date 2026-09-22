@@ -64,6 +64,81 @@ def _digest_text(text: str) -> str:
     return _digest_bytes(text.encode("utf-8"))
 
 
+def _canonical_record_digest(record: Mapping[str, Any]) -> str:
+    payload = dict(record)
+    payload.pop("record_digest", None)
+    data = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+    return _digest_bytes(data)
+
+
+def _read_issuance_ledger(path: Path) -> list[Dict[str, Any]]:
+    if not path.exists():
+        return []
+    records = []
+    previous = None
+    for expected_sequence, raw in enumerate(
+        path.read_text(encoding="utf-8").splitlines(),
+        1,
+    ):
+        if not raw.strip():
+            continue
+        record = json.loads(raw)
+        if record.get("sequence") != expected_sequence:
+            raise ValidationError("issuance ledger sequence mismatch")
+        if record.get("previous_record_digest") != previous:
+            raise ValidationError("issuance ledger previous digest mismatch")
+        if record.get("record_digest") != _canonical_record_digest(record):
+            raise ValidationError("issuance ledger record digest mismatch")
+        previous = record["record_digest"]
+        records.append(record)
+    return records
+
+
+def _seal_validation_receipt(
+    *,
+    ledger_path: Path,
+    receipt: Mapping[str, Any],
+    receipt_digest: str,
+) -> Dict[str, Any]:
+    records = _read_issuance_ledger(ledger_path)
+    for record in records:
+        if record.get("validation_receipt_digest") == receipt_digest:
+            return {
+                "status": "POSTCONDITION_VALIDATION_RECEIPT_ISSUANCE_RECOVERED",
+                "record": record,
+                "appended": False,
+            }
+
+    payload = {
+        "schema_version": "plw-js-ts-v2-postcondition-validation-issuance-v1",
+        "status": "POSTCONDITION_VALIDATION_RECEIPT_ISSUED",
+        "validation_receipt_digest": receipt_digest,
+        "validation_status": receipt.get("status"),
+        "rule": receipt.get("rule"),
+        "candidate_id": (receipt.get("candidate", {}) or {}).get("candidate_id"),
+        "target": receipt.get("target"),
+        "lineage": receipt.get("bindings", {}),
+        "sequence": len(records) + 1,
+        "previous_record_digest": (
+            records[-1]["record_digest"] if records else None
+        ),
+    }
+    payload["record_digest"] = _canonical_record_digest(payload)
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    with ledger_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, sort_keys=True) + "\n")
+    return {
+        "status": "POSTCONDITION_VALIDATION_RECEIPT_ISSUED",
+        "record": payload,
+        "appended": True,
+    }
+
+
 def _require_outside_target(root: Path, path: Path, label: str) -> None:
     resolved = path.resolve()
     try:
@@ -555,11 +630,13 @@ def main() -> int:
     parser.add_argument("--mutation-receipt", required=True)
     parser.add_argument("--postcondition-validation-spec", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--issuance-ledger", required=True)
     parser.add_argument("--timeout-seconds", type=int, default=120)
     args = parser.parse_args()
 
     root = Path(args.target_root).resolve()
     output = Path(args.output).resolve()
+    issuance_ledger = Path(args.issuance_ledger).resolve()
     if args.timeout_seconds < 1 or args.timeout_seconds > 600:
         raise SystemExit("--timeout-seconds must be between 1 and 600")
 
@@ -573,6 +650,7 @@ def main() -> int:
             "postcondition validation spec",
         ),
         (output, "postcondition validation receipt"),
+        (issuance_ledger, "postcondition validation issuance ledger"),
     ):
         _require_outside_target(root, path, label)
 
@@ -624,7 +702,16 @@ def main() -> int:
         }
 
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+    receipt_bytes = (
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+    output.write_bytes(receipt_bytes)
+    receipt_digest = _digest_bytes(receipt_bytes)
+    issuance = _seal_validation_receipt(
+        ledger_path=issuance_ledger,
+        receipt=receipt,
+        receipt_digest=receipt_digest,
+    )
 
     print(
         json.dumps(
@@ -635,6 +722,8 @@ def main() -> int:
                 "evidence_acceptance_granted": receipt["postconditions"][
                     "evidence_acceptance_granted"
                 ],
+                "validation_receipt_digest": receipt_digest,
+                "issuance_status": issuance["status"],
             },
             sort_keys=True,
         )

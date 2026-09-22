@@ -105,6 +105,12 @@ The validator explicitly records:
 
     evidence_acceptance_granted = false
 
+After the receipt bytes are finalized, the validator seals their exact SHA-256
+in a hash-chained issuance ledger outside the disposed worktree.
+
+This issuance seal exists so the later acceptor can distinguish the exact
+validator-emitted receipt from a JSON file edited after validation.
+
 The next authority boundary is:
 
     TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE
