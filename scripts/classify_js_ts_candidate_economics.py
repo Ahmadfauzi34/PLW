@@ -149,11 +149,11 @@ def review_disposition(candidate: Mapping[str, Any], role: str) -> str:
     recommendation = _recommendation(candidate)
     risk = _risk(candidate)
 
-    if recommendation.startswith("defer") or risk == "high":
-        return "DEFER_PROOF_SURFACE"
-
     if kind == "js_direct_forwarding_wrapper":
         return "API_CONTRACT_REVIEW_REQUIRED"
+
+    if recommendation.startswith("defer") or risk == "high":
+        return "DEFER_PROOF_SURFACE"
 
     if role == "mixed":
         return "OWNERSHIP_BOUNDARY_REVIEW"
