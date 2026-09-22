@@ -110,32 +110,39 @@ capability.
 
 ## Current project state
 
-At this checkpoint:
+The current retained sealed ledger now contains two independently accepted
+boolean-guard experiments:
 
-    sealed accepted records = 0
+    sequence 1
+      prettier/prettier
+      candidate sha256:2fb4fc47394645dd1dada20e09c329ff23ae9cf1ef499176e0ba0658b04690c4
 
-Historical boolean-guard evidence:
+    sequence 2
+      vitejs/vite
+      candidate sha256:d4d1da6c55c80079b4761ae51b1593c8b051e8c3ff276fb78fd6542ab2bfdef0
 
-    Prettier
-    Vite
+Both records use:
 
-But the historical records are pre-seal evidence.
+    BOUNDED_POSTCONDITION_VALIDATION_EVIDENCE
+
+The Vite sequence-two bundle was adjudicated interactively after deterministic
+execution. Canonical acceptance digests, the sequence-one-to-sequence-two hash
+link, lineage, validation summary, worktree disposal, and no-authority fields
+were recomputed directly from the retained evidence.
 
 Therefore the current result is:
 
-    INSUFFICIENT_SEALED_ACCEPTED_EVIDENCE
-    reason = NO_ACCEPTED_RECORDS
-    promotion_review_ready = false
+    CROSS_REPOSITORY_SEALED_ACCEPTED_EVIDENCE_READY
+    accepted records = 2
+    repositories = 2
+    candidates = 2
+    promotion_review_ready = true
 
-The next operational task is to collect new experiments through the full chain:
+This state opens only:
 
-    plan
-      -> preflight
-      -> authorization
-      -> TEMP_WORKTREE_APPLIED
-      -> POSTCONDITIONS_VALIDATED
-      -> issuance seal
-      -> EXPERIMENT_EVIDENCE_ACCEPTED
+    BOUNDED_MUTATION_CAPABILITY_PROMOTION_REVIEW
+
+It does not grant the mutation capability.
 
 ## Authority boundary
 
