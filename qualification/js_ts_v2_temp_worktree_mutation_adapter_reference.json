@@ -24,7 +24,10 @@
     "consumption_ledger_outside_target_root": true,
     "evidence_output_outside_target_root": true,
     "stop_after_state": "TEMP_WORKTREE_APPLIED",
-    "postcondition_acceptance_performed_by_adapter": false
+    "postcondition_acceptance_performed_by_adapter": false,
+    "postcondition_validation_spec_required": true,
+    "postcondition_validation_spec_must_be_outside_target_root": true,
+    "postcondition_validation_spec_bound_before_write": true
   },
   "authorization_binding": [
     "candidate_id",
@@ -34,7 +37,8 @@
     "before_source_sha256",
     "planned_source_sha256",
     "plan_digest",
-    "preflight_evidence_digest"
+    "preflight_evidence_digest",
+    "postcondition_validation_spec_digest"
   ],
   "reference_checks": {
     "positive_apply": true,
@@ -46,7 +50,10 @@
     "dirty_checkout_rejected": true,
     "stale_source_rejected": true,
     "authorization_reuse_rejected": true,
-    "unexpected_changed_or_untracked_paths_rejected": true
+    "unexpected_changed_or_untracked_paths_rejected": true,
+    "validation_spec_digest_mismatch_rejected": true,
+    "focused_command_substitution_rejected": true,
+    "shell_command_spec_rejected": true
   },
   "authority": {
     "reference_adapter_only": true,
