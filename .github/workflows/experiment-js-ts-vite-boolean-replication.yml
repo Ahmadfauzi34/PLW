@@ -48,6 +48,10 @@ jobs:
         working-directory: experiment/target
         run: pnpm install --frozen-lockfile
 
+      - name: Build Vite package prerequisite
+        working-directory: experiment/target
+        run: pnpm --filter vite build
+
       - name: Baseline focused target-native test
         working-directory: experiment/target
         run: pnpm exec vitest run packages/vite/src/node/ssr/__tests__/ssrTransform.spec.ts
