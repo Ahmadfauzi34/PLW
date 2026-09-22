@@ -151,9 +151,11 @@ jobs:
             --allow-reference-mutation
 
       - name: Validate postconditions and seal emitted receipt
+        id: validation
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          set +e
           python scripts/validate_js_ts_boolean_guard_temp_worktree_postconditions.py \
             --target-root "${{ steps.worktree.outputs.target }}" \
             --disposable-parent "${{ steps.worktree.outputs.parent }}" \
@@ -165,9 +167,25 @@ jobs:
             --issuance-ledger execution/evidence/sealed/postcondition-issuance.jsonl \
             --output execution/evidence/sealed/postcondition-validation-receipt.json \
             --timeout-seconds 600
+          rc=$?
+          set -e
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
           test ! -e "${{ steps.worktree.outputs.target }}"
+          test -f execution/evidence/sealed/postcondition-validation-receipt.json
+          test -f execution/evidence/sealed/postcondition-issuance.jsonl
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path('execution/evidence/sealed/postcondition-validation-receipt.json').read_text())
+          print(json.dumps({
+              'status': receipt.get('status'),
+              'failure': (receipt.get('validation') or {}).get('failure'),
+              'worktree_disposed': (receipt.get('containment') or {}).get('worktree_disposed'),
+          }, sort_keys=True))
+          PY
 
       - name: Seed global acceptance chain from committed Prettier evidence
+        if: steps.validation.outputs.exit_code == '0'
         shell: bash
         run: |
           set -euo pipefail
@@ -176,6 +194,7 @@ jobs:
           test "$(wc -l < execution/evidence/sealed/acceptance.jsonl | tr -d ' ')" = "1"
 
       - name: Accept sealed Vite evidence as global sequence two
+        if: steps.validation.outputs.exit_code == '0'
         shell: bash
         run: |
           set -euo pipefail
@@ -191,6 +210,7 @@ jobs:
             --output execution/evidence/sealed/acceptance-result.json
 
       - name: Verify source checkout remained untouched and summarize evidence
+        if: steps.validation.outputs.exit_code == '0'
         shell: bash
         run: |
           set -euo pipefail
@@ -267,3 +287,10 @@ jobs:
           name: js-ts-v2-sealed-vite-boolean-guard-evidence
           path: execution/evidence
           if-no-files-found: error
+
+      - name: Finalize deterministic execution status
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.validation.outputs.exit_code }}" = "0"
