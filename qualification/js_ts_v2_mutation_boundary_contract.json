@@ -120,7 +120,15 @@
     "evidence_output_outside_target_root": true,
     "record_authorization_consumption_status": true,
     "record_failure_or_rollback_status": true,
-    "record_postcondition_validation_spec_digest": true
+    "record_postcondition_validation_spec_digest": true,
+    "postcondition_validation_receipt_must_be_sealed_at_issuance": true,
+    "issuance_ledger_hash_chain_required": true,
+    "acceptance_must_verify_exact_issued_receipt_digest": true,
+    "acceptance_must_recompute_lineage_digests": true,
+    "acceptance_must_not_rerun_validation": true,
+    "acceptance_must_not_require_disposed_worktree": true,
+    "exact_acceptance_replay_must_be_idempotent": true,
+    "accepted_evidence_is_not_truth": true
   },
   "authority": {
     "contract_review_only": true,
