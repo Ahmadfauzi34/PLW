@@ -37,6 +37,7 @@ REQUIRED_RECEIPT_BINDINGS = {
     "planned_source_sha256",
     "plan_digest",
     "preflight_evidence_digest",
+    "postcondition_validation_spec_digest",
 }
 
 REQUIRED_TERMINAL_STATES = {
@@ -135,6 +136,8 @@ def review_contract(contract: Mapping[str, Any], promotion: Mapping[str, Any]) -
         "focused_target_native_validation_before_mutation",
         "baseline_validation_must_pass",
         "preflight_evidence_digest_required",
+        "postcondition_validation_spec_required_before_mutation",
+        "postcondition_validation_spec_digest_required",
         "preflight_is_read_only",
     ):
         _require_true(errors, preflight, key, "preflight")
@@ -181,6 +184,11 @@ def review_contract(contract: Mapping[str, Any], promotion: Mapping[str, Any]) -
         _require_true(errors, execution, key, "execution")
 
     postconditions = contract.get("postconditions", {}) or {}
+    if (
+        postconditions.get("validation_spec_schema")
+        != "plw-js-ts-v2-postcondition-validation-spec-v1"
+    ):
+        errors.append("postcondition validation spec schema mismatch")
     for key in (
         "parse_after_rewrite_required",
         "same_focused_target_native_validation_after_mutation",
@@ -190,6 +198,9 @@ def review_contract(contract: Mapping[str, Any], promotion: Mapping[str, Any]) -
         "actual_diff_must_equal_planned_diff",
         "all_required_postconditions_must_pass",
         "passing_postconditions_do_not_prove_global_equivalence",
+        "validation_spec_must_be_bound_before_mutation",
+        "validation_spec_commands_are_argv_no_shell",
+        "focused_post_command_must_equal_baseline_command",
     ):
         _require_true(errors, postconditions, key, "postconditions")
 
@@ -214,6 +225,7 @@ def review_contract(contract: Mapping[str, Any], promotion: Mapping[str, Any]) -
         "record_plan_digest",
         "record_authorization_receipt_digest",
         "record_preflight_evidence_digest",
+        "record_postcondition_validation_spec_digest",
         "record_before_and_after_source_sha256",
         "record_planned_and_actual_diff_digest",
         "record_validation_commands_and_results",
@@ -343,6 +355,16 @@ def run_self_check(contract: Mapping[str, Any], promotion: Mapping[str, Any]) ->
         item for item in c["authorization"]["receipt_must_bind"] if item != "plan_digest"
     ]
     cases.append(("missing_plan_digest_binding", c, copy.deepcopy(promotion)))
+
+    c = copy.deepcopy(contract)
+    c["authorization"]["receipt_must_bind"] = [
+        item
+        for item in c["authorization"]["receipt_must_bind"]
+        if item != "postcondition_validation_spec_digest"
+    ]
+    cases.append(
+        ("missing_postcondition_spec_binding", c, copy.deepcopy(promotion))
+    )
 
     c = copy.deepcopy(contract)
     c["failure_policy"]["rollback_strategy"] = "KEEP_DIRTY_WORKTREE"
