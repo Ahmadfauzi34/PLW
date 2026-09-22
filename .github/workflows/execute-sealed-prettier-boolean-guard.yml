@@ -69,7 +69,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          parent="$RUNNER_TEMP/plw-prettier-sealed"
+          parent="/tmp/plw-prettier-sealed-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           target="$parent/target"
           rm -rf "$parent"
           mkdir -p "$parent"
