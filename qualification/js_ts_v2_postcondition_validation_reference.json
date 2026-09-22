@@ -46,7 +46,11 @@
     "no_untracked_target_files_required": true,
     "git_diff_check_required": true,
     "worktree_disposed_after_evidence_capture": true,
-    "evidence_acceptance_granted": false
+    "evidence_acceptance_granted": false,
+    "validation_receipt_must_be_sealed_at_issuance": true,
+    "issuance_ledger_append_only": true,
+    "issuance_ledger_hash_chained": true,
+    "issuance_exact_replay_must_not_duplicate": true
   },
   "failure": {
     "terminal_state": "MUTATION_FAILED_WORKTREE_DISCARDED",
@@ -65,5 +69,13 @@
     "global_behavioral_equivalence_proven": false,
     "truth_commit": false
   },
-  "next_gate": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+  "next_gate": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE",
+  "evidence_sealing": {
+    "issuance_schema": "plw-js-ts-v2-postcondition-validation-issuance-v1",
+    "validation_receipt_digest_required": true,
+    "lineage_digests_recorded": true,
+    "issuance_record_digest_required": true,
+    "issuance_previous_record_digest_required": true,
+    "worktree_not_required_for_later_acceptance": true
+  }
 }
