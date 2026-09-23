@@ -43,3 +43,7 @@ grep -q 'python_ast+js_structural_v2' core/simplification_analyzer.py
 apply_b64_overlay "portable_agent_v1"
 grep -q 'plw-portable-agent-v1' core/portable_agent.py
 grep -q 'plw agent orient' plw_cli.py
+
+apply_b64_overlay "validation_runtime_cli_v1"
+grep -q 'parser.add_argument("--evidence-id", action="append"' plw_cli.py
+grep -q 'F138 still requires exact identity/content agreement' skills/validation-runtime-dispatch-workflow.md
