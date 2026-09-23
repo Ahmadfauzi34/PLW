@@ -1,0 +1,111 @@
+{
+  "schema_version": "path-normalization-neutral-owner-promotion-v1",
+  "checkpoint": "F92",
+  "status": "PATH_NORMALIZATION_NEUTRAL_OWNER_PROMOTED_AND_VALIDATED",
+  "parent": {
+    "checkpoint": "F91",
+    "manifest_sha256": "sha256:af6be6fa13713a9f3362b0bc57d5de42b0daafdf3f8c6600d5c71afde5e139d6"
+  },
+  "architecture_source": {
+    "checkpoint": "F90",
+    "candidate_id": "sha256:2a4cc94ad8f212e3fc3e778cc22a745558434cfac9237f73b4639a427442a350"
+  },
+  "goal": "consume the existing language_semantics.normalize_path neutral owner through one selective-promotion patch group without adding detector capability",
+  "promotion_group": {
+    "neutral_owner": "language_semantics.normalize_path",
+    "private_alias_contract_preserved": true,
+    "files": {
+      "codebase/cycle_break.py": {
+        "before_loc": 501,
+        "after_loc": 497,
+        "loc_reduction": 4
+      },
+      "codebase/topology_analyzers.py": {
+        "before_loc": 775,
+        "after_loc": 768,
+        "loc_reduction": 7
+      },
+      "core/context_optimizer.py": {
+        "before_loc": 1406,
+        "after_loc": 1402,
+        "loc_reduction": 4
+      },
+      "core/graph_cache.py": {
+        "before_loc": 599,
+        "after_loc": 595,
+        "loc_reduction": 4
+      }
+    },
+    "total_loc_reduction": 19,
+    "estimated_duplicate_loc_before": 20,
+    "candidate_count_before": 32,
+    "candidate_count_after": 31,
+    "neutral_owner_candidates_before": 2,
+    "neutral_owner_candidates_after": 1,
+    "new_detector_capability_added": false,
+    "new_utility_module_added": false
+  },
+  "frontier_after": {
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "recommended_local_candidates": 0,
+    "remaining_candidate_count": 31,
+    "remaining_debt_by_recommendation": {
+      "defer_cross_domain_until_neutral_owner_proven": 11,
+      "defer_payload_no_positive_patch_margin": 1,
+      "defer_public_api_wrapper": 3,
+      "defer_sequence_high_proof_surface": 9,
+      "defer_sequence_no_positive_net_gain": 6,
+      "defer_until_narrower_candidates_exhausted": 1
+    },
+    "disposition_counts": {
+      "API_PROOF_CANDIDATE": 3,
+      "DEFER": 11,
+      "KEEP": 16,
+      "NEUTRAL_OWNER_CANDIDATE": 1
+    }
+  },
+  "files": {
+    "codebase/cycle_break.py": "sha256:6ee0dd8b9a2192f5720ecf3bcffe41f702a512ad243b2cfb52848260f3ec308b",
+    "codebase/topology_analyzers.py": "sha256:52b07733bfb9fc857ed4d432391ff3aa42acd79960b51d418257d4ee9e2c3018",
+    "core/context_optimizer.py": "sha256:44536d2266789e6f9a91e805f4b5377ca95a1aa4390661c0441fb0dfc21102fe",
+    "core/graph_cache.py": "sha256:c2d3a5c1bb9d97548a14a4399cba8bd4254940215a4a3a428dea5bb027b45386",
+    "language_semantics.py": "sha256:050ba8127218c15e98ffa744f411df324f8563151cd980753e1112a8e5b001d5",
+    "core/simplification_analyzer.py": "sha256:442cf476a4a19e583b04c8cd81fc75bfcb5e9cb92dbe8800ba5e1a1b9092b9ec"
+  },
+  "invariants": {
+    "stable_default_TS_JS_contract_preserved": true,
+    "experimental_python_remains_opt_in": true,
+    "private_normalize_path_symbol_preserved_by_alias": true,
+    "neutral_owner_reuse_does_not_expand_detector_cost": true,
+    "candidate_elimination_requires_regression_validation": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "13/13 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "F37": "PASS"
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS",
+    "targeted_path_domains": [
+      "F09",
+      "F10",
+      "F11",
+      "F15",
+      "F34",
+      "F35",
+      "F45",
+      "F48",
+      "F64"
+    ]
+  },
+  "next_target": {
+    "checkpoint": "F93_post_promotion_stop_decision",
+    "goal": "recompute economics after F92 and decide whether the broad UTC neutral-owner candidate merits proof or simplification work should stop"
+  }
+}

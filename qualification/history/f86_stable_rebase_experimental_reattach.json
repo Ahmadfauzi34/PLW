@@ -1,0 +1,101 @@
+{
+  "schema_version": "stable-rebase-experimental-reattach-v1",
+  "checkpoint": "F86",
+  "status": "STABLE_REBASED_EXPERIMENT_REATTACHED_AND_VALIDATED",
+  "stable_base": {
+    "checkpoint": "F85_selective_stable_promotion",
+    "artifact_sha256": "sha256:4ed33abdd521e5b24db077b1786d64ed6fcec9cb12ac556c7a75dccc6804cd4a"
+  },
+  "experimental_source": {
+    "checkpoint": "F83_local_simplification_frontier",
+    "artifact_sha256": "sha256:dc74dd0130d3d79aedd1fecdf5773bf7872bc0e577de03cb0a638b0795c34dda"
+  },
+  "architecture": {
+    "mode": "stable_default_dormant_experimental_overlay_v1",
+    "stable_default_boundary_preserved": true,
+    "experimental_activation": "explicit_self_host_only",
+    "wholesale_f83_tree_replacement": false,
+    "stable_registry_separate_from_experimental_registry": true
+  },
+  "default_stable_contract": {
+    "source_extensions": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx"
+    ],
+    "python_source_enabled": false,
+    "shared_graph_schema": "3.0.0-kernel",
+    "file_scanner_schema": "1.8.0-brief",
+    "cache_parser_identity": "imports-v1+shared-graph-3.0.0-kernel",
+    "tool_source_ownership_metadata_present_by_default": false
+  },
+  "experimental_contract": {
+    "activation_parameter": "include_tool_source=True",
+    "source_extensions": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".py"
+    ],
+    "python_ast_frontend": true,
+    "tool_source_ownership_boundary": true,
+    "cache_identity_separated": true,
+    "plw_simplify_available": true,
+    "simplification_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 32,
+      "remaining_debt_by_recommendation": {
+        "defer_cross_domain_until_neutral_owner_proven": 13,
+        "defer_payload_no_positive_patch_margin": 1,
+        "defer_public_api_wrapper": 3,
+        "defer_sequence_high_proof_surface": 9,
+        "defer_sequence_no_positive_net_gain": 6
+      },
+      "meaning": "no remaining mechanically recommended local-safe simplification; remaining debt needs architectural/API/high-risk/no-margin decisions"
+    }
+  },
+  "overlay_files": {
+    "language_semantics.py": "sha256:0aeabe3d6b2d00b555f176c4b0f4399f65a1ca9c91509c38b0368450af4db97c",
+    "core/shared_graph.py": "sha256:2cd8cfc14672c9305f6d40dec3f21132d866f0bb1b5822711bfaf10613d47a62",
+    "core/graph_cache.py": "sha256:8f9a75a705b236d23c77b912efd8ccb764c3979fbb3e16c12837e3fce16d26d2",
+    "codebase/file_scanner.py": "sha256:db012d0ae9223b090b923c8446993c0370cff02684ba0830c0ab6bb196ca48a4",
+    "core/simplification_analyzer.py": "sha256:a71bc4575c6ba60b7577b27947a6fb1ae69515d7d99b618d34cde60eb4000205",
+    "plw_cli.py": "sha256:389ac9ff28117505000e03575b8d1af92ce884d38a1a2fe68026ec8d47385c6f"
+  },
+  "stable_protected_files": {
+    "memory/retrieval.py": "sha256:c6ea3b6446d8cb7e26a56516264d23cc5dde021048a053b1d5e6f2cbddd541b7",
+    "memory/retrieval_cache.py": "sha256:33d9fddf343fd388bab076a13681034a29d2c0777b3bd7d33414a5d01bcea8a1",
+    "core/claim_obligations.py": "sha256:5acbfba0043a83aea9ddd2b7abe4c79d02cd71ab7b020c57b030538523763417",
+    "core/context_optimizer.py": "sha256:074f6f49296596d5e8cd23b817ea896dca798914dd061454cb9f72fea232582a",
+    "memory/graph.py": "sha256:16726fedec0de5e479d987af058f74d89005c8a0057d83006f04b1412824865d",
+    "memory/analyzers.py": "sha256:4e76edaa2f38d3474d45160bb4986570a6a2b63f9a7ca734c1cad2ada2356d40",
+    "memory/kan_extension.py": "sha256:1c7aa3d13c357c60b88df36ad33c9485e34aec676bf3bde5e4fea42f3fdb49c6",
+    "codebase/cycle_break.py": "sha256:10315a52d04f3d845643d7092f946720783dd5c0ca35b5bddfd70b1aee943183"
+  },
+  "invariants": {
+    "overlay_cannot_change_default_stable_source_boundary": true,
+    "stable_promoted_patch_units_remain_baseline_not_overlay": true,
+    "experimental_python_requires_explicit_activation": true,
+    "default_and_self_host_cache_identity_must_differ": true,
+    "frontier_reached_does_not_mean_total_debt_zero": true,
+    "experimental_tests_do_not_replace_stable_fixture_lane": true
+  },
+  "validation": {
+    "stable_critical_contracts": "PASS",
+    "experimental_overlay_contracts": "6/6 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "execution_note": "Validated in bounded batches; F37 passed isolated."
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS"
+  },
+  "next_transition": "continue_experiment_only_from_F86_or_keep_F85_as_stable_without_overlay"
+}

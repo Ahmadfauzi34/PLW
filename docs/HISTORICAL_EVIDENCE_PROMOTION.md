@@ -14,6 +14,27 @@ The Development Full archive contains experiments, fixtures, audit logs, interme
 
 Promotion therefore retains only evidence that is still useful for reconstructing the lineage of current architecture. A promoted exact record preserves the complete historical bytes, source SHA-256, repository path, Git blob identity, and an explicit no-new-authority boundary.
 
+## F85-F105 simplification / economics lineage — exact records retained
+
+The foundational simplification lineage is retained as **21 exact checkpoint records** from F85 through F105.
+
+Its machine-readable index is:
+
+`qualification/history/historical_evidence_promotion_f85_f105_v1.json`
+
+This group preserves the lineage from selective stable promotion and reference-machine economics through frontend reuse/compression, freeze/reopen governance, and the Rule3 dossier → shadow prototype → economics → retirement sequence.
+
+Five direct supporting witnesses are retained byte-exact because they are decision-relevant to F104/F105:
+
+```text
+4  pinned F104 Rule3 probe excerpts
+1  F105 compression-trial patch
+```
+
+The two large F105 analyzer snapshots remain archive-only. Their exact SHA-256 identities and decision role are preserved in the F105 checkpoint record, while the retained compression patch preserves the implementation delta. They are not required for normal current development; the pinned Development Full archive remains available for independent historical reconstruction.
+
+Large external probe/corpus snapshots from F94/F98/F99 remain outside the clean repository because their decision records already retain the relevant historical conclusions and identities; raw corpora are not current product authority.
+
 ## F106-F123 authority / agent lineage — exact records retained
 
 The authority/agent lineage is retained as **19 exact historical records** under `qualification/history/`, including two independent F120 records. Its machine-readable index is:
@@ -63,24 +84,26 @@ Its machine-readable index remains:
 
 ## Retained state
 
-Across the three bounded promotion ledgers the repository now retains:
+Across the bounded promotion ledgers the repository now retains:
 
 ```text
+F85-F105   21 exact decision records
 F106-F123  19 exact records
 F124-F127   4 exact records
 F128-F142  21 exact records
 ---------------------------
-Total      44 exact records
+Total      65 exact decision/history records
+
+F104/F105   5 exact supporting witnesses
+             2 archive-only analyzer snapshots
 ```
 
-For these retained groups the Development Full ZIP is not required for normal current work. It remains useful for historical reconstruction or independent byte verification.
+For the F85-F142 architectural lineage, the Development Full ZIP is no longer required for normal current development reasoning. It remains archival material for independent byte verification and broader historical archaeology.
 
 Historical retention does **not** grant runtime, mutation, execution, evidence-acceptance, postcondition, stable-promotion, upstream, or truth authority.
 
-## Remaining bounded historical group
+## Promotion frontier closed
 
-The remaining archive review is:
+The bounded historical promotion plan F85-F142 is complete.
 
-1. F85-F105 — simplification economics and detector-history evidence, only where still useful for current architecture.
-
-Raw fixture corpora and transient audit output should remain outside the product repository unless a retained decision record specifically depends on them.
+Raw fixture corpora and transient audit output remain outside the product repository unless a future retained decision record specifically requires them.

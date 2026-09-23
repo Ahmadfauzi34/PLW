@@ -1,0 +1,66 @@
+{
+  "schema_version": "reference-machine-economics-v1",
+  "checkpoint": "F91",
+  "status": "ECONOMICS_ADJUDICATED_STOP_NEW_DETECTOR_PROCEED_EXISTING_WITNESS",
+  "parent": {
+    "checkpoint": "F90",
+    "manifest_sha256": "sha256:7ad489982cd2ed902c531be3d8a03b0d1834114cba25bff327a2409910c8a5f3"
+  },
+  "scope": "marginal self-host economics for F87-F90; does not infer external-project reuse value",
+  "ledger": {
+    "reference_machine_loc_baseline_F86": 1008,
+    "reference_machine_loc_current_F90": 1123,
+    "net_reference_machine_loc_growth": 115,
+    "F87_target_loc_reduction": 2,
+    "F89_target_loc_reduction": 9,
+    "realized_target_loc_reduction_from_new_frontier": 11,
+    "self_host_realized_gain_per_net_machine_loc": 0.095652,
+    "F88_compression_recovered_loc": 134,
+    "F90_adjudication_added_loc": 94
+  },
+  "interpretation": {
+    "new_detector_capability": "NOT_JUSTIFIED_BY_CURRENT_SELF_HOST_EVIDENCE",
+    "reason": "recent realized target reduction is materially smaller than net reference-machine growth and no external reusable-coverage evidence is present in this experiment",
+    "external_reuse_value": "UNKNOWN_NOT_ZERO",
+    "existing_detector_witnesses_remain_actionable": "YES_IF_SEPARATE_OWNER_PROOF_PASSES"
+  },
+  "decision": {
+    "new_detector_policy": "STOP_NEW_DETECTOR_CAPABILITY",
+    "next_existing_witness": "PATH_NORMALIZATION_NEUTRAL_OWNER_PROOF",
+    "path_candidate": {
+      "owner": "language_semantics.normalize_path",
+      "owner_status": "EXISTING",
+      "estimated_duplicate_loc": 20,
+      "why_first": "neutral owner already exists; semantics are exact-body duplicate; no new detector or utility module required"
+    },
+    "utc_clock_candidate": {
+      "status": "DEFER",
+      "reason": "high proof surface across 14 owners and neutral clock owner is not yet proven"
+    },
+    "api_proof_candidates": {
+      "status": "DEFER",
+      "reason": "public compatibility proof not yet supplied"
+    }
+  },
+  "invariants": {
+    "economics_does_not_change_truth_authority": true,
+    "economics_does_not_authorize_patch_by_itself": true,
+    "external_reuse_value_not_inferred_from_self_host_only": true,
+    "existing_witness_may_proceed_without_new_detector_cost": true,
+    "F90_candidate_inventory_remains_source_of_architectural_disposition": true
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:442cf476a4a19e583b04c8cd81fc75bfcb5e9cb92dbe8800ba5e1a1b9092b9ec",
+    "experiments/f90_architectural_debt_adjudication.json": "sha256:7ad489982cd2ed902c531be3d8a03b0d1834114cba25bff327a2409910c8a5f3"
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "12/12 PASS",
+    "analyzer_implementation_changed_by_F91": false,
+    "decision": "STOP_NEW_DETECTOR_CAPABILITY_AND_PROCEED_EXISTING_PATH_WITNESS"
+  },
+  "next_target": {
+    "checkpoint": "F92_path_normalization_neutral_owner_promotion",
+    "goal": "use the already-proven language_semantics.normalize_path owner to remove remaining exact path-normalization duplicates through one selective-promotion patch group"
+  }
+}

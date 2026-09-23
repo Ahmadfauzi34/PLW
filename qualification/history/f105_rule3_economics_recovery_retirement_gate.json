@@ -1,0 +1,103 @@
+{
+  "schema_version": "rule3-economics-recovery-retirement-gate-v1",
+  "checkpoint": "F105",
+  "base_checkpoint": "F104",
+  "stable_baseline": "F85",
+  "status": "SHADOW_RULE3_RETIRED_AFTER_MATERIAL_COMPRESSION_STILL_FAILS_ACCEPTANCE_ECONOMICS",
+  "proposal_id": "js_terminal_const_expression_passthrough",
+  "recovery_trial": {
+    "authority": "LOCAL_TEMPORARY_WORKTREE_COMPRESSION_TRIAL_NOT_FINAL_RUNTIME",
+    "F104_shadow_cost_loc": 73,
+    "compressed_shadow_cost_loc": 36,
+    "compression_recovered_loc": 37,
+    "compression_recovery_fraction": 0.506849,
+    "F103_analyzer_loc": 1448,
+    "compressed_trial_analyzer_loc": 1484,
+    "compressed_trial_analyzer_sha256": "sha256:7d5e3029fd236fe58e28d9565583aed7e50c8a124702fd26d4b0f215bbfadee9",
+    "trial_patch": "experiments/f105_rule3_compression_trial.patch",
+    "trial_patch_sha256": "sha256:a53e3763e53da2090f786694b0bf4ab3ac53789694f1dc17194b893e1c6fb3df",
+    "rule3_occurrences_rediscovered": 4,
+    "expected_occurrences": 4,
+    "candidate_ids_preserved": [
+      "sha256:146d738436d251f0969be4b6c40bf12baf20b2c1145106e905b0105508d63409",
+      "sha256:2b57085251c407155e89272fec6d153b1d6603eefe00ba1ff00fd077bfcb4916",
+      "sha256:8d3a542fa1ae36ba44b467f90569ce5ccd6bded2145f279e643120b3e9b35e6d",
+      "sha256:d033c730551fa07d1a3b43667052dc934ba450f9a814c0ab8eee8b4acb31db0f"
+    ],
+    "F98_rule1_rule2_projection_preserved": true,
+    "F99_rule1_rule2_projection_preserved": true,
+    "single_mask_per_file_preserved": true,
+    "new_lexer_or_scanner": false,
+    "second_source_mask_pass": false,
+    "new_runtime_module": false,
+    "compressed_trial_snapshot": "experiments/f105_rule3_retirement_evidence/compressed_trial_analyzer.py.txt",
+    "compressed_trial_snapshot_sha256": "sha256:7d5e3029fd236fe58e28d9565583aed7e50c8a124702fd26d4b0f215bbfadee9",
+    "F104_shadow_snapshot": "experiments/f105_rule3_retirement_evidence/f104_shadow_analyzer.py.txt",
+    "F104_shadow_snapshot_sha256": "sha256:fad66c18675a99ff1a91b32ef03ceecf64ceb001573659c3b890efc8caccea43"
+  },
+  "economics": {
+    "proven_target_gain_loc": 4,
+    "original_effective_cost_loc": 73,
+    "compressed_effective_cost_loc": 36,
+    "required_equation": "proven_rule3_target_gain_loc >= effective_rule3_machine_cost_loc",
+    "original_equation_passes": false,
+    "compressed_equation_passes": false,
+    "compressed_equation": "4 >= 36",
+    "decision": "RETIRE_SHADOW_RULE3_DO_NOT_ACCEPT"
+  },
+  "retirement": {
+    "performed": true,
+    "final_runtime_rule3_present": false,
+    "final_ts_js_rule_count": 2,
+    "final_analyzer_restored_to_checkpoint_bytes": "F103/F102/F101 two-rule frontend",
+    "final_analyzer_loc": 1448,
+    "final_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "final_schema_version": "self-simplification-v13-js-frontend-reuse",
+    "historical_dossier_preserved": true,
+    "historical_shadow_prototype_proof_preserved": true,
+    "external_patch_performed": false,
+    "stable_promotion_performed": false,
+    "reason": "Even after a 50%+ implementation-cost recovery, proven target gain remains far below effective machine cost. Keeping the shadow detector would add permanent context/runtime surface without demonstrated amortization."
+  },
+  "post_retirement_contract": {
+    "F98_files": 20,
+    "F98_loc": 812,
+    "F98_mask_calls": 20,
+    "F98_rule1_candidates": 1,
+    "F98_rule2_candidates": 0,
+    "F99_files": 12,
+    "F99_loc": 755,
+    "F99_mask_calls": 12,
+    "F99_rule1_candidates": 0,
+    "F99_rule2_candidates": 0,
+    "rule3_metric_absent_from_final_runtime": true,
+    "self_host_remaining_candidate_count": 31,
+    "self_host_recommended_local_candidates": 0,
+    "self_host_status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "invariants": {
+    "failed_acceptance_economics_requires_retirement_or_new_preimplementation_evidence": true,
+    "compression_trial_does_not_authorize_acceptance": true,
+    "retirement_removes_runtime_cost_but_preserves_provenance": true,
+    "historical_prototype_success_does_not_imply_current_runtime_capability": true,
+    "external_mutation_requires_separate_authorization": true,
+    "stable_promotion_requires_separate_authorization": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E26 PASS in bounded runs",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "kernel_wiring_smoke": "PASS isolated",
+    "kernel_cli_contract": "PASS isolated",
+    "compileall": "PASS",
+    "final_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "final_analyzer_loc": 1448,
+    "self_host_frontier": "31 remaining / 0 recommended",
+    "retirement_replay": "compressed trial snapshot rediscovered 4/4 with one mask/file inside E26"
+  },
+  "next_target": {
+    "checkpoint": "F106",
+    "name": "Capability Lifecycle Contract",
+    "goal": "Generalize the proven dossier \u2192 prototype \u2192 economics \u2192 accept/retire sequence into an explicit lifecycle state machine without adding a new simplification rule."
+  }
+}

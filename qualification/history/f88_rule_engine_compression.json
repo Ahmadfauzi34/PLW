@@ -1,0 +1,109 @@
+{
+  "schema_version": "simplification-rule-engine-compression-v1",
+  "checkpoint": "F88",
+  "status": "RULE_ENGINE_COMPRESSED_AND_VALIDATED",
+  "parent": {
+    "checkpoint": "F87_intra_function_semantic_frontier",
+    "artifact_sha256": "sha256:45cdf819448709fb5a4dc8f1c61d409ded81405437eee56b692ba8ed3909941d"
+  },
+  "stable_base": "F85_selective_stable_promotion",
+  "architecture_base": "F86_stable_rebase_experimental_reattach",
+  "goal": "compress the experimental simplification reference machine before adding new detector classes, without changing F87 candidate/output semantics",
+  "compression": {
+    "analyzer_before_loc": 1163,
+    "analyzer_after_loc": 1029,
+    "loc_reduction": 134,
+    "relative_reduction": 0.115219,
+    "mechanisms": [
+      "canonical semantic candidate envelope via _candidate/_member",
+      "central recommendation lattice via _recommend_candidate",
+      "semantic detector orchestration/metrics registry via detector_specs"
+    ],
+    "file_split_used": false,
+    "code_moved_to_new_module": false,
+    "schema_version_changed": false,
+    "candidate_priority_policy_changed": false
+  },
+  "contract_equivalence": {
+    "synthetic_multirule_corpus_canonical_sha256": "sha256:5f651d9eeb146d731a842269bd69da8cc9a791a88d15082e82b546bf041c5538",
+    "synthetic_multirule_output": "BYTE_IDENTICAL_TO_F87",
+    "covered_rule_kinds": [
+      "redundant_branch_identical_body",
+      "direct_forwarding_wrapper",
+      "repeated_direct_statement_sequence",
+      "parallel_payload_return_normalization",
+      "terminal_temporary_inline"
+    ],
+    "self_host_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 36,
+      "stable_lane_shadow_candidates": 3,
+      "remaining_debt_by_recommendation": {
+        "defer_cross_domain_until_neutral_owner_proven": 12,
+        "defer_payload_no_positive_patch_margin": 1,
+        "defer_public_api_wrapper": 3,
+        "defer_sequence_high_proof_surface": 9,
+        "defer_sequence_no_positive_net_gain": 6,
+        "defer_stable_lane_requires_selective_promotion": 4,
+        "defer_until_narrower_candidates_exhausted": 1
+      }
+    }
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:80517f826501f6230dfd46c4f3302527b3beae8b99d3657db379d98287b32400",
+    "language_semantics.py": "sha256:050ba8127218c15e98ffa744f411df324f8563151cd980753e1112a8e5b001d5",
+    "experimental_fixture_check.py": "sha256:79d42d24d788bf6196fc7fe609366d99be8a1ea5d5670b6f00cb092aeb4389f7"
+  },
+  "next_work_map": [
+    {
+      "target": "F89_stable_shadow_promotion_review",
+      "scope": "adjudicate the four stable-lane shadow candidates through a selective-promotion gate; overlay still cannot mutate stable directly",
+      "entry_debt": {
+        "stable_shadow_total": 4,
+        "terminal_temporary": 3,
+        "exact_duplicate": 1
+      },
+      "done_when": "each candidate is promoted or explicitly deferred with stable-lane proof; no overlay direct mutation"
+    },
+    {
+      "target": "F90_architectural_debt_adjudication",
+      "scope": "evaluate cross-domain/public/high-proof-surface debt as architecture decisions, not mechanical refactors",
+      "entry_debt": {
+        "cross_domain": 12,
+        "public_api_wrapper": 3,
+        "high_proof_sequence": 9
+      },
+      "done_when": "remaining debt has an explicit architectural disposition and no false local-safe recommendation"
+    },
+    {
+      "target": "F91_reference_machine_economics",
+      "scope": "reconcile cumulative target simplification gain against detector/reference-machine capability cost before opening another detector frontier",
+      "done_when": "new detector work is justified by measured reusable coverage or deferred"
+    }
+  ],
+  "invariants": {
+    "F85_stable_default_contract_preserved": true,
+    "F86_opt_in_overlay_preserved": true,
+    "F87_frontier_semantics_preserved": true,
+    "compression_must_not_be_file_shuffling": true,
+    "candidate_envelope_is_not_proof": true,
+    "recommendation_lattice_is_not_truth_authority": true,
+    "future_detector_expansion_requires_cost_accounting": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "9/9 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "execution_note": "validated in bounded batches; F37 passed before wrapper boundary"
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS",
+    "synthetic_multirule_contract": "BYTE_IDENTICAL_TO_F87"
+  }
+}

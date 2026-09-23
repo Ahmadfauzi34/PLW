@@ -1,0 +1,189 @@
+{
+  "schema_version": "independent-angular-generalization-probe-v1",
+  "checkpoint": "F99",
+  "base_checkpoint": "F98",
+  "stable_baseline": "F85",
+  "status": "INDEPENDENT_CORPUS_CONFIRMS_SPARSE_YIELD_FREEZE_EXPANSION",
+  "goal": "Test the unchanged F97/F98 two-rule TS/JS frontend on an independent real Angular corpus before adding rule3 or applying any external patch.",
+  "corpus": {
+    "repository": "angular/angular",
+    "branch": "main",
+    "pinned_commit_sha": "8576f161ae45f810a49be6b2c4c666ccf5f5d3c4",
+    "scope": "all direct non-spec .ts files in adev/src/app plus all direct non-spec .ts files in adev/src/app/core/services observed at the pinned main commit",
+    "selection_rule_fixed_before_candidate_measurement": true,
+    "independent_from_F98_repository": true,
+    "source_fidelity": "12_OF_12_GIT_BLOB_EXACT",
+    "files": 12,
+    "source_loc": 755,
+    "snapshot_storage": "experiments/f99_independent_angular_corpus/**/*.ts.txt (materialized only into temporary .ts files during probe)",
+    "github_blobs": {
+      "adev/src/app/app-scroller.ts": {
+        "github_blob_sha": "894818c60b0e6bd6b46de92e074f4654fa57530c",
+        "snapshot_sha256": "sha256:37faf7363cd0615a5116640c5bc25c1064969f347d9e57f533a2b70238a69828",
+        "loc": 126
+      },
+      "adev/src/app/app.component.ts": {
+        "github_blob_sha": "028b20baa116fb236e61b0186524f2374c80a7d1",
+        "snapshot_sha256": "sha256:b5f472302b4cb74c99aa1b937db08d61c446e769b8d2c9fe1714d64dbb8c7f52",
+        "loc": 118
+      },
+      "adev/src/app/app.config.server.ts": {
+        "github_blob_sha": "9d4b6056f5311524f24ca58e5b70d3edbad43350",
+        "snapshot_sha256": "sha256:0486a3a4e2e3e3e1e3164e7ed14a74ba52df1140811a714d3c730ebba640c882",
+        "loc": 22
+      },
+      "adev/src/app/app.config.ts": {
+        "github_blob_sha": "6eafe1c71ad20f783ca7f21cd9ec264bed58af2c",
+        "snapshot_sha256": "sha256:bf75b8cac4ad27c158c7dd33959cd713863d4aa9f7b1e373baae8782a0b51110",
+        "loc": 59
+      },
+      "adev/src/app/core/services/a-dev-title-strategy.ts": {
+        "github_blob_sha": "60662a00dd19f24fcce4b84f4be65bc96496a04d",
+        "snapshot_sha256": "sha256:70e580a2cbc3a2eb89d25b4ec4c02b6f7070f85ac8f5682470e72ce25ae80994",
+        "loc": 60
+      },
+      "adev/src/app/core/services/content-loader.service.ts": {
+        "github_blob_sha": "f488e348463f565973801b66787b49cc30a08b88",
+        "snapshot_sha256": "sha256:349321b473d67f6c0cd5f01138f2be24b38c87f2397579592a7dbaaf9c2b3476",
+        "loc": 47
+      },
+      "adev/src/app/core/services/example-content-loader.service.ts": {
+        "github_blob_sha": "426b22f61630e45f9bd82272a8fae7b9865f391f",
+        "snapshot_sha256": "sha256:94383c34f8a2f0210f7dec46c9e2b05d00bd280b60533f82b9d3e0255c33d53e",
+        "loc": 19
+      },
+      "adev/src/app/core/services/header.service.ts": {
+        "github_blob_sha": "200d6d87439598de8ff335787ea2794fa84eca15",
+        "snapshot_sha256": "sha256:7ff8846faf2cfee26c4f491446e899ca34149f74e036e096509c3260fb0a0a5b",
+        "loc": 40
+      },
+      "adev/src/app/core/services/theme-manager.service.ts": {
+        "github_blob_sha": "3e6d1ead0d677d16a1196d21dbf2d4bb70d20ba9",
+        "snapshot_sha256": "sha256:957aeb8e5338ea18c928284da2d28f5061f8e01b195d01cb2b4f54bb9cf19610",
+        "loc": 100
+      },
+      "adev/src/app/core/services/version-manager.service.ts": {
+        "github_blob_sha": "f8e455c3f14d52b70abb3c9d682c8c2d29dbac81",
+        "snapshot_sha256": "sha256:3f924da4835c2e04aa3475f74d961352d2da746a9b4cedd8b87ca115e4b5a550",
+        "loc": 103
+      },
+      "adev/src/app/environment.ts": {
+        "github_blob_sha": "4a8b03193fc3a6cf403bef7c67c26c1ef754abd7",
+        "snapshot_sha256": "sha256:35ca673915359a8261f3540b72047a718eeed88ccbed36f575fef06f01e60da7",
+        "loc": 29
+      },
+      "adev/src/app/main.component.ts": {
+        "github_blob_sha": "daab349e693717446ae0348a1107ee28aaf5ac89",
+        "snapshot_sha256": "sha256:c1ed02d1b81da19a6f9be63f5dc050be933c3fe8e9cd31a7b29f67c118a0d48e",
+        "loc": 32
+      }
+    }
+  },
+  "yield": {
+    "total_candidates": 0,
+    "candidate_density_per_1000_loc": 0.0,
+    "estimated_gain_loc": 0,
+    "rule1": {
+      "kind": "js_try_catch_identical_terminal_return",
+      "candidates": 0,
+      "density_per_1000_loc": 0.0,
+      "estimated_gain_loc": 0
+    },
+    "rule2": {
+      "kind": "js_terminal_literal_temporary",
+      "candidates": 0,
+      "density_per_1000_loc": 0.0,
+      "estimated_gain_loc": 0
+    }
+  },
+  "generalization": {
+    "F98_repository": "Ahmadfauzi34/Tool.py",
+    "F98_source_loc": 812,
+    "F98_candidates": 1,
+    "F99_repository": "angular/angular",
+    "F99_source_loc": 755,
+    "F99_candidates": 0,
+    "combined_source_loc": 1567,
+    "combined_candidates": 1,
+    "combined_candidate_density_per_1000_loc": 0.6382,
+    "combined_rule1_candidates": 1,
+    "combined_rule2_candidates": 0,
+    "interpretation": "The only observed candidate across both real corpora remains the project-specific getScannerScript case from F98; no candidate generalized to the independent official Angular corpus.",
+    "sample_boundary": "1567 LOC across two repositories is useful engineering evidence, not a statistical claim about all TypeScript/Angular code."
+  },
+  "frontend_reuse_economics": {
+    "F96_initial_frontend_delta_loc": 254,
+    "F97_rule2_marginal_delta_loc": 86,
+    "F98_analyzer_delta_loc": 0,
+    "F99_analyzer_delta_loc": 0,
+    "total_analyzer_delta_vs_F95": 340,
+    "active_ts_js_rules": 2,
+    "combined_real_corpus_loc": 1567,
+    "combined_observed_potential_gain_loc": 1,
+    "raw_loc_cost_to_observed_potential_gain_ratio": "340:1",
+    "status": "REUSE_INFRASTRUCTURE_PROVEN_BUT_GENERALIZED_YIELD_TOO_SPARSE_TO_EXPAND"
+  },
+  "decision": {
+    "add_third_rule_now": false,
+    "expand_lexer_or_scanner_now": false,
+    "apply_getScannerScript_external_patch_now": false,
+    "retain_existing_two_rule_frontend_for_now": true,
+    "reason": "The frontend is reusable but a second independent Angular corpus produced zero candidates; adding rule3 would increase detector cost before demonstrated generalized yield."
+  },
+  "implementation": {
+    "core_simplification_analyzer_sha256": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "same_analyzer_bytes_as_F98": true,
+    "new_rule_added": false,
+    "new_lexer_or_scanner": false,
+    "new_masking_engine": false,
+    "new_filesystem_scan": false
+  },
+  "self_host_state": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "corpus_snapshots_do_not_enter_self_host_scan": true
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F99_is_current_development": true,
+    "official_angular_repository_not_mutated": true,
+    "F98_repository_not_mutated": true,
+    "two_rule_frontend_unchanged": true,
+    "zero_F99_candidates_is_corpus_evidence_not_universal_rule_uselessness": true,
+    "generalization_probe_does_not_authorize_rule3": true,
+    "self_host_debt_remains_31": true
+  },
+  "next_target": {
+    "checkpoint": "F100",
+    "name": "Frontend Cost Compression Gate",
+    "goal": "Without adding rules, determine whether the +340 LOC two-rule TS/JS frontend can be materially compressed while preserving E17-E20 behavior; if not, freeze it as experimental infrastructure rather than expanding it."
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "experimental_fixture_check.py": "sha256:843b3dedbce8c8702ffd2b1e1992c4eb653546e7f9978559c6afeb4a51093880",
+    "Readme.md": "sha256:b4ae85c8321091bf5a9d137d2b33003ef3192130b6d6e9b708e42356354054a6",
+    "Skill.md": "sha256:508ac0f58ade0baa6b2e5f8d6a7ca279bcb988d42871ab2692e056d1033718ff"
+  },
+  "validation": {
+    "source_fidelity": "12/12 Git blob SHA exact at angular/angular main commit 8576f161ae45f810a49be6b2c4c666ccf5f5d3c4",
+    "independent_corpus_probe": "12 TypeScript files / 755 LOC / 0 rule1 candidates / 0 rule2 candidates",
+    "combined_F98_F99": "2 repositories / 1567 LOC / 1 candidate total / 0 rule2 candidates / 0.6382 candidates per 1k LOC",
+    "experimental_overlay": "E01-E10 PASS; E11-E16 PASS; E17-E20 PASS in bounded batches",
+    "stable_critical": {
+      "F15": "PASS",
+      "F35": "PASS",
+      "F46": "PASS",
+      "F64": "PASS",
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS",
+    "full_stable_lane_rerun": "NOT_REQUIRED_NO_STABLE_OR_ANALYZER_IMPLEMENTATION_CHANGE",
+    "self_host_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 31
+    }
+  }
+}

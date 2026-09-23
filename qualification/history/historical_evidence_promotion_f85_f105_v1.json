@@ -1,0 +1,264 @@
+{
+  "schema_version": "plw-historical-evidence-promotion-group-v1",
+  "group": "F85-F105",
+  "current_repository_role": "canonical current state",
+  "historical_archive_role": "supporting lineage only",
+  "source_archive": {
+    "name": "ai_studio_tool_js_ts_simplification_v2_development_full.zip",
+    "sha256": "sha256:9d9ee884c2bffc9ea3ac582c3a806610b2ca27f804fb00b4d082c71eb380d276",
+    "size_bytes": 2970045
+  },
+  "selection_policy": {
+    "decision_records": "retain all checkpoint JSON records F85-F105 byte-exact",
+    "supporting_witnesses": "retain five direct byte-exact F104/F105 witnesses; keep two large analyzer snapshots archive-only because their hashes and decision role are already bound by F105 plus the retained compression patch",
+    "raw_external_corpora_retained": false,
+    "transient_audit_output_retained": false
+  },
+  "rule": "Historical evidence never overrides newer main state. Promotion does not grant runtime, mutation, postcondition, evidence-acceptance, stable-promotion, or truth authority.",
+  "records": [
+    {
+      "checkpoint": "F100",
+      "source_path": "tools/ai_studio_tool/experiments/f100_bitwarden_large_corpus_remote_probe.json",
+      "source_sha256": "sha256:5a7c0d7e5be24012eaa3a670a0380cb6ce684ed4e5f1bec201cf59bdbefdafa3",
+      "repository_path": "qualification/history/f100_bitwarden_large_corpus_remote_probe.json",
+      "repository_git_blob_sha1": "7bf912a2bd12901ed9befd4da9fcf1cd6eadcbd1",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F101",
+      "source_path": "tools/ai_studio_tool/experiments/f101_frontend_cost_compression_gate.json",
+      "source_sha256": "sha256:9a74b7ae5f33e59185b927526710aaeda42ab208b54456a2e8a999bd56b92057",
+      "repository_path": "qualification/history/f101_frontend_cost_compression_gate.json",
+      "repository_git_blob_sha1": "14b48f216342c23acdf694d3f1243965c9d33a33",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F102",
+      "source_path": "tools/ai_studio_tool/experiments/f102_frontend_freeze_reopen_contract.json",
+      "source_sha256": "sha256:4f110ad3872307e6c688b41a632018d5811b0ac017fcae987268ea7748f252ec",
+      "repository_path": "qualification/history/f102_frontend_freeze_reopen_contract.json",
+      "repository_git_blob_sha1": "23156dcd468106d5b026acd3bb51c4293dcadc02",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F103",
+      "source_path": "tools/ai_studio_tool/experiments/f103_rule3_evidence_dossier.json",
+      "source_sha256": "sha256:5f04c3c78fbeacf92c3511f942595a61a5da86fdfa2df968f71e57f13e0f293c",
+      "repository_path": "qualification/history/f103_rule3_evidence_dossier.json",
+      "repository_git_blob_sha1": "52d8859596b46769e8b9b247b6b99f0919ec54a9",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F104",
+      "source_path": "tools/ai_studio_tool/experiments/f104_rule3_shadow_prototype_cost_proof.json",
+      "source_sha256": "sha256:5be3d130a4de6db613b94a587d13f98c8247bf786b513fa6e9cb2bb0c102221b",
+      "repository_path": "qualification/history/f104_rule3_shadow_prototype_cost_proof.json",
+      "repository_git_blob_sha1": "64904e9c45a0b870fad743635339f4ee07d17d0c",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F105",
+      "source_path": "tools/ai_studio_tool/experiments/f105_rule3_economics_recovery_retirement_gate.json",
+      "source_sha256": "sha256:092e4415c6a0d59b6ca5e3ac0a6b9fe82de81257f3b196fc025f266763730768",
+      "repository_path": "qualification/history/f105_rule3_economics_recovery_retirement_gate.json",
+      "repository_git_blob_sha1": "6ad8ec91dd43c4a54bce938190338628924bbb27",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F85",
+      "source_path": "tools/ai_studio_tool/experiments/f85_selective_stable_promotion.json",
+      "source_sha256": "sha256:ab59700695d7e27daf92aed8af9ceebe0e11bb3217dfdc71dac52cc753763358",
+      "repository_path": "qualification/history/f85_selective_stable_promotion.json",
+      "repository_git_blob_sha1": "585eaf8858665cec1b60ede84bfbd4ec347340b2",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F86",
+      "source_path": "tools/ai_studio_tool/experiments/f86_stable_rebase_experimental_reattach.json",
+      "source_sha256": "sha256:902a702d0fa268a9e5f9b30cc78cf9d2a5b1ca0876e3d5e7a8b3f281657edd39",
+      "repository_path": "qualification/history/f86_stable_rebase_experimental_reattach.json",
+      "repository_git_blob_sha1": "4478f0249567d04073db06f7cef48cc8a1ff3a61",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F87",
+      "source_path": "tools/ai_studio_tool/experiments/f87_intra_function_semantic_frontier.json",
+      "source_sha256": "sha256:a24bdb0e5011728cc9ca425d28c7844c51864f9891c3c968297525a378be1647",
+      "repository_path": "qualification/history/f87_intra_function_semantic_frontier.json",
+      "repository_git_blob_sha1": "05509271f6ab1e918d4a70003ae351d8165e865c",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F88",
+      "source_path": "tools/ai_studio_tool/experiments/f88_rule_engine_compression.json",
+      "source_sha256": "sha256:45a784d52198de437cc881ce36dd34e11fd6d2a104528bd8f8efc643b8124ace",
+      "repository_path": "qualification/history/f88_rule_engine_compression.json",
+      "repository_git_blob_sha1": "b3854d3c509d1d1072b63b733ce9923f2646349e",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F89",
+      "source_path": "tools/ai_studio_tool/experiments/f89_stable_shadow_promotion.json",
+      "source_sha256": "sha256:233c4210247df9bbae08e08e12d1849dac453e20428fbd1e4f0ce5cb6ba00093",
+      "repository_path": "qualification/history/f89_stable_shadow_promotion.json",
+      "repository_git_blob_sha1": "868f1b61a7ab9786b6a311e119810215e55af572",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F90",
+      "source_path": "tools/ai_studio_tool/experiments/f90_architectural_debt_adjudication.json",
+      "source_sha256": "sha256:7ad489982cd2ed902c531be3d8a03b0d1834114cba25bff327a2409910c8a5f3",
+      "repository_path": "qualification/history/f90_architectural_debt_adjudication.json",
+      "repository_git_blob_sha1": "019e7676f6c949a6eb2a2d6c9875a17776fcdda5",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F91",
+      "source_path": "tools/ai_studio_tool/experiments/f91_reference_machine_economics.json",
+      "source_sha256": "sha256:af6be6fa13713a9f3362b0bc57d5de42b0daafdf3f8c6600d5c71afde5e139d6",
+      "repository_path": "qualification/history/f91_reference_machine_economics.json",
+      "repository_git_blob_sha1": "d68ae9d141cefdce9f8c028c6842445e82d8c7f3",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F92",
+      "source_path": "tools/ai_studio_tool/experiments/f92_path_normalization_neutral_owner_promotion.json",
+      "source_sha256": "sha256:6633e683bb06c4e0a8c77f16910ecf85b67c12faa4f2910cee5b23f97034ae3b",
+      "repository_path": "qualification/history/f92_path_normalization_neutral_owner_promotion.json",
+      "repository_git_blob_sha1": "a7979de8881091f461edb0a3d25eb2f335905024",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F93",
+      "source_path": "tools/ai_studio_tool/experiments/f93_post_promotion_stop_decision.json",
+      "source_sha256": "sha256:fba6fcce164c0d22797d56e8653b5a22476524491520130c49d3a7f223f6af87",
+      "repository_path": "qualification/history/f93_post_promotion_stop_decision.json",
+      "repository_git_blob_sha1": "da01d1e593044570f9232cf43921ddf11f1a35af",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F94",
+      "source_path": "tools/ai_studio_tool/experiments/f94_external_generalization_probe.json",
+      "source_sha256": "sha256:e2fcc69083b23ed4fe2fe816f0ec7e6b8914f77fb1b6623e87a54bd946c63152",
+      "repository_path": "qualification/history/f94_external_generalization_probe.json",
+      "repository_git_blob_sha1": "8a07018596bd452e826302b6995ef27aa55e86ac",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F95",
+      "source_path": "tools/ai_studio_tool/experiments/f95_canonical_anatomy_bridge.json",
+      "source_sha256": "sha256:4ad9603dc513647f1c9464cf05b70a686c1b7b645f84ba6539749148b95fe9cc",
+      "repository_path": "qualification/history/f95_canonical_anatomy_bridge.json",
+      "repository_git_blob_sha1": "e2bd748953ea1df28dfb70c296e8f232ccc0e7bb",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F96",
+      "source_path": "tools/ai_studio_tool/experiments/f96_js_semantic_frontend_v1.json",
+      "source_sha256": "sha256:9f362ae3cc9157ed98b08a634027da43ebe162dabad908a9a8a1e04b5c8a38f2",
+      "repository_path": "qualification/history/f96_js_semantic_frontend_v1.json",
+      "repository_git_blob_sha1": "72ba7b738a841671175aef5a4051253fc212aac7",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F97",
+      "source_path": "tools/ai_studio_tool/experiments/f97_angular_candidate_proof_frontend_reuse.json",
+      "source_sha256": "sha256:1c91627a7892baf49208b114689de16de83cf996de3fc8e4f79b49380ff03f35",
+      "repository_path": "qualification/history/f97_angular_candidate_proof_frontend_reuse.json",
+      "repository_git_blob_sha1": "b3aa7ed43d12142d3f0070d375376d8f70453ca5",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F98",
+      "source_path": "tools/ai_studio_tool/experiments/f98_rule_reuse_yield_probe.json",
+      "source_sha256": "sha256:e3f7d8a5ed6a06157c01081ef4d7b17d9b26d9356cd72f373ab547b7aae192c0",
+      "repository_path": "qualification/history/f98_rule_reuse_yield_probe.json",
+      "repository_git_blob_sha1": "4c3266a47d83d0ce3a0d5da6d460f40f44fda65f",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F99",
+      "source_path": "tools/ai_studio_tool/experiments/f99_independent_angular_generalization.json",
+      "source_sha256": "sha256:67bed15acd68de0063e58a631f80bb537087749252de545c5a6125d5c7b1a29a",
+      "repository_path": "qualification/history/f99_independent_angular_generalization.json",
+      "repository_git_blob_sha1": "198fa66172e708e80e8c0ce3835c11e6b1d810d1",
+      "retained_bytes_match_source_sha256": true
+    }
+  ],
+  "supporting_witnesses": [
+    {
+      "role": "F104_PINNED_PROBE_EXCERPT",
+      "source_path": "tools/ai_studio_tool/experiments/f104_rule3_probe_sources/angular/packages/compiler/src/render3/view/i18n/icu_serializer.ts.txt",
+      "source_sha256": "sha256:2fd98d7f9743a7caecdfd13976b4d30ad3e1f1f4ba9e2f96806dd31920c81b7a",
+      "repository_path": "qualification/history/support/f104_rule3_probe_sources/angular/packages/compiler/src/render3/view/i18n/icu_serializer.ts.txt",
+      "repository_git_blob_sha1": "962f2eed0aa0de3c67062894ac3709c2fb6c7eb6",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "role": "F104_PINNED_PROBE_EXCERPT",
+      "source_path": "tools/ai_studio_tool/experiments/f104_rule3_probe_sources/angular/packages/core/src/render3/after_render/manager.ts.txt",
+      "source_sha256": "sha256:94cc5091c306c3a65e1da64ae511b700e9aac5a179c20536ce84bcb7d708579d",
+      "repository_path": "qualification/history/support/f104_rule3_probe_sources/angular/packages/core/src/render3/after_render/manager.ts.txt",
+      "repository_git_blob_sha1": "3e7cec62a75a37d748982016aaf6b8769abca30d",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "role": "F104_PINNED_PROBE_EXCERPT",
+      "source_path": "tools/ai_studio_tool/experiments/f104_rule3_probe_sources/bitwarden/libs/common/src/platform/services/fido2/ecdsa-utils.ts.txt",
+      "source_sha256": "sha256:96a0dc177d0accb3279fb5b80a3356610d33b9be294760bd8376ab7187dd5d5e",
+      "repository_path": "qualification/history/support/f104_rule3_probe_sources/bitwarden/libs/common/src/platform/services/fido2/ecdsa-utils.ts.txt",
+      "repository_git_blob_sha1": "68668e4bb950ddb0d04d7d58e2af24b1a2408058",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "role": "F104_PINNED_PROBE_EXCERPT",
+      "source_path": "tools/ai_studio_tool/experiments/f104_rule3_probe_sources/bitwarden/libs/tools/generator/core/src/engine/username-randomizer.ts.txt",
+      "source_sha256": "sha256:cc6ed9f703b0f929859d26c5a13fb98d242444172ee3c3a240bef0f5d25ad76e",
+      "repository_path": "qualification/history/support/f104_rule3_probe_sources/bitwarden/libs/tools/generator/core/src/engine/username-randomizer.ts.txt",
+      "repository_git_blob_sha1": "768d1826210c16f07968dd61f2255ee53ea95917",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "role": "F105_RETIREMENT_WITNESS",
+      "source_path": "tools/ai_studio_tool/experiments/f105_rule3_compression_trial.patch",
+      "source_sha256": "sha256:a53e3763e53da2090f786694b0bf4ab3ac53789694f1dc17194b893e1c6fb3df",
+      "repository_path": "qualification/history/support/f105_rule3_retirement/f105_rule3_compression_trial.patch",
+      "repository_git_blob_sha1": "3cd56042742af197dfa9ccd192cb1320af24d39d",
+      "retained_bytes_match_source_sha256": true
+    }
+  ],
+  "summary": {
+    "F85_F105_exact_checkpoint_records_retained": 21,
+    "direct_supporting_witnesses_retained": 5,
+    "archive_only_large_analyzer_snapshots": 2,
+    "pending_exact_checkpoint_records": 0,
+    "source_archive_required_for_normal_current_work": false,
+    "source_archive_role_after_promotion": "historical reconstruction / independent byte verification / archive-only raw snapshots"
+  },
+  "historical_frontier": {
+    "F85": "selective stable promotion baseline",
+    "F91": "reference-machine economics",
+    "F95": "canonical anatomy bridge",
+    "F96": "JS semantic frontend",
+    "F101": "frontend cost compression gate",
+    "F102": "freeze/reopen contract",
+    "F103": "rule3 evidence dossier",
+    "F104": "rule3 shadow prototype / actual cost proof",
+    "F105": "compression recovery still fails economics; rule3 retired",
+    "handoff": "F106 capability lifecycle"
+  },
+  "archive_only_witnesses": [
+    {
+      "role": "F105_RETIREMENT_WITNESS",
+      "source_path": "tools/ai_studio_tool/experiments/f105_rule3_retirement_evidence/compressed_trial_analyzer.py.txt",
+      "source_sha256": "sha256:7d5e3029fd236fe58e28d9565583aed7e50c8a124702fd26d4b0f215bbfadee9",
+      "archive_only_reason": "Large intermediate analyzer snapshot; checkpoint F105 and the retained compression patch preserve the decision-relevant lineage. Raw snapshot remains in the pinned Development Full archive for independent reconstruction."
+    },
+    {
+      "role": "F105_RETIREMENT_WITNESS",
+      "source_path": "tools/ai_studio_tool/experiments/f105_rule3_retirement_evidence/f104_shadow_analyzer.py.txt",
+      "source_sha256": "sha256:fad66c18675a99ff1a91b32ef03ceecf64ceb001573659c3b890efc8caccea43",
+      "archive_only_reason": "Large intermediate analyzer snapshot; checkpoint F105 and the retained compression patch preserve the decision-relevant lineage. Raw snapshot remains in the pinned Development Full archive for independent reconstruction."
+    }
+  ]
+}

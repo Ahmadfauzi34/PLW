@@ -1,0 +1,121 @@
+{
+  "schema_version": "bitwarden-large-corpus-remote-yield-probe-v1",
+  "checkpoint": "F100",
+  "base_checkpoint": "F99",
+  "stable_baseline": "F85",
+  "status": "BITWARDEN_BOUNDED_LARGE_CORPUS_REMOTE_AUDIT_REINFORCES_SPARSE_YIELD",
+  "target_pivot": {
+    "original_planned_F100": "Frontend Cost Compression Gate",
+    "user_requested_intervening_probe": "Try bitwarden/clients because it is a materially larger TypeScript production repository",
+    "cost_compression_moved_to": "F101"
+  },
+  "repository": {
+    "name": "bitwarden/clients",
+    "default_branch": "main",
+    "pinned_commit_sha": "29af15b6ce384b48d55b38e807e8841612aed33a",
+    "github_repo_size_kb": 1366376,
+    "selection_rule": "all direct non-spec .ts files in apps/browser/src/autofill/background; no recursion",
+    "selection_rule_fixed_before_candidate_measurement": true,
+    "selected_files": {
+      "apps/browser/src/autofill/background/auto-submit-login.background.ts": {
+        "blob_sha": "07f0b98318a21f9f450e48f8550f08b759b92aaa",
+        "bytes": 23559
+      },
+      "apps/browser/src/autofill/background/autofill-orchestrator.ts": {
+        "blob_sha": "d58b98de6ecac71e283ea3b1e226414bcd129d83",
+        "bytes": 10385
+      },
+      "apps/browser/src/autofill/background/context-menus.background.ts": {
+        "blob_sha": "3b106aafece706df4d0e77ab32a27350468c221c",
+        "bytes": 2047
+      },
+      "apps/browser/src/autofill/background/notification.background.ts": {
+        "blob_sha": "fd2711e82c7295a73620fde8059fb6a5a121df26",
+        "bytes": 71953
+      },
+      "apps/browser/src/autofill/background/overlay-notifications.background.ts": {
+        "blob_sha": "dea6dc5c44ce9ce719279215668b62e00ad193a1",
+        "bytes": 23946
+      },
+      "apps/browser/src/autofill/background/overlay.background.ts": {
+        "blob_sha": "70c87e0fe461a640b14f91c2242d639170ad1554",
+        "bytes": 130211
+      },
+      "apps/browser/src/autofill/background/tabs.background.ts": {
+        "blob_sha": "b76997c0ae92b6a5b9bd814d595a0edb7d11542e",
+        "bytes": 3386
+      },
+      "apps/browser/src/autofill/background/web-request.background.ts": {
+        "blob_sha": "de66309b6f76e224c5cbdbf0ba5e865ba47dc4ad",
+        "bytes": 4249
+      }
+    },
+    "selected_file_count": 8,
+    "selected_source_bytes": 269736,
+    "source_line_lower_bound": 6775,
+    "source_line_lower_bound_note": "Conservative bound from inspected pinned-source cursor positions; exact LOC was not materialized locally and is intentionally not claimed.",
+    "source_fidelity": "8_OF_8_PINNED_GIT_BLOB_IDENTITIES_FETCHED_VIA_GITHUB_CONNECTOR"
+  },
+  "execution_authority": {
+    "mode": "REMOTE_LEXICAL_AUDIT",
+    "local_analyzer_execution_on_bitwarden_blob_bytes": false,
+    "reason": "GitHub connector exposed pinned UTF-8 content and searchable response resources but did not provide a direct raw-file materialization path into the local runtime.",
+    "claim_boundary": "Result is a bounded audit against the exact F99 rule predicates, not an attestation that local PLW executed over these blob bytes.",
+    "rule1_audit": "all block try/catch sites in selected files inspected; none has identical non-throwing literal terminal return in both try and catch",
+    "rule2_audit": "all const sites in selected files inspected for adjacent terminal return of the same binding; no non-throwing literal temporary matches"
+  },
+  "yield": {
+    "rule1": "js_try_catch_identical_terminal_return",
+    "rule1_candidates": 0,
+    "rule2": "js_terminal_literal_temporary",
+    "rule2_candidates": 0,
+    "total_candidates": 0,
+    "estimated_potential_gain_loc": 0
+  },
+  "economics": {
+    "F96_initial_frontend_delta_loc": 254,
+    "F97_rule2_marginal_delta_loc": 86,
+    "F98_analyzer_delta_loc": 0,
+    "F99_analyzer_delta_loc": 0,
+    "F100_analyzer_delta_loc": 0,
+    "total_analyzer_delta_vs_F95": 340,
+    "status": "LARGE_PRODUCTION_SLICE_STILL_SHOWS_NO_GENERALIZED_YIELD_DO_NOT_EXPAND_RULESET",
+    "interpretation": "A much larger production TypeScript slice produced no candidate under the existing two rules. This strengthens the freeze-expansion decision, while remote-audit authority prevents overclaiming exact local detector execution."
+  },
+  "implementation": {
+    "core_simplification_analyzer_sha256": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "F99_core_simplification_analyzer_sha256": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "same_analyzer_bytes_as_F99": true,
+    "new_rule_added": false,
+    "new_lexer_or_scanner": false,
+    "new_masking_engine": false,
+    "new_filesystem_scan": false
+  },
+  "decision": {
+    "add_third_rule_now": false,
+    "expand_lexer_or_scanner_now": false,
+    "apply_any_bitwarden_external_patch": false,
+    "apply_getScannerScript_external_patch_now": false,
+    "retain_two_rule_frontend_as_experimental": true,
+    "move_to_frontend_cost_compression": true
+  },
+  "self_host_state": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F100_is_current_development": true,
+    "bitwarden_repository_not_mutated": true,
+    "F99_analyzer_unchanged": true,
+    "remote_audit_is_not_mislabeled_as_local_execution": true,
+    "zero_candidates_is_corpus_evidence_not_universal_rule_uselessness": true,
+    "self_host_debt_remains_31": true
+  },
+  "next_target": {
+    "checkpoint": "F101",
+    "name": "Frontend Cost Compression Gate",
+    "goal": "Compress the +340 LOC two-rule frontend without adding rules and preserve E17-E21 behavior; if material compression is not possible, freeze the frontend as experimental infrastructure."
+  }
+}

@@ -1,0 +1,10 @@
+export class AfterRenderImpl {
+  execute(sequence: any, phase: any) {
+    sequence.pipelinedValue = this.maybeTrace(() => {
+      const hookFn = sequence.hooks[phase]!;
+      const value = hookFn(sequence.pipelinedValue);
+      return value;
+    }, sequence.snapshot);
+  }
+  maybeTrace(fn: any, snapshot: any) { return fn(); }
+}

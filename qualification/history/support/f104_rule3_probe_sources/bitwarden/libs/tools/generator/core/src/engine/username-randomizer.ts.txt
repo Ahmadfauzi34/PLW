@@ -1,0 +1,8 @@
+export class UsernameRandomizer {
+  async randomWords() {
+    const parts = [];
+    const result = parts.join("");
+
+    return result;
+  }
+}

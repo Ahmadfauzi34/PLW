@@ -1,0 +1,111 @@
+{
+  "schema_version": "js-semantic-frontend-v1",
+  "checkpoint": "F96",
+  "base_checkpoint": "F95",
+  "stable_baseline": "F85",
+  "status": "JS_SEMANTIC_FRONTEND_V1_VALIDATED",
+  "goal": "Activate the first TS/JS semantic simplification rule through the F95 canonical SharedGraph anatomy bridge without adding a second scanner or mutating the stable baseline.",
+  "frontend": {
+    "name": "js_lexical_v1_try_catch_terminal_return",
+    "source_authority": "shared_graph.file_map",
+    "inventory_authority": "core.shared_graph",
+    "supported_extensions": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx"
+    ],
+    "rule_count": 1,
+    "rule": "js_try_catch_identical_terminal_return",
+    "rule_scope": "identical non-throwing literal terminal return in try and catch; no finally; prefixes/catch boundary preserved",
+    "coverage_complete": false,
+    "python_api_compatibility": "analyze_python_simplification is alias of analyze_simplification"
+  },
+  "external_angular_probe": {
+    "repository": "Ahmadfauzi34/Tool.py",
+    "branch": "main",
+    "source_fidelity": "EXACT_GITHUB_EXCERPT_FOR_SERVER_FUNCTION_PLUS_FULL_SMALL_SERVICE_FILES",
+    "github_blob_shas": {
+      "src/server.ts": "9564e2a6a99c54a07feb647cc9d00caf96f06925",
+      "src/services/data.processor.ts": "d781de2a21d8476c3ed83b520c287a76a024c6a1",
+      "src/services/cache.service.ts": "4066b0eb45707318c62e052872f4372d2239e7da",
+      "src/services/user.service.ts": "c6ca4feb5611a0d681bfc58a7a73e92b657a7b89"
+    },
+    "repro_source_hashes": {
+      "experiments/f96_angular_probe_sources/src/server.ts.txt": "sha256:206486460da5f5899b7d2d5bdf1edffc00fb50922a7ba4d7e1fcf6f6823ae6c1",
+      "experiments/f96_angular_probe_sources/src/services/data.processor.ts.txt": "sha256:d4239f78d8f14bae78ad3d472265298540b0f5354cf5749b3ee39e6284ef1e6e",
+      "experiments/f96_angular_probe_sources/src/services/cache.service.ts.txt": "sha256:b66a3c5cce902bfc1c429ede4b59b76ca4772b9b4f00faee031ed46de2f6b022",
+      "experiments/f96_angular_probe_sources/src/services/user.service.ts.txt": "sha256:f6dc3602504c8a972753be4d8bbb17603711fea42860bec47396509728077884"
+    },
+    "probe_files": 4,
+    "probe_loc": 92,
+    "candidate_count": 1,
+    "candidate_file": "src/server.ts",
+    "candidate_symbol": "getScannerScript",
+    "candidate_kind": "js_try_catch_identical_terminal_return",
+    "recommendation": "candidate_js_try_catch_return_hoist",
+    "proof_surface_risk": "low",
+    "external_repository_mutated": false
+  },
+  "behavioral_differential": {
+    "transform_model": "preserve try-prefix and catch boundary; hoist only identical non-throwing literal return",
+    "access_resolves": "PASS",
+    "access_rejects": "PASS",
+    "access_call_count_preserved": true,
+    "return_value_preserved": true,
+    "runtime": "Node v22.16.0 sandbox model",
+    "note": "bounded transform-model differential; not a replacement for target repository tests"
+  },
+  "negative_witness_cases": {
+    "different_return_literals": "must_not_candidate",
+    "potentially_throwing_return_expression": "must_not_candidate",
+    "finally_present": "must_not_candidate",
+    "template_literal_spoof": "must_not_candidate"
+  },
+  "economics": {
+    "F95_analyzer_loc": 1185,
+    "F96_analyzer_loc": 1439,
+    "frontend_implementation_loc_delta": 254,
+    "external_actionable_candidate_observed": 1,
+    "external_realized_target_gain_loc": 0,
+    "interpretation": "F96 establishes reusable TS/JS lexical frontend infrastructure and one bounded rule; the external candidate is not counted as realized gain until a target patch is separately validated."
+  },
+  "self_host_state": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "js_candidates_in_PLW": 0
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F96_is_development_overlay": true,
+    "single_shared_graph_snapshot_per_analysis": true,
+    "no_independent_ts_js_filesystem_scan": true,
+    "candidate_is_not_patch": true,
+    "external_repo_not_mutated": true,
+    "nonthrowing_literal_required_before_return_hoist_candidate": true,
+    "catch_boundary_must_remain": true,
+    "ts_js_v1_frontend_is_not_exhaustive_semantic_coverage": true
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:7e59e58f379c8ef68cd78454dae11ff85a72b9dbbd1710165f88500a040b5e3a",
+    "plw_cli.py": "sha256:67a0e8c1f958931b4aacb775dd665168b52043ffafe7c97515128c89db711425"
+  },
+  "validation": {
+    "experimental_overlay": "E01-E17 PASS",
+    "stable_minimal_fixtures": "F01-F64 PASS",
+    "stable_minimal_fixture_count": 61,
+    "F37_memory_runtime_integrity": "PASS",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "compileall": "PASS",
+    "positive_rule_fixture": "PASS",
+    "negative_rule_cases": "4/4 PASS",
+    "angular_external_probe": "1 actionable candidate observed",
+    "bounded_node_behavioral_differential": "resolve PASS; reject PASS; access call count preserved",
+    "self_host_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 31
+    }
+  }
+}

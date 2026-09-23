@@ -1,0 +1,4 @@
+function getParamSize(keySize: number) {
+  const result = ((keySize / 8) | 0) + (keySize % 8 === 0 ? 0 : 1);
+  return result;
+}

@@ -1,0 +1,654 @@
+{
+  "schema_version": "architectural-debt-adjudication-v1",
+  "checkpoint": "F90",
+  "status": "ARCHITECTURAL_DEBT_ADJUDICATED_NO_PATCH",
+  "parent": {
+    "checkpoint": "F89_stable_shadow_promotion",
+    "manifest_sha256": "sha256:233c4210247df9bbae08e08e12d1849dac453e20428fbd1e4f0ce5cb6ba00093"
+  },
+  "stable_base": "F85_selective_stable_promotion",
+  "architecture_base": "F86_stable_rebase_experimental_reattach",
+  "goal": "adjudicate every remaining F89 simplification debt as an architecture/API/economic decision without opening a new detector frontier or silently patching target code",
+  "entry_frontier": {
+    "remaining_candidate_count": 32,
+    "recommended_local_candidates": 0,
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "adjudication": {
+    "status": "ARCHITECTURAL_DEBT_ADJUDICATED",
+    "unadjudicated_candidate_count": 0,
+    "disposition_counts": {
+      "API_PROOF_CANDIDATE": 3,
+      "DEFER": 11,
+      "KEEP": 16,
+      "NEUTRAL_OWNER_CANDIDATE": 2
+    },
+    "owner_decision_counts": {
+      "CROSS_DOMAIN_SEMANTICS_NEED_NEUTRAL_OWNER_PROOF": 2,
+      "EXISTING_NEUTRAL_OWNER_ALREADY_PRESENT": 1,
+      "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW": 9,
+      "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING": 8,
+      "NEW_NEUTRAL_CLOCK_OWNER_MAY_JUSTIFY_BROAD_DEDUP": 1,
+      "NO_POSITIVE_NET_SIMPLIFICATION_GAIN": 7,
+      "PROOF_LANE_INDEPENDENCE_IS_INTENTIONAL": 1,
+      "PUBLIC_COMPATIBILITY_SURFACE_MUST_BE_PROVEN": 3
+    },
+    "patches_applied_by_F90": 0,
+    "meaning": "remaining debt has an explicit architecture/API/economic disposition; F90 opens no new detector frontier"
+  },
+  "decision_summary": {
+    "KEEP": "debt whose abstraction/removal currently has no positive net gain or would create more coupling than it removes",
+    "DEFER": "potential simplification whose proof surface or domain ownership is not sufficiently bounded",
+    "NEUTRAL_OWNER_CANDIDATE": "cross-domain utility-like debt worth a dedicated owner/proof transition, not an immediate patch",
+    "API_PROOF_CANDIDATE": "public forwarding surface that requires caller/compatibility proof before removal"
+  },
+  "neutral_owner_candidates": [
+    {
+      "family": "path_normalization",
+      "candidate_id": "sha256:2a4cc94ad8f212e3fc3e778cc22a745558434cfac9237f73b4639a427442a350",
+      "owner": "language_semantics.normalize_path",
+      "owner_status": "EXISTING"
+    },
+    {
+      "family": "utc_timestamp_formatting",
+      "candidate_id": "sha256:42b0e72d524a598d14d6c3ce203680c50a1e3eafd1a11ea961bc2584cbe39fad",
+      "owner": "UNPROVEN_UTC_TIME_SEMANTICS_OWNER",
+      "owner_status": "NEEDS_ARCHITECTURE_PROOF"
+    }
+  ],
+  "api_proof_candidates": [
+    "normalize_recall_text",
+    "normalize_recall_path",
+    "transition_identity"
+  ],
+  "candidate_inventory": [
+    {
+      "candidate_id": "sha256:d46b4c977d99c0536487208305875c277c90b244e613e815cae58bbf9dcb772e",
+      "kind": "direct_forwarding_wrapper",
+      "names": [
+        "normalize_recall_text"
+      ],
+      "files": [
+        "memory/retrieval.py"
+      ],
+      "recommendation": "defer_public_api_wrapper",
+      "disposition": "API_PROOF_CANDIDATE",
+      "owner_decision": "PUBLIC_COMPATIBILITY_SURFACE_MUST_BE_PROVEN",
+      "neutral_owner": null,
+      "reopen_condition": "prove all callers/consumers and provide compatibility or deprecation transition before wrapper removal"
+    },
+    {
+      "candidate_id": "sha256:e268ca626aa146907fa40c8e4809d7bd6a969cee14a5b545aa36865e68d0692b",
+      "kind": "direct_forwarding_wrapper",
+      "names": [
+        "normalize_recall_path"
+      ],
+      "files": [
+        "memory/retrieval.py"
+      ],
+      "recommendation": "defer_public_api_wrapper",
+      "disposition": "API_PROOF_CANDIDATE",
+      "owner_decision": "PUBLIC_COMPATIBILITY_SURFACE_MUST_BE_PROVEN",
+      "neutral_owner": null,
+      "reopen_condition": "prove all callers/consumers and provide compatibility or deprecation transition before wrapper removal"
+    },
+    {
+      "candidate_id": "sha256:987684fbff075944bf8d8a06528c65de7b6dd5d3b0f2c44f95e9243cdeefa096",
+      "kind": "direct_forwarding_wrapper",
+      "names": [
+        "transition_identity"
+      ],
+      "files": [
+        "core/proof_transitions.py"
+      ],
+      "recommendation": "defer_public_api_wrapper",
+      "disposition": "API_PROOF_CANDIDATE",
+      "owner_decision": "PUBLIC_COMPATIBILITY_SURFACE_MUST_BE_PROVEN",
+      "neutral_owner": null,
+      "reopen_condition": "prove all callers/consumers and provide compatibility or deprecation transition before wrapper removal"
+    },
+    {
+      "candidate_id": "sha256:78c67a2a641d79dd398e1e4a21f889c0e4b5b08de7bbe8f63239ce50127c1a61",
+      "kind": "parallel_payload_return_normalization",
+      "names": [
+        "register_transition_intents"
+      ],
+      "files": [
+        "memory/state_transition_model.py"
+      ],
+      "recommendation": "defer_payload_no_positive_patch_margin",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:921562b4c387c2e84cc25a963ba1076b4da453cd4d9fce8128f56e9568322f60",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "find_admissible_runtime_attestations",
+        "find_runtime_attestation_attempts"
+      ],
+      "files": [
+        "core/runtime_attestation.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:1c3ac9bf91d473830ad79ac79a00d3eaf330a7e1bfd5e0cc4757063431a1839f",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "analyze_circular",
+        "analyze_manifold"
+      ],
+      "files": [
+        "memory/analyzers.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:9e24e696608f381fa6789407790191945fa63bc7ce5f0f1833f0cbf5970c040b",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "kernel_memory_analyze",
+        "kernel_memory_establish",
+        "kernel_memory_steer"
+      ],
+      "files": [
+        "hott_kernel.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:2a4cc94ad8f212e3fc3e778cc22a745558434cfac9237f73b4639a427442a350",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_normalize_path",
+        "normalize_path"
+      ],
+      "files": [
+        "codebase/cycle_break.py",
+        "codebase/topology_analyzers.py",
+        "core/context_optimizer.py",
+        "core/graph_cache.py",
+        "language_semantics.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "NEUTRAL_OWNER_CANDIDATE",
+      "owner_decision": "EXISTING_NEUTRAL_OWNER_ALREADY_PRESENT",
+      "neutral_owner": "language_semantics.normalize_path",
+      "reopen_condition": "selectively migrate remaining callers to language_semantics.normalize_path and prove cache/path identity compatibility"
+    },
+    {
+      "candidate_id": "sha256:42b0e72d524a598d14d6c3ce203680c50a1e3eafd1a11ea961bc2584cbe39fad",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_now",
+        "_now_iso",
+        "_utc_now",
+        "_utc_timestamp"
+      ],
+      "files": [
+        "context/fibration.py",
+        "core/analyzer_cache.py",
+        "core/command_telemetry.py",
+        "core/context_accountability.py",
+        "core/decision_lineage.py",
+        "core/graph_cache.py",
+        "core/runtime_attestation.py",
+        "hott_kernel.py",
+        "memory/delayed_costs.py",
+        "memory/provenance.py",
+        "memory/retrieval_cache.py",
+        "memory/state_transition_model.py",
+        "memory/store.py",
+        "memory/transition_outcomes.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "NEUTRAL_OWNER_CANDIDATE",
+      "owner_decision": "NEW_NEUTRAL_CLOCK_OWNER_MAY_JUSTIFY_BROAD_DEDUP",
+      "neutral_owner": "UNPROVEN_UTC_TIME_SEMANTICS_OWNER",
+      "reopen_condition": "define one stdlib-only UTC timestamp contract and prove serialization/time-format compatibility across all owners"
+    },
+    {
+      "candidate_id": "sha256:7bf91c475f930f2d8d0bd189dc2d70aff663979f59b430d6291c88cdd43340e6",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_dfs"
+      ],
+      "files": [
+        "codebase/topology_analyzers.py",
+        "memory/analyzers.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "DEFER",
+      "owner_decision": "CROSS_DOMAIN_SEMANTICS_NEED_NEUTRAL_OWNER_PROOF",
+      "neutral_owner": null,
+      "reopen_condition": "identify a neutral owner and prove domain-specific semantics remain equivalent before extraction"
+    },
+    {
+      "candidate_id": "sha256:1d2772e29dd6fc9c781589d09559a3ff448d6829b1bc0b53086e2d321681c0fc",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "bridge_auto",
+        "get_bridge_candidates"
+      ],
+      "files": [
+        "memory/store.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:e6efde4e0480d5ff98a030ee523d63de84345a3c6ce7b06e79ea2eb01c4128c0",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "cmd_context",
+        "cmd_kan",
+        "cmd_transitions"
+      ],
+      "files": [
+        "plw_cli.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:e5922ac3493e7ced89bea9ece5181d4db65dd24b5c0e45d676828f3e2889a6d6",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_fingerprint",
+        "_sha",
+        "_sha_text"
+      ],
+      "files": [
+        "core/decision_lineage.py",
+        "core/proof_state.py",
+        "memory/state_transition_model.py",
+        "memory/transition_outcomes.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:cd7f7a6ea55ad329c092e09370947cdba1c58dee5b6135c8690f63abae23030d",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_fingerprint",
+        "_id",
+        "_outcome_id"
+      ],
+      "files": [
+        "core/outcome_reconciliation.py",
+        "memory/state_transition_model.py",
+        "memory/transition_outcomes.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:048e4c6512ac680eba9d9309f877378f6be77360dc2f4aec092d5150a8dd953b",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "union"
+      ],
+      "files": [
+        "codebase/hott_analyzers.py",
+        "memory/analyzers.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "DEFER",
+      "owner_decision": "CROSS_DOMAIN_SEMANTICS_NEED_NEUTRAL_OWNER_PROOF",
+      "neutral_owner": null,
+      "reopen_condition": "identify a neutral owner and prove domain-specific semantics remain equivalent before extraction"
+    },
+    {
+      "candidate_id": "sha256:9ac0f5a833fc04dfd844d404e3000036219b1417917b8eaa4e706b1b7fb52231",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "kernel_memory_establish",
+        "kernel_memory_steer"
+      ],
+      "files": [
+        "hott_kernel.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:a239bc47d75c7f2114954984b190ad7e5b2afab26397f136ec13cbad2452c399",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_saturate"
+      ],
+      "files": [
+        "codebase/hott_analyzers.py",
+        "core/synthesizer.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:8f3160d568c412e806349d1659d47d7f4c34ee85fbaf3b1229f56793606510fb",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "test_f01_basic_relative",
+        "test_f02_extensionless",
+        "test_f04_tsx_jsx",
+        "test_f09_circular",
+        "test_f13_multi_root",
+        "test_f15_alias_paths"
+      ],
+      "files": [
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:8bbded363d29a1d2ce5b6aff06a2f411f7114f8e1f8269f5a763bc9e1c6ff5e2",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "cmd_context",
+        "cmd_transitions"
+      ],
+      "files": [
+        "plw_cli.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:76fc68bc512834ee6251a17ae0841a5e77c66e8bb876ba9e10ca974a0af7568f",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "cmd_check",
+        "cmd_steer"
+      ],
+      "files": [
+        "plw_cli.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:9158397c352d6b389cc4ca93b0a63ea9d8066e4243705e241049cc9271576a1f",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "__init__"
+      ],
+      "files": [
+        "codebase/hott_analyzers.py",
+        "memory/analyzers.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:6fddd32e9d65251c2302dde73d756a2dd660293afe08a3a1d4d61b2c8b24f0ef",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_clamp"
+      ],
+      "files": [
+        "core/shadow_policy.py",
+        "memory/q_value_model.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:18c5c2b20ce381cf39fb4837e1fcbbc4e9716aea83c598e9f4df06b5cbe7c94c",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "find"
+      ],
+      "files": [
+        "codebase/hott_analyzers.py",
+        "memory/analyzers.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:ea3014b232c6cab814fe5d56482a9819d6929a2cc62f85411d5694b55513d53a",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_canonical",
+        "_compact_json_bytes"
+      ],
+      "files": [
+        "core/decision_lineage.py",
+        "memory/retrieval_cache.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:206fda29b0f4cf1a7bf281860d26dc5435798621a45bc46d5e9fb52397cd50b0",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "_clamp01"
+      ],
+      "files": [
+        "codebase/hott_analyzers.py",
+        "core/synthesizer.py"
+      ],
+      "recommendation": "defer_cross_domain_until_neutral_owner_proven",
+      "disposition": "KEEP",
+      "owner_decision": "LOCAL_DUPLICATION_CHEAPER_THAN_NEW_CROSS_DOMAIN_COUPLING",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if a neutral owner already exists or reuse expands enough to outweigh dependency cost"
+    },
+    {
+      "candidate_id": "sha256:f134dad3ebe76584d3bbe99e6339450e034f6b94639f404d3039f3523686d225",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "test_f04_tsx_jsx",
+        "test_f12_unreferenced_files",
+        "test_f13_multi_root"
+      ],
+      "files": [
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:b75e4b77ec11809774aecabc0f9c32b651b43875b968268eb00065b063756803",
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "expect"
+      ],
+      "files": [
+        "experimental_fixture_check.py",
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_until_narrower_candidates_exhausted",
+      "disposition": "KEEP",
+      "owner_decision": "PROOF_LANE_INDEPENDENCE_IS_INTENTIONAL",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if stable and experimental proof harnesses acquire a neutral test-support layer without coupling their execution lanes"
+    },
+    {
+      "candidate_id": "sha256:63d5ce6ccaa5d3881dd31d78360e1b5487c484d90f2a665edc97b9fc09c48f7a",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "cmd_q_values",
+        "cmd_transition_model"
+      ],
+      "files": [
+        "plw_cli.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:2f84d856511e7886cbb4373806be2ab8cc34100c57add6d7eac046041d56e060",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "test_f04_tsx_jsx",
+        "test_f13_multi_root"
+      ],
+      "files": [
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:48b028a009d8d107aa9670c7cf3f571e8520d9a57bc23e662c2fdd12015316d1",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "kernel_synthesize",
+        "kernel_xanalyze"
+      ],
+      "files": [
+        "hott_kernel.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:1ee4fbbd59c95a9533611149dd9c779467cc1b9ad4578a36bfab677cb2b93d0a",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "test_f09_circular",
+        "test_f10_graph_metrics"
+      ],
+      "files": [
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    },
+    {
+      "candidate_id": "sha256:76fd510b25ce9b3f7871fad097f392f3916f805591ccf825766d828ea0dab7f3",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "test_f01_basic_relative",
+        "test_f02_extensionless"
+      ],
+      "files": [
+        "fixture_check.py"
+      ],
+      "recommendation": "defer_sequence_no_positive_net_gain",
+      "disposition": "KEEP",
+      "owner_decision": "NO_POSITIVE_NET_SIMPLIFICATION_GAIN",
+      "neutral_owner": null,
+      "reopen_condition": "reopen only if surrounding code changes create a positive measured patch margin"
+    }
+  ],
+  "invariants": {
+    "candidate_count_must_remain_32_during_F90": true,
+    "F90_opens_no_new_detector_frontier": true,
+    "F90_applies_no_target_simplification_patch": true,
+    "every_candidate_requires_explicit_disposition": true,
+    "KEEP_is_not_proof_of_irrelevance": true,
+    "DEFER_is_not_rejection": true,
+    "neutral_owner_candidate_is_not_patch_authority": true,
+    "api_proof_candidate_preserves_public_surface_until_proven": true,
+    "stable_default_contract_preserved": true,
+    "experimental_python_remains_opt_in": true
+  },
+  "reference_machine_cost": {
+    "F89_analyzer_loc": 1029,
+    "F90_analyzer_loc": 1123,
+    "F90_added_analyzer_loc": 94,
+    "target_patch_loc_reduction": 0,
+    "note": "F90 adds decision/accountability capability; economics must be evaluated separately before opening another detector frontier"
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:442cf476a4a19e583b04c8cd81fc75bfcb5e9cb92dbe8800ba5e1a1b9092b9ec",
+    "plw_cli.py": "sha256:87c812bbab12c6ac71703a4648f2c540236b882024f52a142283ae7918deb0e0",
+    "experimental_fixture_check.py": "sha256:7efa6c0783c21aa6e88779f6993548cdc4750b9dd0f65a0193928f53d0ce7ef3"
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "11/11 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "execution_note": "validated in three bounded batches; F37 PASS"
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS",
+    "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "remaining_candidate_count": 32,
+    "unadjudicated_candidate_count": 0
+  },
+  "next_target": {
+    "checkpoint": "F91_reference_machine_economics",
+    "goal": "compare cumulative target simplification value against detector/adjudication machinery cost and decide whether either neutral-owner candidate justifies another implementation cycle",
+    "decision_point": "PROCEED_WITH_BOUNDED_NEUTRAL_OWNER_PROOF or STOP_NEW_SIMPLIFICATION_CAPABILITY"
+  }
+}

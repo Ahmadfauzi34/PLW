@@ -1,0 +1,187 @@
+{
+  "schema_version": "selective-stable-promotion-v1",
+  "checkpoint": "F85",
+  "status": "PROMOTED_AND_VALIDATED",
+  "stable_oracle": {
+    "checkpoint": "F64_evidence_roles",
+    "artifact_sha256": "sha256:a52d8a99fdf90da90249fc2f9002092a7e9e17c42eb64cd6c3522deee01a2a01"
+  },
+  "source_gate": {
+    "f64_hash_matches_f84_oracle": true,
+    "promotion_mode": "patch_units_only",
+    "full_f83_or_f84_file_tree_replacement": false
+  },
+  "applied_groups": [
+    {
+      "id": "tsjs_shared_resolution_subset",
+      "source": "F66 subset",
+      "files": [
+        "language_semantics.py",
+        "core/shared_graph.py",
+        "codebase/file_scanner.py"
+      ],
+      "excluded": [
+        "Python AST frontend",
+        ".py source activation",
+        "include_tool_source ownership",
+        "self-host cache identity",
+        "experimental schema widening"
+      ]
+    },
+    {
+      "id": "memory_retrieval_local_dedup",
+      "source": [
+        "F69",
+        "F70"
+      ],
+      "files": [
+        "memory/retrieval.py",
+        "memory/retrieval_cache.py"
+      ]
+    },
+    {
+      "id": "claim_context_local_simplification",
+      "source": [
+        "F73",
+        "F75"
+      ],
+      "files": [
+        "core/claim_obligations.py",
+        "core/context_optimizer.py"
+      ]
+    },
+    {
+      "id": "memory_graph_and_payload_simplification",
+      "source": [
+        "F77",
+        "F79",
+        "F81",
+        "F82"
+      ],
+      "files": [
+        "memory/graph.py",
+        "memory/retrieval_cache.py",
+        "memory/analyzers.py",
+        "memory/kan_extension.py"
+      ]
+    },
+    {
+      "id": "cycle_break_local_payload",
+      "source": [
+        "F80"
+      ],
+      "files": [
+        "codebase/cycle_break.py"
+      ]
+    }
+  ],
+  "explicitly_not_promoted": [
+    "Python self-host capability",
+    "include_tool_source ownership machinery",
+    "core/simplification_analyzer.py",
+    "plw simplify command",
+    "architectural/frontier experiment policies",
+    "experimental F65-F84 harness/state as runtime capability"
+  ],
+  "stable_boundary_assertions": {
+    "source_extensions": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx"
+    ],
+    "python_source_enabled": false,
+    "include_tool_source_api_present": false,
+    "stable_shared_graph_schema": "3.0.0-kernel",
+    "stable_file_scanner_schema": "1.8.0-brief",
+    "language_semantics_contains_python_frontend": false
+  },
+  "changed_python_files": [
+    {
+      "file": "language_semantics.py",
+      "loc_before": 0,
+      "loc_after": 173,
+      "loc_delta": 173
+    },
+    {
+      "file": "codebase/cycle_break.py",
+      "loc_before": 505,
+      "loc_after": 501,
+      "loc_delta": -4
+    },
+    {
+      "file": "codebase/file_scanner.py",
+      "loc_before": 1316,
+      "loc_after": 1085,
+      "loc_delta": -231
+    },
+    {
+      "file": "memory/retrieval.py",
+      "loc_before": 771,
+      "loc_after": 774,
+      "loc_delta": 3
+    },
+    {
+      "file": "memory/analyzers.py",
+      "loc_before": 659,
+      "loc_after": 654,
+      "loc_delta": -5
+    },
+    {
+      "file": "memory/retrieval_cache.py",
+      "loc_before": 1070,
+      "loc_after": 1051,
+      "loc_delta": -19
+    },
+    {
+      "file": "memory/kan_extension.py",
+      "loc_before": 831,
+      "loc_after": 830,
+      "loc_delta": -1
+    },
+    {
+      "file": "memory/graph.py",
+      "loc_before": 391,
+      "loc_after": 282,
+      "loc_delta": -109
+    },
+    {
+      "file": "core/claim_obligations.py",
+      "loc_before": 452,
+      "loc_after": 450,
+      "loc_delta": -2
+    },
+    {
+      "file": "core/shared_graph.py",
+      "loc_before": 1095,
+      "loc_after": 888,
+      "loc_delta": -207
+    },
+    {
+      "file": "core/context_optimizer.py",
+      "loc_before": 1410,
+      "loc_after": 1406,
+      "loc_delta": -4
+    }
+  ],
+  "net_python_loc_delta": -406,
+  "validation": {
+    "F01_F36": "PASS",
+    "F38_F64": "PASS",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "F37_memory_runtime_integrity": "PASS",
+    "compileall": "PASS",
+    "full_registry": {
+      "minimal_fixture_count": 61,
+      "integration_smoke_count": 2,
+      "registry_duplicates": [],
+      "F01_F64": "PASS",
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS",
+      "compileall": "PASS",
+      "execution_note": "Long registry validated in bounded batches; F37 passed isolated after wrapper-timeout retries."
+    }
+  },
+  "next_transition": "user_adopts_F85_as_stable_successor_or_keeps_as_candidate"
+}
