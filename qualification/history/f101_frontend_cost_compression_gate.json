@@ -1,0 +1,113 @@
+{
+  "schema_version": "frontend-cost-compression-gate-v1",
+  "checkpoint": "F101",
+  "base_checkpoint": "F100",
+  "stable_baseline": "F85",
+  "status": "FRONTEND_COST_COMPRESSED_AND_RULE_EXPANSION_FROZEN",
+  "goal": "Compress the existing two-rule TS/JS frontend without adding semantic rules, changing candidate semantics, or adding another scanner/lexer.",
+  "acceptance_gate": {
+    "material_loc_reduction_min": 50,
+    "material_frontend_cost_recovery_fraction_min": 0.15,
+    "mask_pass_reduction_fraction_min": 0.5,
+    "F97_F100_behavior_must_remain_unchanged": true,
+    "self_host_frontier_must_remain_closed": true
+  },
+  "compression": {
+    "F100_analyzer_loc": 1525,
+    "F101_analyzer_loc": 1448,
+    "loc_reduction": 77,
+    "relative_total_analyzer_reduction": 0.050492,
+    "F95_analyzer_loc": 1185,
+    "F100_frontend_delta_vs_F95": 340,
+    "F101_frontend_delta_vs_F95": 263,
+    "frontend_cost_recovered_loc": 77,
+    "frontend_cost_recovery_fraction": 0.226471,
+    "mechanisms": [
+      "canonical TS/JS source snapshot now carries one shared length-preserving non-code mask per file",
+      "rule1 and rule2 consume the same prepared source/mask tuple instead of masking each file independently",
+      "common JS candidate envelope/location assembly centralized in _js_candidate_row",
+      "bounded lexical helpers compacted without changing accepted literal/control-flow semantics"
+    ],
+    "code_moved_to_new_module": false,
+    "new_rule_added": false,
+    "new_lexer_or_scanner": false,
+    "schema_version_changed": false
+  },
+  "frontend_work_cost": {
+    "measurement_corpus": "F98 20-file / 812-LOC Git-blob-exact TypeScript corpus",
+    "F100_mask_calls": 40,
+    "F101_mask_calls": 20,
+    "files": 20,
+    "mask_calls_per_file_before": 2.0,
+    "mask_calls_per_file_after": 1.0,
+    "mask_pass_reduction_fraction": 0.5,
+    "reason": "the two existing rules now reuse one prepared mask instead of invoking _mask_js_noncode independently"
+  },
+  "contract_equivalence": {
+    "F98_semantic_projection_sha256": "sha256:7dc5ba0979a53c4ce57e804c20f03bddcd22d28a1cdace4093e77e0f9f391463",
+    "F99_semantic_projection_sha256": "sha256:279568b42601674edef36963530c971d1e8333eec9b4f77729b5e753e0774c29",
+    "F98_projection_before_after": "BYTE_IDENTICAL",
+    "F99_projection_before_after": "BYTE_IDENTICAL",
+    "getScannerScript_candidate_id": "sha256:9efccfa79488dfbba44fafe93a02cf56f3ebc57e4d60e63a464e0da84da34e59",
+    "F97_rule_count": 2,
+    "candidate_schema_changed": false,
+    "candidate_priority_policy_changed": false
+  },
+  "self_host_state": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "js_rule1_candidates": 0,
+    "js_rule2_candidates": 0,
+    "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "implementation": {
+    "F100_core_simplification_analyzer_sha256": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "F101_core_simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "F100_manifest_sha256": "sha256:5a7c0d7e5be24012eaa3a670a0380cb6ce684ed4e5f1bec201cf59bdbefdafa3",
+    "F100_artifact_sha256": "sha256:bd7a2251947619b27b38130ef5c42003f94a13eb8473139750ca68f53a76ad8e",
+    "experimental_fixture_check_sha256": "sha256:4acdd7b4707472b9d47acda08acd02b86d29be019bd3fdf450bbb24a76bf52d6"
+  },
+  "economics": {
+    "rules_supported": 2,
+    "F100_average_delta_loc_per_rule_vs_F95": 170.0,
+    "F101_average_delta_loc_per_rule_vs_F95": 131.5,
+    "observed_external_validated_sandbox_gain_loc": 1,
+    "F98_F99_combined_candidate_count": 1,
+    "F100_large_remote_slice_candidate_count": 0,
+    "status": "COST_REDUCED_BUT_YIELD_STILL_TOO_SPARSE_TO_JUSTIFY_RULE3",
+    "interpretation": "Compression improves the reusable frontend cost basis but does not erase the sparse-yield evidence; rule expansion stays frozen."
+  },
+  "decision": {
+    "accept_compression": true,
+    "add_third_rule_now": false,
+    "expand_lexer_or_scanner_now": false,
+    "freeze_existing_two_rule_frontend": true,
+    "external_repo_mutation_authorized": false
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F101_is_development_overlay": true,
+    "single_shared_graph_snapshot_per_analysis": true,
+    "single_js_mask_per_source_file": true,
+    "candidate_is_not_patch": true,
+    "compression_is_not_new_semantic_capability": true,
+    "zero_yield_is_not_universal_uselessness_proof": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E22 PASS in bounded batches",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "stable_full_registry": "not rerun at F101 because stable/default implementation was not modified",
+    "kernel_wiring_smoke": "PASS (isolated)",
+    "kernel_cli_contract": "PASS (isolated)",
+    "compileall": "PASS",
+    "F98_semantic_projection": "BYTE_IDENTICAL_TO_F100",
+    "F99_semantic_projection": "BYTE_IDENTICAL_TO_F100",
+    "F98_mask_passes": "40 -> 20 for 20 files"
+  },
+  "next_target": {
+    "checkpoint": "F102",
+    "name": "Frontend Freeze / Reopen Contract",
+    "goal": "Formalize measurable conditions that may reopen TS/JS rule expansion; absent those conditions, keep the compressed two-rule frontend frozen and reuse-only."
+  }
+}
