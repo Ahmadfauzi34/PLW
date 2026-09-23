@@ -1,0 +1,78 @@
+{
+  "schema_version": "workflow-accountability-chain-query-v1",
+  "checkpoint": "F113",
+  "base_checkpoint": "F112",
+  "stable_baseline": "F85",
+  "status": "WORKFLOW_ACCOUNTABILITY_CHAIN_QUERY_ACTIVE",
+  "goal": "Provide one bounded read-only verified view from F111 relevance accountability to F112 delivery accountability without exposing raw prompt/source/evidence or granting new authority.",
+  "design": {
+    "accepted_start_ids": [
+      "F111 capability_workflow_relevance accountability id",
+      "F112 capability_workflow_delivery accountability id"
+    ],
+    "resolves_delivery_to_parent_relevance": true,
+    "finds_sibling_delivery_records": true,
+    "parent_child_binding_revalidated": true,
+    "generic_ledger_forged_child_fails_closed": true,
+    "delivery_view_default_limit": 16,
+    "delivery_view_max_limit": 64,
+    "ledger_delivery_scan_cap": 256,
+    "raw_prompt_exposed": false,
+    "raw_source_exposed": false,
+    "raw_evidence_exposed": false,
+    "ledger_write_added": false,
+    "context_optimizer_io_added": false,
+    "kernel_io_added": false,
+    "cli": "plw accountability-chain <sha256:decision-id> [--store-dir DIR] [--limit N] [--json]"
+  },
+  "authority": {
+    "relevance_authority": false,
+    "delivery_authority": false,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "implementation": {
+    "chain_query_loc": 208,
+    "chain_query_sha256": "sha256:f6d35c7ce5dc2edf68aab941490c5b9ab3142d0c306cc695a2d007f6065bb01c",
+    "capability_delivery_sha256": "sha256:fe065ce0fc90b01001a3cc92f57c862eb746d9aafd28183f7a60eb8ed143f3c9",
+    "capability_relevance_sha256": "sha256:7f3a2e5d47b5bd8502c428818daef54b6fe5c98ca29c147a274a329f4aeef002",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "plw_cli_sha256": "sha256:b05fdf4263ae381b460e18aba1c4b7214b024f08280c7d8b9bca6cdbb839a52b",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F113_is_current_development": true,
+    "query_is_read_only": true,
+    "query_does_not_create_accountability_records": true,
+    "query_does_not_change_relevance": true,
+    "query_does_not_change_delivery": true,
+    "query_does_not_change_prompt": true,
+    "F111_and_F112_records_remain_source_of_audit_facts": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true
+  },
+  "next_target": {
+    "checkpoint": "F114",
+    "name": "Workflow Action Proposal Boundary",
+    "goal": "Define a typed proposal-only boundary from verified workflow audit state to a separately authorized action request, without executing transitions, runtime, patches, promotion, or truth commits."
+  }
+}
