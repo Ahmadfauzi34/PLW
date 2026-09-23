@@ -12,64 +12,66 @@ Historical development archives are supporting evidence. They explain how a curr
 
 The Development Full archive contains experiments, fixtures, audit logs, intermediate implementations, and retained checkpoint records. Copying the whole archive into the product repository would reintroduce ambiguity and unnecessary weight.
 
-Promotion therefore retains only evidence that is still useful for reconstructing the lineage of current architecture.
+Promotion therefore retains only evidence that is still useful for reconstructing the lineage of current architecture. A promoted exact record preserves the complete historical bytes, source SHA-256, repository path, Git blob identity, and an explicit no-new-authority boundary.
 
-A promoted exact record preserves:
+## F106-F123 authority / agent lineage — exact records retained
 
-- the historical checkpoint identifier and complete historical record bytes;
-- the exact source-file SHA-256;
-- the exact source-archive SHA-256 in the promotion ledger;
-- the repository path and Git blob identity;
-- an explicit boundary that historical retention grants no new runtime or authority state.
-
-## F128-F142 proof lineage — exact records retained
-
-The first priority group is now retained as **21 exact historical records** under `qualification/history/`.
-
-`qualification/history/historical_evidence_promotion_ledger_v1.json` is the promotion index. It records the source path, source SHA-256, repository path, Git blob SHA-1, and byte-match result for every retained checkpoint.
+The second bounded promotion group is retained as **19 exact historical records** under `qualification/history/`.
 
 The retained chain covers:
 
 ```text
-F128  scenario-set validation planning
-F129  scenario-bound validation evidence
-F130  proof-obligation coverage
-F131  witness-integrity hardening
-F132  validation execution request
-F133  authorization binding
-F134  single-use execution lease
-F135  attempt registration
-F136  dispatch intent
-F137  runtime dispatch/reconciliation
-F138  validation-result evidence acceptance
-F138.1 semantic affordance / skill handoff
-F138.2 target-codebase topology bootstrap
-F138.3 target resolution
-F138.4 evidence-need derivation
-F138.5 evidence-driven capability selection
-F139  execution-backed scenario binding
-F139.1 agent-tool communication
-F140  proof-obligation re-derivation
-F141  postcondition proof
-F142  full-stack validated state
+F106  capability lifecycle
+F107  lifecycle workflow adapter
+F108  workflow context-pack integration
+F109  relevance trigger contract
+F110  fixture fast lane
+F111  relevance decision accountability
+F112  delivery accountability link
+F113  accountability chain query
+F114  action proposal boundary
+F115  layered skill router
+F116  action authorization receipt
+F117  authorized action gate
+F118  authorized executor dry-run
+F119  authority provenance / preflight hardening
+F120  adaptive-agent reference machine
+F120  Tool.py external-corpus audit
+F121  atomic single-use action lease
+F122  lease-bound executor outcome
+F123  executor-adapter reconciliation bridge
 ```
 
-All 21 records are marked `EXACT_RECORD_RETAINED`. The Development Full ZIP is therefore **not required for normal current work on this lineage**. It remains useful only for historical reconstruction or independent byte verification against the retained source hashes.
+Both F120 records are retained independently because they are distinct historical evidence artifacts despite sharing the same checkpoint number.
 
-These records are historical lineage only. Retention does **not**:
+`qualification/history/historical_evidence_promotion_f106_f123_v1.json` is the machine-readable index for this group. It records the pinned source archive, source path, source SHA-256, repository path, repository Git blob SHA-1, and byte-match state for all 19 records.
 
-- promote PLW to F143;
-- grant mutation or execution authority;
-- grant evidence-acceptance or postcondition authority beyond current `main`;
-- promote stable state;
-- commit truth.
+## F128-F142 proof lineage — exact records retained
 
-## Promotion order after F128-F142
+The first bounded group remains retained as **21 exact historical records**, covering scenario planning/evidence, proof obligations and witness integrity, request→authorization→lease→attempt→dispatch→runtime, result acceptance, semantic/target/evidence/capability routing, execution-backed evidence, postcondition proof, and full-stack validated-state composition.
+
+`qualification/history/historical_evidence_promotion_ledger_v1.json` remains the machine-readable index for the F128-F142 group.
+
+## Retained state
+
+Across the two bounded promotion ledgers the repository now retains:
+
+```text
+F106-F123  19 exact records
+F128-F142  21 exact records
+---------------------------
+Total      40 exact records
+```
+
+For these retained groups the Development Full ZIP is not required for normal current work. It remains useful for historical reconstruction or independent byte verification.
+
+Historical retention does **not** grant runtime, mutation, execution, evidence-acceptance, postcondition, stable-promotion, upstream, or truth authority.
+
+## Promotion order after F106-F123 and F128-F142
 
 The remaining archive should be reviewed in bounded groups:
 
-1. F106-F123 — capability lifecycle, agent accountability, authorization, lease/executor lineage.
-2. F124-F127 — semantic ownership, geometry/correspondence, runtime geometry, impact projection.
-3. F85-F105 — simplification economics and detector-history evidence, only where still useful for current architecture.
+1. F124-F127 — semantic ownership, geometry/correspondence, runtime geometry, impact projection.
+2. F85-F105 — simplification economics and detector-history evidence, only where still useful for current architecture.
 
-Raw fixture corpora and transient audit output should remain outside the product repository unless a current qualification record specifically depends on them.
+Raw fixture corpora and transient audit output should remain outside the product repository unless a retained decision record specifically depends on them.
