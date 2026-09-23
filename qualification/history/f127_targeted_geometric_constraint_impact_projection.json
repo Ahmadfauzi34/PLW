@@ -1,0 +1,177 @@
+{
+  "checkpoint": "F127",
+  "base_checkpoint": "F126",
+  "stable_baseline": "F85",
+  "status": "TARGETED_GEOMETRIC_CONSTRAINT_IMPACT_PROJECTION_ACTIVE",
+  "objective": "Evaluate caller-declared geometric constraints and project only selected/proven UI surfaces through F125/F124 to bounded SharedGraph impact without whole-UI brute force or mutation authority.",
+  "baseline_proof_state": {
+    "F124_static_angular_ownership_present": true,
+    "F125_geometry_correspondence_present": true,
+    "F126_runtime_capture_binding_present": true,
+    "explicit_geometric_constraint_evidence_present": false,
+    "targeted_ui_to_topology_projection_present": false
+  },
+  "constraint_contract": {
+    "query_schema": "geometric-impact-query-v1",
+    "supported_kinds": [
+      "inside_viewport",
+      "inside_parent",
+      "no_overlap",
+      "min_gap"
+    ],
+    "constraint_intent_inferred": false,
+    "constraint_statuses": [
+      "SATISFIED",
+      "VIOLATED",
+      "UNRESOLVED"
+    ],
+    "ancestor_descendant_auto_peer_overlap_excluded": true,
+    "explicit_constraint_may_still_target_ancestor_descendant_pair": true
+  },
+  "selection_contract": {
+    "focus_is_explicit": true,
+    "pair_scan_is_focus_bounded": true,
+    "omitted_geometry_count_reported": true,
+    "omission_is_irrelevance": false,
+    "recovery_path_reported": true,
+    "bounded_pair_relation_limit": 10000
+  },
+  "impact_projection": {
+    "required_correspondence_classes": [
+      "EXACT",
+      "STRUCTURAL"
+    ],
+    "unresolved_correspondence_projects_to_topology": false,
+    "component_file_resolved_via_shared_graph": true,
+    "template_style_anchors_returned": true,
+    "transitive_topology_lists_bounded_with_total_and_omitted_counts": true,
+    "full_topology_recoverable_via_plw_impact": true,
+    "projection_class": "STRUCTURAL"
+  },
+  "runtime_provenance": {
+    "optional_F126_binding_in_same_query": true,
+    "runtime_dispatch_performed": false,
+    "F126_EXACT_required_for_runtime_capture_provenance_bound": true,
+    "F126_EXACT_is_truthful_pixels": false
+  },
+  "tool_surface": {
+    "command": "plw geometric-impact <snapshot.json> [root] [--focus UI_ID] [--constraints query.json] [--proximity PX] [--lease-id ID --store-dir DIR] [--json]",
+    "read_only": true,
+    "state_change_acknowledgement_required": false,
+    "runtime_execution_performed_by_query": false,
+    "single_call_composes_F124_F125_F126_F127_when_lease_supplied": true
+  },
+  "proof_boundary": {
+    "overlap_fact_is_visual_bug": false,
+    "constraint_violation_is_behavior_failure": false,
+    "topology_projection_is_geometric_effect_proof": false,
+    "structural_correspondence_is_runtime_instance_proof": false,
+    "omitted_surface_is_irrelevant": false,
+    "constraint_result_is_mutation_authority": false,
+    "constraint_result_is_truth_commit": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 30,
+    "operational_skill_modules": 16,
+    "experimental_fixture_count": 50,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "shared_graph_schema_changed": false,
+    "F125_geometry_schema_changed": false,
+    "source_mutated": false,
+    "runtime_executed_by_reference_query": false,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "implementation": {
+    "geometric_impact_sha256": "sha256:d996ea0cbc3eee2504b2a4c348d754b8b1d796614a9e65f2cfe6d2603f97b1c4",
+    "fullstack_init_sha256": "sha256:a792c2ebb32b6f40ebbb6b18fc03771333e93750d34f8882719c025910bfe3ea",
+    "geometry_correspondence_sha256": "sha256:89d41c416e119f59f4756370246a55232bcf8dddfac2aed49c2ce8892f8e8667",
+    "geometric_impact_skill_sha256": "sha256:904e009d977f2bae6cfe77222b0a1ba77a539324fdfa3a9859d4164d2b2f68d0",
+    "runtime_geometry_skill_sha256": "sha256:4f793d0a992063e0161fafaf911ee22fdc28fa123dbcdf1fd8d8eb6fe7218e37",
+    "geometry_skill_sha256": "sha256:e2fcb24eab0ec87ee5d60f639826c737b60c3dd20c94cae9c18d0d52eed73425",
+    "agent_tool_sha256": "sha256:f0fb32546f4ce9fc8887100ea9cb9b1b267356724d7457825092b42c77adecd5",
+    "plw_cli_sha256": "sha256:799ed9319e78419a47d9f285424809ef20ed9fff7f160bbd0ab95a85847e4bf7",
+    "compact_schema_sha256": "sha256:a3e968e81f9770b48497a5c9c7756d157345525d238821fdc683001f299fbc60",
+    "legacy_schema_sha256": "sha256:96ad95a694df641aef07dbca0387b5647fe022d779d76e95551d92e1bbee5797",
+    "skill_root_sha256": "sha256:19f454c43258e042de7e32f12ff61718d8b04884ed2198f816cb7c92602d4870",
+    "readme_sha256": "sha256:2ef5d82b56c694e5f61a9a48615a6bb000f998b5bce4061e6bee8810af7f0205",
+    "experimental_fixture_sha256": "sha256:8d79fe9169a5331f19d4fa47853354d8c517ba95e9f261546938199e56db9a14",
+    "fast_fixture_sha256": "sha256:5e7c2bc100b4d0da6f424ef0dc58918146b13fa67f58813ae1e531f8daf67af4",
+    "stable_fixture_sha256": "sha256:83892b1f41b340868ca810e5081aff43857129808a6b12868b06dc9290c7f534"
+  },
+  "validation": {
+    "experimental_fixture_count": 50,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "adversarial_cases": [
+      "undeclared overlap remains a fact and not a violation",
+      "ancestor containment is excluded from automatic peer overlap",
+      "missing focus id remains explicit",
+      "stale F125 correspondence does not project to topology",
+      "unsupported or malformed constraint query fails closed",
+      "incomplete/forged-looking runtime binding is not accepted as compatible exact provenance",
+      "bounded omission and recovery metadata are present",
+      "read-only CLI invocation",
+      "read-only agent-tool invocation"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F128",
+    "name": "Scenario-Set Targeted Validation Planning",
+    "goal": "Use F127 projected owners and F125 scenario identity to produce recoverable targeted render/validation scenario sets before code mutation, without claiming unselected scenarios are irrelevant."
+  },
+  "historical_integrity": {
+    "checkpoint_contract_is_historical": true,
+    "cross_checkpoint_implementation_fingerprints_are_historical": true,
+    "current_source_equality_required_for_cross_checkpoint_files": false,
+    "historical_source_reconstruction_claimed": false
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F127_checkpoint_owned_contract_retained": true,
+    "F134_validation_execution_lease_is_current_package": false,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}
