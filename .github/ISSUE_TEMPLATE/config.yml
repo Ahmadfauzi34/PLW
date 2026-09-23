@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security policy
+    url: https://github.com/Ahmadfauzi34/PLW/blob/main/SECURITY.md
+    about: Review the security reporting policy before posting sensitive details publicly.
+  - name: Support policy
+    url: https://github.com/Ahmadfauzi34/PLW/blob/main/SUPPORT.md
+    about: Check supported versions and the information expected in reproducible reports.
