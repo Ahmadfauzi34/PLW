@@ -1,0 +1,75 @@
+{
+  "schema_version": "canonical-anatomy-bridge-v1",
+  "checkpoint": "F95",
+  "base_checkpoint": "F94",
+  "stable_baseline": "F85",
+  "status": "CANONICAL_ANATOMY_BRIDGE_VALIDATED",
+  "goal": "Make SharedGraph the single discovery/source/topology authority for plw simplify while keeping semantic rule coverage explicit and language-specific.",
+  "bridge": {
+    "inventory_authority": "core.shared_graph",
+    "source_content_authority": "shared_graph.file_map",
+    "proof_surface_graph_reused_from_same_snapshot": true,
+    "independent_simplifier_filesystem_scan_removed": true,
+    "graph_builds_per_analysis_expected": 1,
+    "semantic_frontend_current": "python_ast",
+    "stable_reference_languages": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx"
+    ],
+    "python_frontend_role": "experimental/self-host and external Python target semantic rules",
+    "zero_candidate_on_reference_covered_language_without_semantic_frontend": "NOT_CLEAN_EVIDENCE"
+  },
+  "behavior_preservation": {
+    "F94_external_probe_candidate_projection": "BYTE_IDENTICAL_EXPECTED",
+    "F94_external_probe_metrics": "IDENTICAL_EXPECTED",
+    "self_host_candidate_ids": "IDENTICAL_EXPECTED",
+    "self_host_remaining_debt_expected": 31,
+    "self_host_recommended_expected": 0
+  },
+  "coverage_example": {
+    "fixture": "fixtures_min/f17_async_waterfall/project",
+    "reference_observed_extension": ".ts",
+    "expected_frontier_status": "SEMANTIC_FRONTEND_COVERAGE_INCOMPLETE",
+    "expected_zero_candidate_clean_evidence": false
+  },
+  "economics": {
+    "F94_analyzer_loc": 1123,
+    "F95_analyzer_loc": 1185,
+    "loc_delta": 62,
+    "runtime_authority_paths_before": 2,
+    "runtime_authority_paths_after": 1,
+    "interpretation": "F95 spends implementation LOC to remove duplicated discovery authority and establish a reusable canonical anatomy contract; LOC growth is not simplification gain."
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F95_is_development_overlay": true,
+    "no_typescript_simplification_detector_added": true,
+    "no_angular_simplification_detector_added": true,
+    "reference_coverage_is_not_semantic_simplification_coverage": true,
+    "semantic_frontend_absence_must_not_report_clean_zero": true,
+    "candidate_is_not_patch": true
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:55acb9e46b833cb41717bcd86b3c3a4a6bc22d30e0d5ce747fba2f9066011d8e",
+    "plw_cli.py": "sha256:49e374f3fbf9dbf04a9c7aed6175704088f4cb78759fa29289c53de19870de61"
+  },
+  "validation": {
+    "experimental_overlay": "E01-E16 PASS",
+    "stable_minimal_fixtures": "F01-F64 PASS",
+    "stable_minimal_fixture_count": 61,
+    "F37_memory_runtime_integrity": "PASS",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "compileall": "PASS",
+    "single_shared_graph_build_per_analysis": "PASS",
+    "F94_external_probe_projection_preserved": "PASS",
+    "typescript_coverage_gap_is_explicit": "PASS",
+    "self_host_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 31
+    }
+  }
+}
