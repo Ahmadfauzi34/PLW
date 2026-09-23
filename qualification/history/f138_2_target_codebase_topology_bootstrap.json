@@ -1,0 +1,96 @@
+{
+  "schema_version": "f138-2-target-codebase-topology-bootstrap-v1",
+  "checkpoint": "F138.2",
+  "base_checkpoint": "F138.1",
+  "stable_baseline": "F85",
+  "status": "TARGET_CODEBASE_TOPOLOGY_BOOTSTRAP_ACTIVE",
+  "goal": "Make first-contact reasoning target-codebase-first by establishing a bounded file-to-import-to-file topology before PLW capability selection.",
+  "problem_statement": {
+    "agent_may_enter_unfamiliar_repo_without_structural_map": true,
+    "manual_single_file_read_does_not_establish_reverse_dependency_closure": true,
+    "semantic_capability_routing_should_follow_target_evidence_not_precede_it": true,
+    "full_graph_dump_should_not_be_required_for_first_contact": true
+  },
+  "contract": {
+    "first_contact_command": "plw topology <root> --json",
+    "topology_is_read_only": true,
+    "topology_selects_PLW_capability": false,
+    "edge_semantics": "source file imports target file",
+    "runtime_call_graph_claimed": false,
+    "test_coverage_claimed": false,
+    "behavioral_correctness_claimed": false,
+    "bounded_by_default": true,
+    "full_edges_explicitly_recoverable": true,
+    "work_returns_target_orientation": true,
+    "work_reuses_same_graph_snapshot": true,
+    "work_filesystem_rescans_inside_call": 0
+  },
+  "orientation_fields": [
+    "inventory",
+    "entrypoint_surface",
+    "test_surface",
+    "high_fan_in",
+    "high_fan_out",
+    "graph_roots",
+    "graph_leaves",
+    "cyclic_sccs",
+    "boundary_surface",
+    "import_resolution",
+    "reasoning_gaps",
+    "next_reasoning"
+  ],
+  "tool_surface": {
+    "command": "plw topology",
+    "options": [
+      "--top N",
+      "--full-edges",
+      "--json"
+    ],
+    "state_change": false,
+    "runtime_execution": false,
+    "source_mutation": false,
+    "truth_commit": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 43,
+    "semantic_contracts": 43,
+    "operational_skill_modules": 28,
+    "experimental_fixture_count": 63,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E63",
+    "mini_repository_topology_probe": true,
+    "bounded_default_edge_projection": true,
+    "explicit_full_edge_recovery": true,
+    "work_same_graph_orientation_probe": true,
+    "agent_read_only_topology_probe": true,
+    "semantic_registry_covers_topology": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/target_topology.py": "sha256:6633d89dc1c774316c48cff36f6df4236c8dc296c1c02bb677501711618ea4e9",
+    "core/semantic_affordance.py": "sha256:ef22ec5899662309e5fcaa18cb9ae5a3186b8b223b8382453159d482a24829ed",
+    "hott_kernel.py": "sha256:06893d30e5d8c298c7b67e3196649e5249cf07fde12af2856848293025eb22c5",
+    "plw_cli.py": "sha256:ef7300a9508ff512268da51676e2d4531f231fa8a140b54cbbf4e8ea4c8190a2",
+    "agent_tool.py": "sha256:bb6a43ea5e6fedefab48a62ae63aba81d19a67049a3cc5b1f676517f4aff7dca",
+    "skills/target-codebase-topology-workflow.md": "sha256:82b653123d6e870f13af8a34da53968a2669b7785fd3bf6cd18f398e6aad439d",
+    "skills/adaptive-agent-workflow.md": "sha256:417b841777b3f571a394f1bcdf2669e85cfbac78466e8e662427f29d48b41e89",
+    "skills/semantic-affordance-workflow.md": "sha256:47f33d50c4310c2940dda2ba75bdb625275baabee28e54276f29fcd26eaff3d3",
+    "SKILL.md": "sha256:c53d51b0ccc1270b869da23da17bbc29c572336cc5e6796326d7c649caab29b0",
+    "README.md": "sha256:8c526fd3542599c114107a66655b61dc67bdf006671371ea0c2864d6fa124329",
+    "tools_schema_compact.json": "sha256:665798111ec97040ab664311239412603339c9c72a4fa82fa85e89e018a03e35",
+    "tools_schema.json": "sha256:19fba3d1072af17f8dd90989cb8fe6e3ca89933cd92758de900e953633786d90",
+    "experimental_fixture_check.py": "sha256:3246e044733ecc0e82bfbe921e6ef58a7707a8884bdfece100387e9659e0e87e",
+    "fixture_fast.py": "sha256:730b580045a238adfa2da9d65245518d4b049da745454745b58b53b1ad01d5e7"
+  },
+  "next_target": {
+    "checkpoint": "F139",
+    "name": "Execution-Backed Scenario Evidence Binding",
+    "goal": "Bind accepted F138 evidence back into the existing F129-style scenario evidence model using additive F137/F138 provenance, after target-first orientation is established."
+  }
+}
