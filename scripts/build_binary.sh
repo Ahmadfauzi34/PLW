@@ -21,6 +21,9 @@ ARGS=(--noconfirm --clean --onefile --name plw --paths "$ROOT")
 if [[ -d skills ]]; then
   ARGS+=(--add-data "skills:skills")
 fi
+if [[ -f VERSION ]]; then
+  ARGS+=(--add-data "VERSION:.")
+fi
 
 python -m PyInstaller "${ARGS[@]}" plw_cli.py
 
