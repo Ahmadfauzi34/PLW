@@ -1,0 +1,89 @@
+{
+  "schema_version": "f138-3-target-resolution-structural-relevance-v1",
+  "checkpoint": "F138.3",
+  "base_checkpoint": "F138.2",
+  "stable_baseline": "F85",
+  "status": "TARGET_RESOLUTION_STRUCTURAL_RELEVANCE_ACTIVE",
+  "goal": "Ground a user task to bounded target-codebase graph nodes before specialized PLW capability selection.",
+  "problem_statement": {
+    "topology_alone_does_not_identify_task_target": true,
+    "task_word_similarity_is_not_semantic_ownership": true,
+    "ambiguous_targets_must_not_be_silently_guessed": true,
+    "specialized_capability_routing_should_wait_for_target_grounding": true
+  },
+  "contract": {
+    "command": "plw resolve-target <task> <root> --json",
+    "task_text_is_retrieval_seed_only": true,
+    "explicit_target_identity_preferred": true,
+    "graph_neighborhood_contributes_structural_evidence": true,
+    "resolution_states": [
+      "RESOLVED",
+      "MULTI_TARGET_RESOLVED",
+      "AMBIGUOUS",
+      "UNRESOLVED"
+    ],
+    "ambiguous_or_unresolved_blocks_specialized_work_handoff": true,
+    "semantic_ownership_proven": false,
+    "selects_PLW_capability": false,
+    "runtime_execution": false,
+    "source_mutation": false,
+    "truth_commit": false,
+    "work_reuses_same_graph_snapshot": true
+  },
+  "candidate_evidence": [
+    "explicit_target",
+    "task_path_match",
+    "task_basename_match",
+    "filename_token_match",
+    "path_segment_match",
+    "content_identifier_hint",
+    "fan_in_tiebreak_only",
+    "direct_imports",
+    "direct_importers",
+    "affected_entrypoints",
+    "reachable_tests"
+  ],
+  "final_proof_state": {
+    "public_plw_commands": 44,
+    "semantic_contracts": 44,
+    "operational_skill_modules": 29,
+    "experimental_fixture_count": 64,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E64",
+    "ambiguous_task_probe": true,
+    "explicit_target_resolution_probe": true,
+    "unresolved_task_probe": true,
+    "structural_neighborhood_probe": true,
+    "work_handoff_blocks_specialized_capability_when_ambiguous": true,
+    "work_handoff_allows_normal_semantics_after_explicit_grounding": true,
+    "cli_probe": true,
+    "agent_read_only_probe": true,
+    "semantic_registry_full_coverage": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/target_resolution.py": "sha256:068bdc2e55f3718c80043ec08c70fd5286dbbbc9b4562589d75093ade0ade09a",
+    "core/semantic_affordance.py": "sha256:463cd387daa954897e295bd14734388faa18b5b858ff4a38eaceabb844fa8597",
+    "hott_kernel.py": "sha256:d2230c89bdde17fe3ed53650d55d7b0c68396b1cbd14a573423d0fa84ed60bd6",
+    "plw_cli.py": "sha256:bf84923c7369366684a2d13f66687579d36cc2c91bc7bd8a2fe3eda9fa6fa1f9",
+    "agent_tool.py": "sha256:ae679c7ca6cf41ac345461e405bb75ab974ca90db2261bdfc992ba2850ca77da",
+    "skills/target-resolution-workflow.md": "sha256:dd6424c9b127fc0e74ec42c06dd017a6335a6f605d9d312890f913249d369feb",
+    "SKILL.md": "sha256:40678b875a75b77f77a0eb98b77b48fe2050a350adcce6d39c22f19dcbbd0b59",
+    "README.md": "sha256:bf8010d6b09ec1c97b739d27a19ef7bf87752f391b7d00db24818de235cbcea5",
+    "tools_schema_compact.json": "sha256:698c9011d499ed293475aa2c2bcab19c20f6a43f68096bd4e323abd07983e57a",
+    "tools_schema.json": "sha256:7331aa6e040e27275a391d5c76f49502594f2854c7ca32a766ce369cb41c6f34",
+    "experimental_fixture_check.py": "sha256:f4e7b640d9b8e5055c7d00b54bc9d42a818c972886952ce88c2dcf6b25b502cb",
+    "fixture_fast.py": "sha256:17da36a05bee9c8ed74daf1ba2ea1818b1c72c0ee9d4d8bcbda603dea51312ff"
+  },
+  "next_target": {
+    "checkpoint": "F138.4",
+    "name": "Evidence-Need Derivation",
+    "goal": "Derive task-specific unknowns and required technical evidence from resolved target nodes before capability selection."
+  }
+}
