@@ -98,6 +98,6 @@
   "next_target": {
     "checkpoint": "F106",
     "name": "Capability Lifecycle Contract",
-    "goal": "Generalize the proven dossier → prototype → economics → accept/retire sequence into an explicit lifecycle state machine without adding a new simplification rule."
+    "goal": "Generalize the proven dossier \u2192 prototype \u2192 economics \u2192 accept/retire sequence into an explicit lifecycle state machine without adding a new simplification rule."
   }
 }
