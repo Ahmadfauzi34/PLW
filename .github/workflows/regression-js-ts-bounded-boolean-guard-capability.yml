@@ -29,9 +29,7 @@ jobs:
       - name: Run deterministic capability regression
         run: |
           mkdir -p regression-evidence
-          python scripts/check_js_ts_boolean_guard_bounded_capability.py \
-            --output regression-evidence/report.json \
-            --summary regression-evidence/summary.md
+          python scripts/check_js_ts_boolean_guard_bounded_capability.py             --output regression-evidence/report.json             --summary regression-evidence/summary.md
           cat regression-evidence/summary.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload regression evidence
@@ -39,16 +37,4 @@ jobs:
         with:
           name: js-ts-v2-bounded-boolean-guard-capability-regression
           path: regression-evidence
-          if-no-files-found: error
-
-      - name: Upload exact source bundle for interactive audit
-        uses: actions/upload-artifact@v4
-        with:
-          name: js-ts-v2-bounded-boolean-guard-capability-source
-          path: |
-            qualification/js_ts_v2_bounded_boolean_guard_mutation_capability.json
-            scripts/apply_js_ts_boolean_guard_bounded_capability.py
-            scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py
-            scripts/plan_js_ts_boolean_guard_rewrite.py
-            scripts/check_js_ts_boolean_guard_bounded_capability.py
           if-no-files-found: error
