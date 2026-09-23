@@ -1,0 +1,72 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-evidence-acceptance-integration-v1",
+  "status": "BOUNDED_CAPABILITY_EVIDENCE_ACCEPTANCE_INTEGRATION_READY",
+  "goal": "Prove that evidence emitted by the READY bounded boolean-guard capability, after existing postcondition validation and exact receipt issuance, is consumable by the already-qualified TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE without creating a second acceptor or widening authority.",
+  "composition": [
+    "BOUNDED_MUTATION_CAPABILITY_APPLIED",
+    "BOUNDED_MUTATION_CAPABILITY_POSTCONDITIONS_VALIDATED",
+    "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED",
+    "existing TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE",
+    "EXPERIMENT_EVIDENCE_ACCEPTED or idempotent EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED"
+  ],
+  "prerequisites": {
+    "bounded_capability_status": "BOUNDED_MUTATION_CAPABILITY_READY",
+    "capability_postcondition_integration_status": "BOUNDED_CAPABILITY_POSTCONDITION_INTEGRATION_READY",
+    "capability_postcondition_issuance_status": "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_READY",
+    "evidence_acceptance_reference_schema": "plw-js-ts-v2-experiment-evidence-acceptance-reference-v1",
+    "evidence_acceptance_reference_status": "qualified by direct interactive audit"
+  },
+  "integration_policy": {
+    "reuse_existing_acceptor": true,
+    "new_acceptor_created": false,
+    "fixture_local_acceptance_ledger_only": true,
+    "retained_global_evidence_ledger_modified": false,
+    "validation_rerun_during_acceptance": false,
+    "disposed_worktree_reopened": false,
+    "acceptance_requires_exact_issued_validation_receipt": true,
+    "exact_acceptance_replay_must_not_append": true,
+    "tampered_validation_receipt_must_reject": true,
+    "tampered_primitive_receipt_must_reject": true,
+    "failed_postcondition_receipt_must_reject": true,
+    "broken_acceptance_chain_must_reject": true
+  },
+  "interactive_validation": {
+    "required": true,
+    "completed": true,
+    "audit_record": "qualification/interactive_js_ts_v2_bounded_capability_evidence_acceptance_audit.json",
+    "audited_source_head": "46f3d9e1e74a2303e4b9d8258b25df971b59b801",
+    "workflow_run": 35912070931,
+    "artifact_id": 10773363061,
+    "artifact_sha256": "sha256:46be96d6d476da3b4e0c63bb1f071f20f6d3777ba76d2f450b1c4a146b543324",
+    "direct_report_sha256": "sha256:d83bc799c5287374820ac567912dc00fbf79f20afbbb9bbb257fa2214a24f3c8",
+    "case_count": 6,
+    "passed_case_count": 6,
+    "minimum_cases": [
+      "positive JS capability evidence accepted then replay recovered without append",
+      "inverse TS capability evidence accepted then replay recovered without append",
+      "validation receipt tamper after issuance rejected",
+      "primitive receipt tamper after issuance rejected",
+      "failed postconditions may be sealed but are rejected by evidence acceptor",
+      "broken acceptance ledger hash chain rejected"
+    ]
+  },
+  "authority": {
+    "integration_reference_only": true,
+    "existing_evidence_acceptance_authority_reused": true,
+    "new_evidence_acceptance_authority_created": false,
+    "public_product_surface_exposed": false,
+    "source_mutation_authority_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "stable_promotion_authorized": false,
+    "truth_commit": false
+  },
+  "ready_meaning": "READY means the current bounded capability can produce a fully sealed evidence lineage that the existing generic experiment-evidence acceptor accepts in an isolated fixture ledger. READY does not append a retained/global experiment record and does not authorize synthesis, promotion, upstream mutation, equivalence, or truth.",
+  "next_gate_on_success": "BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_REVIEW"
+}
