@@ -1,0 +1,97 @@
+{
+  "schema_version": "f136-validation-dispatch-intent-v1",
+  "checkpoint": "F136",
+  "base_checkpoint": "F135.1",
+  "stable_baseline": "F85",
+  "status": "VALIDATION_DISPATCH_INTENT_ACTIVE",
+  "goal": "Bind one durable pre-runtime dispatch intent to one exact F135 attempt without claiming runtime dispatch or extending F134 authorization.",
+  "contract": {
+    "one_dispatch_intent_per_attempt": true,
+    "dispatch_key_is_single_owner": true,
+    "exact_recovery_after_commit": true,
+    "runtime_dispatch_authorized": false,
+    "runtime_dispatch_state_authority": false,
+    "runtime_dispatch_state": "UNKNOWN_TO_F136",
+    "validator_invoked": false,
+    "evidence_accepted": false,
+    "postcondition_proven": false,
+    "truth_committed": false
+  },
+  "durable_store": {
+    "filename": "validation_execution_leases.sqlite3",
+    "base_user_version": 1,
+    "additive_table": "validation_dispatch_intents_v1",
+    "feature_registry": "validation_execution_store_features",
+    "registered_feature": {
+      "dispatch_intent": 1
+    }
+  },
+  "final_proof_state": {
+    "public_plw_commands": 40,
+    "operational_skill_modules": 25,
+    "experimental_fixture_count": 60,
+    "stable_fixture_count": 62,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "reference_tests": 9,
+    "reference_traces": 125,
+    "reference_transitions": 375,
+    "fixture": "E59"
+  },
+  "implementation": {
+    "fullstack/validation_dispatch.py": "sha256:add9fbde3d5081bb31f71fcdc7a4662dd9411b32fdfd33c382d377d7572fc83a",
+    "fullstack/validation_attempt.py": "sha256:cb82fb84a73cc8ad8f507135e726aed1813e5a18c4fcd5026a691cc03f8a9fa1",
+    "fullstack/validation_execution_store.py": "sha256:2c7ec46223c506e84503eef2918b74a5c424ee1c670c7747fe248a1092ee8de7",
+    "validation_dispatch_reference_check.py": "sha256:e3c115d1b212afdfc3cd4ac7a3b177b77a19ff6b97ffdefb728eebe9c4151409",
+    "skills/validation-dispatch-intent-workflow.md": "sha256:5567e5f15b3db04403992b44ed57e32480196755a61239aeb8850035cd6bd7b9",
+    "SKILL.md": "sha256:e405c2bee960987f0f41a5fc2a460797a333ed17ec17ab86e115f7d55c14a177",
+    "README.md": "sha256:cd3de3883225ba7c33694029aadaa25374eade84cefb74e5bb335556fb171c58",
+    "plw_cli.py": "sha256:75583044c5db2a1edd4fdade61b38aa8e2fa78e5e544bdf4a93d11a5635f0b65",
+    "agent_tool.py": "sha256:f724aad05d445a60877eddd96ca5fd56da63ab588f65399e364b198d68c3be7b",
+    "experimental_fixture_check.py": "sha256:186dfb2e57487c3904b90c2dd0143ad2d609bcb5855da599181dea975f9c5604",
+    "fixture_fast.py": "sha256:ca632aeebfada65c5392430f3187e26b87b778925833bc7ca1923318d4d37a77"
+  },
+  "next_target": {
+    "checkpoint": "F137",
+    "name": "Validation Runtime Dispatch and Reconciliation"
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "cross_checkpoint_fingerprints_are_historical": true,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "F136_checkpoint_contract_retained": true,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}
