@@ -1,0 +1,95 @@
+{
+  "schema_version": "intra-function-semantic-frontier-v1",
+  "checkpoint": "F87",
+  "status": "INTRA_FUNCTION_OVERLAY_FRONTIER_REACHED",
+  "parent": {
+    "checkpoint": "F86_stable_rebase_experimental_reattach",
+    "artifact_sha256": "sha256:2d89d0837eb30ba8a6e27f631ca1f4ca40b0f0a74769d26e269c970d753999e9"
+  },
+  "stable_base": "F85_selective_stable_promotion",
+  "goal": "open a new mechanically witnessed intra-function simplification frontier without mutating the stable lane from the experimental overlay",
+  "detector": {
+    "schema": "self-simplification-v9-intra-function-frontier",
+    "kind": "terminal_temporary_inline",
+    "witness": "adjacent_terminal_local_assignment_return",
+    "rule": "single local assignment immediately followed by return of the same local name",
+    "debug_line_event_equivalence_not_claimed": true,
+    "candidate_priority_policy": "intra_function_frontier_then_existing_gates_v8"
+  },
+  "accepted_overlay_patch": {
+    "file": "language_semantics.py",
+    "functions": [
+      "strip_js_comments",
+      "strip_jsonc_comments"
+    ],
+    "before_loc": 390,
+    "after_loc": 388,
+    "target_loc_reduction": 2,
+    "before_sha256": "sha256:0aeabe3d6b2d00b555f176c4b0f4399f65a1ca9c91509c38b0368450af4db97c",
+    "after_sha256": "sha256:050ba8127218c15e98ffa744f411df324f8563151cd980753e1112a8e5b001d5",
+    "differential_oracle_sha256": "sha256:5e00e9400869ca4e0af7a00dd888e9981e52ccb3af2fd1f7f5141cb1a51f7302",
+    "differential_result": "BYTE_IDENTICAL",
+    "authority": "experimental_overlay_patch_only"
+  },
+  "stable_lane_shadow": {
+    "direct_mutation_from_overlay_forbidden": true,
+    "terminal_temporary_candidates": [
+      "codebase/performance_analyzers.py::_strip_comments",
+      "codebase/performance_analyzers.py::_strip_strings",
+      "codebase/topology_analyzers.py::_strip_comments"
+    ],
+    "newly_exposed_exact_duplicate": "codebase/performance_analyzers.py::_strip_comments <-> codebase/topology_analyzers.py::_strip_comments",
+    "required_transition": "selective_promotion_gate_before_stable_mutation"
+  },
+  "frontier": {
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "recommended_local_candidates": 0,
+    "remaining_candidate_count": 36,
+    "stable_lane_shadow_terminal_candidates": 3,
+    "remaining_debt_by_recommendation": {
+      "defer_cross_domain_until_neutral_owner_proven": 12,
+      "defer_payload_no_positive_patch_margin": 1,
+      "defer_public_api_wrapper": 3,
+      "defer_sequence_high_proof_surface": 9,
+      "defer_sequence_no_positive_net_gain": 6,
+      "defer_stable_lane_requires_selective_promotion": 4,
+      "defer_until_narrower_candidates_exhausted": 1
+    }
+  },
+  "reference_machine_cost": {
+    "simplification_analyzer_before_loc": 1008,
+    "simplification_analyzer_after_loc": 1163,
+    "detector_and_lane_capability_loc_delta": 155,
+    "target_overlay_loc_reduction": 2,
+    "net_tool_loc_delta_for_F87_scope": 153,
+    "interpretation": "capability expansion cost is tracked separately and is not counted as simplification gain",
+    "future_obligation": "compress/generalize detector architecture before adding many more bespoke intra-function rules"
+  },
+  "files": {
+    "language_semantics.py": "sha256:050ba8127218c15e98ffa744f411df324f8563151cd980753e1112a8e5b001d5",
+    "core/simplification_analyzer.py": "sha256:07a4e8f595f2e1bc6e4122f9f2be4b5459909011ade38b33745dc1732b68180c",
+    "plw_cli.py": "sha256:3a9a53d5e7a432a8793797ff6f71ca1acc268b75613a9828f7d4efc9b1ee46d0"
+  },
+  "invariants": {
+    "F85_stable_default_contract_preserved": true,
+    "F86_explicit_self_host_activation_preserved": true,
+    "experimental_overlay_cannot_mutate_stable_lane_directly": true,
+    "candidate_elimination_is_not_behavioral_equivalence": true,
+    "capability_cost_is_not_simplification_gain": true,
+    "frontier_reached_does_not_mean_total_debt_zero": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "8/8 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "execution_note": "validated in bounded batches; F37 passed in stable batch"
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS"
+  }
+}
