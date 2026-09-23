@@ -154,14 +154,20 @@ A release binary must pass from the **built executable**, not only from Python s
 4. source smoke;
 5. one-file binary build;
 6. standalone topology/impact smoke;
-7. standalone JS/TS/TSX/JSX simplification smoke;
-8. standalone UI static analysis;
-9. Chromium/CDP reproduction when available;
-10. target-repository pollution checks;
-11. SHA-256 verification before release publication.
+7. standalone portable-agent smoke;
+8. standalone JS/TS/TSX/JSX simplification smoke;
+9. standalone UI static analysis;
+10. Chromium/CDP reproduction when available;
+11. target-repository pollution checks;
+12. SHA-256 verification before release publication.
 
-Pull requests produce temporary Actions artifacts. On `main`, a final semantic version in `VERSION` (for example `0.2.0`) publishes exactly one validated `v0.2.0` GitHub Release from the same CI run; `*-dev` versions do not publish. Tag-triggered release remains available as a fallback.
+Pull requests produce temporary Actions artifacts. On `main`, a final semantic version in `VERSION` publishes exactly one validated GitHub Release from the same CI run; `*-dev` versions do not publish. Tag-triggered release remains available as a fallback.
 
-## Contributing
+## Project policies
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Changelog](CHANGELOG.md)
+
+A repository license has not been selected by this governance change; licensing should be decided explicitly by the repository owner rather than inferred from distribution or source visibility.
