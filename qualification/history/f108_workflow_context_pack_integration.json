@@ -1,0 +1,75 @@
+{
+  "schema_version": "workflow-context-pack-integration-v1",
+  "checkpoint": "F108",
+  "base_checkpoint": "F107",
+  "stable_baseline": "F85",
+  "status": "EXPLICIT_RELEVANCE_GATED_WORKFLOW_CONTEXT_ACTIVE",
+  "goal": "Integrate the F107 advisory capability workflow envelope into bounded context packs only when explicitly relevant, without mutation authority or default-context bloat.",
+  "contract": {
+    "input": "capability_workflow_context={relevant: bool, envelope: F107 envelope}",
+    "default_path_unchanged": true,
+    "explicit_relevance_required": true,
+    "valid_f107_schema_policy_required": true,
+    "all_five_authorizations_must_be_boolean_false": true,
+    "raw_evidence_is_not_rendered": true,
+    "source_grounding_precedes_workflow_advisory": true,
+    "workflow_is_budget_droppable": true,
+    "workflow_can_execute_transition": false,
+    "workflow_can_patch": false,
+    "workflow_can_promote_stable": false,
+    "workflow_can_commit_truth": false
+  },
+  "no_global_bloat_proof": {
+    "fixture": "F34 pricing calculation / 600 token budget",
+    "f107_context_sha256": "sha256:a21083aeb5d061a62ff6556c55300e81bf147328c5b95cd513bbec597285ae77",
+    "f108_default_context_sha256": "sha256:a21083aeb5d061a62ff6556c55300e81bf147328c5b95cd513bbec597285ae77",
+    "default_context_byte_identical": true,
+    "default_selection_identical": true,
+    "irrelevant_context_byte_identical": true
+  },
+  "relevant_context_proof": {
+    "fixture": "F34 pricing calculation / 600 token budget",
+    "advisory_rendered_chars": 292,
+    "hard_budget_preserved": true,
+    "source_grounding_present": true,
+    "note": "Relevant advisory may displace lower-ranked optional source cards within the same hard budget, but cannot replace the source grounding floor."
+  },
+  "implementation": {
+    "context_optimizer_loc_before": 1402,
+    "context_optimizer_loc_after": 1434,
+    "context_optimizer_delta_loc": 32,
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "workflow_adapter_loc_before": 74,
+    "workflow_adapter_loc_after": 165,
+    "workflow_adapter_delta_loc": 47,
+    "workflow_adapter_sha256": "sha256:5e8dac389983ac317bf422297a3e2f488ac3137e0de827f6fe1adf0b5e4274f6",
+    "kernel_loc_before": 3595,
+    "kernel_loc_after": 3599,
+    "kernel_delta_loc": 4,
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_changed": false,
+    "simplification_analyzer_loc": 1448,
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "experimental_fixture_check_sha256": "sha256:da4d946761a4a246a3bced9a235c29107c4400e8e15be6720b5d9c7c49770c5c",
+    "readme_sha256": "sha256:38ab6a84a58b47cdc969e791f5ff67f1654086ab2d4855abdd9e656744437695",
+    "skill_sha256": "sha256:0d86d3d91d58813fc508a223077c2f266fd2b630751faf7868986a9a2575a85b"
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E29 PASS in bounded/individual runs",
+    "stable_critical": "F15/F34/F35/F46/F64 PASS",
+    "stable_full_registry": "not rerun; F108 default/no-workflow context was proven byte-identical to F107 and targeted context/kernel contracts were rerun",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "kernel_workflow_passthrough_smoke": "PASS (explicit relevant economics envelope rendered through kernel_context)",
+    "compileall": "PASS",
+    "self_host_frontier": "31 remaining / 0 recommended",
+    "runtime_ts_js_rule_count": 2,
+    "authority": "advisory only; no transition/runtime/patch/stable/truth authority"
+  },
+  "next_target": {
+    "checkpoint": "F109",
+    "name": "Workflow Relevance Trigger Contract",
+    "goal": "Define bounded, inspectable conditions for when a capability-workflow envelope should be requested, without letting query heuristics silently inject workflow context or grant execution authority."
+  }
+}
