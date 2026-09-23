@@ -1,0 +1,165 @@
+--- core/simplification_analyzer.py	2026-09-10 16:36:54.000000000 +0000
++++ /mnt/data/f105_compress_candidate/core/simplification_analyzer.py	2026-09-10 16:58:46.438893297 +0000
+@@ -225,106 +225,70 @@
+     return candidates
+ 
+ 
+-def _js_terminal_literal_temporary_candidates(*, sources: List[Tuple[str, str, str]]) -> List[Dict[str, Any]]:
+-    """Find a terminal ``const x = <literal>; return x;`` using the shared mask."""
+-    candidates: List[Dict[str, Any]] = []
+-    pattern = re.compile(
+-        r"\bconst\s+(?P<name>[A-Za-z_$][A-Za-z0-9_$]*)(?:\s*:\s*[^=;{}]+)?\s*=(?P<expr>[^;{}]+);"
+-        r"\s*return\s+(?P=name)\s*;"
+-    )
+-    for rel, source, masked in sources:
+-        for match in pattern.finditer(masked):
+-            after = match.end()
+-            while after < len(masked) and masked[after].isspace(): after += 1
+-            if after >= len(masked) or masked[after] != "}":
+-                continue
+-            raw_expr = source[match.start("expr"):match.end("expr")].strip()
+-            if not _js_nonthrowing_literal(raw_expr):
+-                continue
+-            name = match.group("name")
+-            line_start = source.count("\n", 0, match.start()) + 1
+-            line_end = source.count("\n", 0, match.end()) + 1
+-            candidates.append(_js_candidate_row(
+-                rel=rel, masked=masked, position=match.start(), line_start=line_start, line_end=line_end,
+-                kind="js_terminal_literal_temporary",
+-                identity={"binding": name, "expr": _sha(raw_expr)},
+-                witness={
+-                    "type": "js_terminal_literal_temporary_v1", "same_owner_file": True,
+-                    "adjacent_assignment_return": True, "const_binding": True,
+-                    "returned_name_matches_assignment": True, "return_expression_nonthrowing_literal": True,
+-                    "terminal_return_in_same_block": True, "shared_mask_js_noncode_reused": True,
+-                    "shared_nonthrowing_literal_predicate_reused": True, "shared_function_labeling_reused": True,
+-                    "authority": "bounded_js_lexical_terminal_temporary_witness_only",
+-                },
+-                proof_rule="inline only an adjacent terminal const bound to a non-throwing literal into its return statement",
+-                validation=[
+-                    "preserve literal value and return ordering",
+-                    "do not inline calls/member access/object literals or other potentially throwing expressions",
+-                    "do not claim debugger/line-event equivalence",
+-                    "run affected TS/Angular tests when applying a target patch",
+-                ],
+-            ))
+-    return candidates
+-
+-
+-
+ def _js_has_top_level_comma(masked_expr: str) -> bool:
+-    depth = 0
+-    pairs = {"(": ")", "[": "]"}
+     stack: List[str] = []
+     for char in masked_expr:
+-        if char in pairs:
+-            stack.append(pairs[char]); depth += 1
+-        elif stack and char == stack[-1]:
+-            stack.pop(); depth -= 1
+-        elif char == "," and depth == 0:
+-            return True
++        if char in "([": stack.append(")" if char == "(" else "]")
++        elif stack and char == stack[-1]: stack.pop()
++        elif char == "," and not stack: return True
+     return False
+ 
+ 
+-def _js_terminal_const_expression_passthrough_candidates(*, sources: List[Tuple[str, str, str]]) -> List[Dict[str, Any]]:
+-    """Find terminal ``const x = <safe expr>; return x;`` on the shared JS mask."""
+-    candidates: List[Dict[str, Any]] = []
++def _js_terminal_const_candidates(*, sources: List[Tuple[str, str, str]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
++    """Classify terminal ``const x = expr; return x;`` using the shared JS mask."""
++    literal_rows: List[Dict[str, Any]] = []
++    shadow_rows: List[Dict[str, Any]] = []
+     pattern = re.compile(
+-        r"\bconst\s+(?P<name>[A-Za-z_$][A-Za-z0-9_$]*)\s*=(?P<expr>[^;{}]+);"
++        r"\bconst\s+(?P<name>[A-Za-z_$][A-Za-z0-9_$]*)(?P<type>\s*:\s*[^=;{}]+)?\s*=(?P<expr>[^;{}]+);"
+         r"(?P<gap>\s*)return\s+(?P=name)\s*;"
+     )
+     for rel, source, masked in sources:
+         for match in pattern.finditer(masked):
+             after = match.end()
+             while after < len(masked) and masked[after].isspace(): after += 1
++            if after >= len(masked) or masked[after] != "}": continue
+             raw_expr = source[match.start("expr"):match.end("expr")].strip()
+-            raw_gap = source[match.start("gap"):match.end("gap")]
+-            if after >= len(masked) or masked[after] != "}" or raw_gap.strip():
++            name = match.group("name")
++            common = dict(rel=rel, masked=masked, position=match.start(),
++                          line_start=source.count("\n", 0, match.start()) + 1,
++                          line_end=source.count("\n", 0, match.end()) + 1,
++                          identity={"binding": name, "expr": _sha(raw_expr)})
++            if _js_nonthrowing_literal(raw_expr):
++                literal_rows.append(_js_candidate_row(
++                    **common, kind="js_terminal_literal_temporary",
++                    witness={"type": "js_terminal_literal_temporary_v1", "same_owner_file": True,
++                             "adjacent_assignment_return": True, "const_binding": True,
++                             "returned_name_matches_assignment": True, "return_expression_nonthrowing_literal": True,
++                             "terminal_return_in_same_block": True, "shared_mask_js_noncode_reused": True,
++                             "shared_nonthrowing_literal_predicate_reused": True, "shared_function_labeling_reused": True,
++                             "authority": "bounded_js_lexical_terminal_temporary_witness_only"},
++                    proof_rule="inline only an adjacent terminal const bound to a non-throwing literal into its return statement",
++                    validation=["preserve literal value and return ordering",
++                                "do not inline calls/member access/object literals or other potentially throwing expressions",
++                                "do not claim debugger/line-event equivalence",
++                                "run affected TS/Angular tests when applying a target patch"],
++                ))
+                 continue
+-            lowered = raw_expr.lstrip()
+             masked_expr = masked[match.start("expr"):match.end("expr")]
+-            if (not raw_expr or _js_has_top_level_comma(masked_expr) or "=>" in raw_expr or
+-                    re.search(r"\b(?:function|class)\b", raw_expr) or
+-                    lowered.startswith(("{", "[")) or _js_nonthrowing_literal(raw_expr)):
+-                continue
+-            name = match.group("name")
+-            line_start = source.count("\n", 0, match.start()) + 1
+-            line_end = source.count("\n", 0, match.end()) + 1
+-            candidates.append(_js_candidate_row(
+-                rel=rel, masked=masked, position=match.start(), line_start=line_start, line_end=line_end,
+-                kind="js_terminal_const_expression_passthrough",
+-                identity={"binding": name, "expr": _sha(raw_expr)},
+-                witness={
+-                    "type": "js_terminal_const_expression_passthrough_shadow_v1", "same_owner_file": True,
+-                    "adjacent_assignment_return": True, "const_binding": True, "no_explicit_type_annotation": True,
+-                    "returned_name_matches_assignment": True, "terminal_return_in_same_block": True,
+-                    "initializer_forbidden_forms_absent": True, "shared_mask_js_noncode_reused": True,
+-                    "authority": "bounded_js_lexical_shadow_prototype_witness_only",
+-                },
++            lowered = raw_expr.lstrip()
++            raw_gap = source[match.start("gap"):match.end("gap")]
++            if (match.group("type") or not raw_expr or raw_gap.strip() or _js_has_top_level_comma(masked_expr)
++                    or "=>" in raw_expr or re.search(r"\b(?:function|class)\b", raw_expr)
++                    or lowered.startswith(("{", "["))):
++                continue
++            shadow_rows.append(_js_candidate_row(
++                **common, kind="js_terminal_const_expression_passthrough",
++                witness={"type": "js_terminal_const_expression_passthrough_shadow_v1", "same_owner_file": True,
++                         "adjacent_assignment_return": True, "const_binding": True, "no_explicit_type_annotation": True,
++                         "returned_name_matches_assignment": True, "terminal_return_in_same_block": True,
++                         "initializer_forbidden_forms_absent": True, "shared_mask_js_noncode_reused": True,
++                         "authority": "bounded_js_lexical_shadow_prototype_witness_only"},
+                 proof_rule="shadow-only: inline the terminal const expression only after target-specific behavioral/type proof",
+-                validation=[
+-                    "preserve expression evaluation count/order and inferred return behavior",
+-                    "reject typed bindings, function/class/arrow, object/array literals, comments and multiple declarators",
+-                    "run target TypeScript checks before any external patch",
+-                ],
++                validation=["preserve expression evaluation count/order and inferred return behavior",
++                            "reject typed bindings, function/class/arrow, object/array literals, comments and multiple declarators",
++                            "run target TypeScript checks before any external patch"],
+             ))
+-    return candidates
++    return literal_rows, shadow_rows
+ 
+ def _canonical_python_source_snapshot(root: Path) -> Tuple[Dict[str, Any], List[Tuple[str, str]]]:
+     """Return Python sources from the canonical SharedGraph discovery snapshot.
+@@ -1261,8 +1225,7 @@
+     )
+     detected = {name: detector(trees=parsed_trees) for name, detector, _, _ in detector_specs}
+     js_try_catch_candidates = _js_try_catch_terminal_return_candidates(sources=js_source_snapshot)
+-    js_terminal_temporary_candidates = _js_terminal_literal_temporary_candidates(sources=js_source_snapshot)
+-    js_terminal_expression_candidates = _js_terminal_const_expression_passthrough_candidates(sources=js_source_snapshot)
++    js_terminal_temporary_candidates, js_terminal_expression_candidates = _js_terminal_const_candidates(sources=js_source_snapshot)
+     js_candidates = js_try_catch_candidates + js_terminal_temporary_candidates + js_terminal_expression_candidates
+     all_candidates = (
+         duplicate_groups
