@@ -1,0 +1,80 @@
+{
+  "schema_version": "post-promotion-stop-decision-v1",
+  "checkpoint": "F93",
+  "status": "SIMPLIFICATION_HOLD_REACHED",
+  "parent": {
+    "checkpoint": "F92",
+    "manifest_sha256": "sha256:6633e683bb06c4e0a8c77f16910ecf85b67c12faa4f2910cee5b23f97034ae3b"
+  },
+  "goal": "recompute self-host economics after consuming the existing path neutral owner and stop further simplification expansion unless a new architecture proof or external reuse signal appears",
+  "economics": {
+    "reference_machine_loc_baseline_F86": 1008,
+    "reference_machine_loc_current": 1123,
+    "net_reference_machine_loc_growth": 115,
+    "realized_target_loc_reduction_F87_F89_F92": 30,
+    "realized_gain_per_net_machine_loc": 0.26087,
+    "new_detector_loc_added_by_F92": 0,
+    "interpretation": "existing witness reuse improved economics, but current self-host evidence still does not justify another detector class"
+  },
+  "current_frontier": {
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "recommended_local_candidates": 0,
+    "remaining_candidate_count": 31,
+    "disposition_counts": {
+      "API_PROOF_CANDIDATE": 3,
+      "DEFER": 11,
+      "KEEP": 16,
+      "NEUTRAL_OWNER_CANDIDATE": 1
+    },
+    "unadjudicated_candidate_count": 0
+  },
+  "decision": {
+    "new_detector_capability": "STOP",
+    "existing_neutral_owner_candidate_count": 0,
+    "remaining_neutral_owner_candidate": {
+      "family": "utc_timestamp_formatting",
+      "status": "DEFER",
+      "reason": "14-owner high proof surface and neutral clock owner remains unproven"
+    },
+    "api_proof_candidates": "DEFER_UNTIL_CALLER_COMPATIBILITY_EVIDENCE",
+    "high_proof_and_cross_domain_debt": "KEEP_OR_DEFER_PER_F90_LEDGER",
+    "resume_condition": [
+      "external-project evidence demonstrates reusable detector value",
+      "architecture introduces/proves a neutral UTC time owner independently",
+      "code changes reopen positive local-safe simplification margin",
+      "explicit API migration proof is supplied for public forwarding wrappers"
+    ]
+  },
+  "invariants": {
+    "STOP_is_not_claim_that_remaining_debt_is_irrelevant": true,
+    "HOLD_preserves_F90_reopen_conditions": true,
+    "no_new_detector_added_by_F93": true,
+    "no_target_patch_applied_by_F93": true,
+    "stable_default_contract_preserved": true
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:442cf476a4a19e583b04c8cd81fc75bfcb5e9cb92dbe8800ba5e1a1b9092b9ec",
+    "experiments/f90_architectural_debt_adjudication.json": "sha256:7ad489982cd2ed902c531be3d8a03b0d1834114cba25bff327a2409910c8a5f3",
+    "experiments/f92_path_normalization_neutral_owner_promotion.json": "sha256:6633e683bb06c4e0a8c77f16910ecf85b67c12faa4f2910cee5b23f97034ae3b"
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "14/14 PASS",
+    "stable_base_validation_from_F92": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS",
+      "F37": "PASS",
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS",
+      "compileall": "PASS"
+    },
+    "F93_stable_source_changes": 0,
+    "current_frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0
+  },
+  "next_work_map": {
+    "default": "DO_NOT_OPEN_F94_SIMPLIFICATION_WORK",
+    "when_resumed": "start from the specific F90/F93 reopen condition that became true, not from candidate count alone"
+  }
+}
