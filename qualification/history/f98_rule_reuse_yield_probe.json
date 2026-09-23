@@ -1,0 +1,88 @@
+{
+  "schema_version": "rule-reuse-yield-probe-v1",
+  "checkpoint": "F98",
+  "base_checkpoint": "F97",
+  "stable_baseline": "F85",
+  "status": "REAL_CORPUS_YIELD_SPARSE_HOLD_EXPANSION",
+  "goal": "Measure real-corpus yield, review pressure, and proofability for the two existing TS/JS rules before adding rule3 or mutating the external repository.",
+  "corpus": {
+    "repository": "Ahmadfauzi34/Tool.py",
+    "branch": "main",
+    "git_tree_sha": "ee7ce91e8f4ae96365488e2ceaad35abe3a05771",
+    "scope": "all 20 non-test TypeScript files under src/ observed in the pinned default-branch tree; src/app/app.spec.ts intentionally excluded",
+    "source_fidelity": "20_OF_20_GIT_BLOB_EXACT",
+    "files": 20,
+    "source_loc": 812,
+    "observed_extensions": [
+      ".ts"
+    ],
+    "snapshot_storage": "experiments/f98_real_ts_corpus/**/*.ts.txt (materialized to temporary .ts targets only during probe)",
+    "github_blobs": {
+      "src/server.ts": {"github_blob_sha":"9564e2a6a99c54a07feb647cc9d00caf96f06925","snapshot_sha256":"sha256:d8068cb575c387a0c0559aad73e130400ca9954de4cb95b58ef75d7c396225d0"},
+      "src/app/app.ts": {"github_blob_sha":"aa03726ac2d82b31e416e38c9f1b21858f7d539b","snapshot_sha256":"sha256:8cc74212893fba12c5e5edba5dd48412d86aac49bf973675fc1c621153b5387e"},
+      "src/app/app.config.server.ts": {"github_blob_sha":"37c9504eabf758545330456302228ef8615ab206","snapshot_sha256":"sha256:2631bd2c8075c91fd0f7b007ab8797eb826e96b109f7c79c379a603a9fe9f44c"},
+      "src/app/app.config.ts": {"github_blob_sha":"7d473387f24580f6bc2594a6447facd30a039d2c","snapshot_sha256":"sha256:6899e66166fe64fa7276959a12e7bcc7d42b1346a21dd80853a1c34a0f05cb6f"},
+      "src/app/app.routes.server.ts": {"github_blob_sha":"0f56d52b979f0fe924024cca2720f8b27f0f5ed0","snapshot_sha256":"sha256:8222ed9f45953c40d921394eda9e702646fc759260aeaeebe6f15553907f6a89"},
+      "src/app/app.routes.ts": {"github_blob_sha":"8b5e5fb231080aef127773e3f0a12865a5923fc1","snapshot_sha256":"sha256:c0d20fcf64711067fc90027c4a7e3c0f59f46ab7731395ae400678ebe1ca935e"},
+      "src/main.ts": {"github_blob_sha":"eb8f66500252097eb832f61acfe1361dd10df2a5","snapshot_sha256":"sha256:cab25af4d5192e8a5786a1a8a7d2089e5b93a3b0b7116b613f2d050da2eb88be"},
+      "src/main.server.ts": {"github_blob_sha":"fd01d589b8d8329fa6b0caa88043abdb2550665e","snapshot_sha256":"sha256:e25f4e5cfdce7174d1d5ca589c293392c00c5b32cd022887fec2a444cecbe4a2"},
+      "src/models/abandoned-schema.ts": {"github_blob_sha":"4df4c0073d1f250d884b501a696dfbc654a430b7","snapshot_sha256":"sha256:2a19a2e65980491b2dd888ec09f5a41d30e4fad1da8ce9bc4be6671356d55f6f"},
+      "src/models/admin.model.ts": {"github_blob_sha":"7f79cc5748dcee4a7e6a9390aec0d8c69a0fff60","snapshot_sha256":"sha256:4fa94670a6060379cfa2d348a79f426ccd582eb4f8268d5fc4106a9139f1a054"},
+      "src/models/user.model.ts": {"github_blob_sha":"2a01cc79282bcfcbdff8aa02c515b16dcdef4591","snapshot_sha256":"sha256:4c86ac6d4557e5b81b322778ab82186efcb1cfa615a89c9d7bc27ffa270d2838"},
+      "src/services/cache.service.ts": {"github_blob_sha":"4066b0eb45707318c62e052872f4372d2239e7da","snapshot_sha256":"sha256:50757650b4521c6599a0796f86ec0dcf4de9b006f42f00d2cc281634a5dcc8f1"},
+      "src/services/data.processor.ts": {"github_blob_sha":"d781de2a21d8476c3ed83b520c287a76a024c6a1","snapshot_sha256":"sha256:828d8d0ebc09fe922146334471b0be1d42a2ca4bfa30ceac56afc03802432c15"},
+      "src/services/user.service.ts": {"github_blob_sha":"c6ca4feb5611a0d681bfc58a7a73e92b657a7b89","snapshot_sha256":"sha256:034099bf08fd9d5a0f2e3a7fa752a160ab54f762b21e94a21f0065291c18992c"},
+      "src/utils/a.ts": {"github_blob_sha":"9431df21f97ad8911750bf90a6b4965dddb9bcb6","snapshot_sha256":"sha256:9c6f7bd130d62a63996d8c858d7e7cb095f9c83ea7c5f98634dab768ba3f039d"},
+      "src/utils/b.ts": {"github_blob_sha":"41802893af166e55125e709698ccd1b90c31465f","snapshot_sha256":"sha256:36e75a1d0370c5be5f6a1e44ca59a83c2d5ce56dd56dc8360720536ceff079d4"},
+      "src/utils/c.ts": {"github_blob_sha":"41859090406996ff76cd97c58ca9fca3e9edf3b5","snapshot_sha256":"sha256:2a1de0a3f6596f9fafcfc6048d27c9b4452e42e72b5ba6e7f6b66fa9b3bf4bcf"},
+      "src/utils/d.ts": {"github_blob_sha":"bd223db1263fcf3967ae327717d2435ab5675f4c","snapshot_sha256":"sha256:25e67b19a732ca6ad501ba7367375cbfc1f0b9c3616e614259337ffa25a4736d"},
+      "src/utils/legacy-crypt.ts": {"github_blob_sha":"3e471d829ee858cddbc6f5755233160637c0f4ac","snapshot_sha256":"sha256:7e9eb640feab421338a7a761138d0354040c50ed55fbc06effd823ba22af6b66"},
+      "src/utils/spaghetti-hub.ts": {"github_blob_sha":"acdeb70ab96a718f16de299d3d0f84689530033f","snapshot_sha256":"sha256:74d19765d7e816b2c8df1f8b4dc9a18a18dc74743abcb62bb02ad990a994e9f6"}
+    }
+  },
+  "yield": {
+    "total_candidates": 1,
+    "candidate_density_per_1000_loc": 1.2315,
+    "estimated_gain_loc": 1,
+    "rule1": {"kind":"js_try_catch_identical_terminal_return","candidates":1,"density_per_1000_loc":1.2315,"estimated_gain_loc":1},
+    "rule2": {"kind":"js_terminal_literal_temporary","candidates":0,"density_per_1000_loc":0.0,"estimated_gain_loc":0}
+  },
+  "candidate_review": {
+    "reviewed_candidates": 1,
+    "confirmed_behaviorally_proofable": 1,
+    "observed_false_positive_candidates": 0,
+    "observed_false_positive_pressure_per_1000_loc": 0.0,
+    "proofable_candidate_rate_on_this_sample": 1.0,
+    "sample_size_warning": "one candidate is insufficient for a statistical false-positive-rate claim",
+    "candidate": {
+      "candidate_id": "sha256:9efccfa79488dfbba44fafe93a02cf56f3ebc57e4d60e63a464e0da84da34e59",
+      "file": "src/server.ts",
+      "symbol": "getScannerScript",
+      "risk": "low",
+      "recommendation": "candidate_js_try_catch_return_hoist",
+      "same_identity_as_F97": true,
+      "F97_behavioral_proof_reused": true,
+      "full_server_patch_recheck": {"source_loc_before":812,"source_loc_after":811,"candidate_count_after":0,"resolve_reject_sync_throw":"PASS","access_call_count_and_path":"PASS"}
+    }
+  },
+  "frontend_reuse_economics": {
+    "F96_initial_frontend_delta_loc": 254,
+    "F97_rule2_marginal_delta_loc": 86,
+    "F98_analyzer_delta_loc": 0,
+    "total_analyzer_delta_vs_F95": 340,
+    "active_ts_js_rules": 2,
+    "real_corpus_potential_gain_loc": 1,
+    "rule2_real_corpus_gain_loc": 0,
+    "realized_external_repository_gain_loc": 0,
+    "raw_loc_cost_to_observed_potential_gain_ratio": "340:1",
+    "status": "REUSE_ARCHITECTURE_PROVEN_REAL_YIELD_NOT_AMORTIZED",
+    "interpretation": "shared lexical infrastructure is genuinely reused and F98 adds no analyzer code, but the second rule yields zero real candidates and the two-rule frontend exposes only one 1-LOC opportunity across 812 LOC; current raw LOC economics do not justify adding rule3 yet."
+  },
+  "decision": {"add_third_rule_now":false,"apply_external_patch_now":false,"getScannerScript_patch_state":"PROVEN_LOW_RISK_BUT_UNAPPLIED","reason":"avoid conflating one proven target cleanup with frontend economics; first test the same two rules on an independent TS/Angular corpus without changing detector code."},
+  "self_host_state": {"remaining_candidate_count":31,"recommended_local_candidates":0,"frontier":"LOCAL_SIMPLIFICATION_FRONTIER_REACHED","corpus_snapshots_do_not_enter_self_host_scan":true},
+  "implementation": {"core_simplification_analyzer_sha256":"sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda","same_analyzer_bytes_as_F97":true,"new_rule_added":false,"new_lexer_or_scanner":false,"new_masking_engine":false,"new_filesystem_scan":false},
+  "invariants": {"F85_remains_current_stable":true,"F98_is_current_development":true,"external_repository_not_mutated":true,"canonical_shared_graph_remains_inventory_authority":true,"two_rule_frontend_unchanged_from_F97":true,"zero_rule2_yield_is_evidence_about_this_corpus_not_universal_rule_uselessness":true,"zero_observed_false_positives_is_not_statistical_FPR_zero":true,"self_host_debt_remains_31":true},
+  "next_target": {"checkpoint":"F99","name":"Independent TS/Angular Corpus Generalization Probe","goal":"Run the unchanged two-rule frontend on a second independent real TS/Angular corpus large enough to test whether sparse F98 yield is project-specific before adding rule3 or applying an external patch."},
+  "files": {"core/simplification_analyzer.py":"sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda","experimental_fixture_check.py":"sha256:16da981ae7f5baf741e17695770ded749be0a02ddfe43ac9fbdb43f18d8a22bf","Readme.md":"sha256:72a8e047fadff52113c889b4db61807f3f55e4caae38da720c3238ac3d2d5416","Skill.md":"sha256:f39ea7bf78a3c0492b9a5195bb63972417723d3501be1d0ff581160677485334"},
+  "validation": {"source_fidelity":"20/20 Git blob SHA exact","corpus_probe":"20 TypeScript files / 812 LOC / 1 rule1 candidate / 0 rule2 candidates","full_server_candidate_identity":"same candidate_id as F97","full_server_sandbox_patch":"812 -> 811 LOC; all JS candidates disappear","full_server_node_behavioral_differential":"resolve PASS; reject PASS; sync-throw PASS; access call count/path preserved","experimental_overlay":"E01-E16 PASS in bounded batches; E17-E19 PASS separately after wrapper timeout","stable_critical":{"F15":"PASS","F35":"PASS","F46":"PASS","F64":"PASS","kernel_wiring_smoke":"PASS","kernel_cli_contract":"PASS"},"compileall":"PASS","full_stable_lane_rerun":"NOT_REQUIRED_NO_STABLE_OR_ANALYZER_IMPLEMENTATION_CHANGE","self_host_frontier":{"status":"LOCAL_SIMPLIFICATION_FRONTIER_REACHED","recommended_local_candidates":0,"remaining_candidate_count":31}}
+}
