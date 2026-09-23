@@ -47,3 +47,8 @@ grep -q 'plw agent orient' plw_cli.py
 apply_b64_overlay "validation_runtime_cli_v1"
 grep -q 'parser.add_argument("--evidence-id", action="append"' plw_cli.py
 grep -q 'F138 still requires exact identity/content agreement' skills/validation-runtime-dispatch-workflow.md
+
+apply_b64_overlay "portable_topology_scope_v1"
+grep -q 'def target_topology_support' core/portable_agent.py
+grep -q 'TARGET_TOPOLOGY_LANGUAGE_UNSUPPORTED' plw_cli.py
+grep -q 'experimental_python_promoted' core/portable_agent.py
