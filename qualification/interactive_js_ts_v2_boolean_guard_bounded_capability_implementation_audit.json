@@ -1,0 +1,73 @@
+{
+  "authority": {
+    "automatic_patch_authority_granted": false,
+    "commit_creation_authorized": false,
+    "evidence_acceptance_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "interactive_execution_is_audit_authority": true,
+    "postcondition_acceptance_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "public_product_surface_exposed": false,
+    "pull_request_creation_authorized": false,
+    "push_authorized": false,
+    "truth_commit": false,
+    "upstream_mutation_authorized": false
+  },
+  "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+  "interactive": {
+    "cases": [
+      {"case": "literal_allow_required", "result": "PASS"},
+      {"case": "pending_implementation_requires_explicit_opt_in", "result": "PASS"},
+      {"case": "exact_positive_bounded_apply", "result": "PASS"},
+      {"case": "single_use_authorization_replay_rejected_after_clean_reset", "result": "PASS"},
+      {"case": "inverse_ts_conservative_rewrite", "result": "PASS"},
+      {"case": "tsx_scope_rejected_before_consumption", "result": "PASS"},
+      {"case": "operator_complement_folding_rejected", "result": "PASS"},
+      {"case": "preexisting_dirty_checkout_rejected", "result": "PASS"},
+      {"case": "actual_prewrite_baseline_failure_rejected", "result": "PASS"},
+      {"case": "prewrite_command_dirtying_detected_before_consumption", "result": "PASS"},
+      {"case": "explicit_shell_baseline_rejected", "result": "PASS"}
+    ],
+    "passed": 11,
+    "total": 11
+  },
+  "next_gate": "TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE",
+  "observations": {
+    "authorization_single_use_preserved": true,
+    "evidence_acceptance_granted": false,
+    "postconditions_validated": false,
+    "prewrite_failure_before_consumption": true,
+    "scope_rejection_before_consumption": true,
+    "successful_state": "BOUNDED_MUTATION_CAPABILITY_APPLIED"
+  },
+  "promoted_status": "BOUNDED_MUTATION_CAPABILITY_READY",
+  "ready_transition": {
+    "cases": [
+      "ready_without_pending_flag",
+      "ready_still_requires_literal_allow"
+    ],
+    "passed": 2,
+    "total": 2
+  },
+  "regression": {
+    "audit_authority": false,
+    "passed": 16,
+    "total": 16
+  },
+  "schema_version": "plw-interactive-bounded-boolean-guard-capability-audit-v1",
+  "source_bundle": {
+    "artifact_id": 10755986435,
+    "artifact_sha256": "sha256:122d441cd90c80e34dfe6bafba178f71c825378f49212fcdd149a8bfb73e59ce",
+    "file_sha256": {
+      "qualification/js_ts_v2_bounded_boolean_guard_mutation_capability.json": "sha256:90a103c303e77d5fa9d53cf2c131012462ffc09fce9948a76e8daff7e26a05db",
+      "scripts/apply_js_ts_boolean_guard_bounded_capability.py": "sha256:94b1c8018a6e3f3639e95a947329e959f2b7bc052a1b4671c840ef40f4ecf6f3",
+      "scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py": "sha256:ffb39cf8c3b8988959f8e2ffde1c7169b925f622b59bd25ee1faf1906c794c58",
+      "scripts/check_js_ts_boolean_guard_bounded_capability.py": "sha256:85d1b3484c5a3d47cda3615cf808bb8d385f7aec6adfe8b79d57c0a29781095a",
+      "scripts/plan_js_ts_boolean_guard_rewrite.py": "sha256:6f907bf0ecce09c69271f83d02ac28d7a45e1c026c638f78b46e9ed716ee8df5"
+    },
+    "head": "ab8415379b8771d5b80b4ddeef5646123d2723a6",
+    "workflow_run": 35874207271
+  },
+  "status": "INTERACTIVE_BOUNDED_MUTATION_CAPABILITY_AUDIT_PASSED"
+}

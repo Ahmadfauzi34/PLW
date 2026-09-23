@@ -123,22 +123,45 @@ Postcondition validation remains separate:
 
 Evidence acceptance also remains a separate transition.
 
-## Regression versus audit
+## Interactive implementation validation
 
-The deterministic regression suite exists only to catch implementation drift.
+CI and the deterministic regression suite are regression/build signals only.
+They are not the enablement authority.
 
-It is not the authority for capability enablement.
+The exact PR #26 implementation source was packaged from workflow run
+`35874207271` and audited directly outside CI:
 
-The suite covers positive JS/TS paths plus rejected scope and prewrite failure
-cases. The implementation status remains:
+    source head       ab8415379b8771d5b80b4ddeef5646123d2723a6
+    source artifact   10755986435
+    artifact sha256   sha256:122d441cd90c80e34dfe6bafba178f71c825378f49212fcdd149a8bfb73e59ce
+    regression        16 / 16 PASS
+    interactive       11 / 11 PASS
+    READY transition   2 / 2 PASS
 
-    IMPLEMENTED_PENDING_INTERACTIVE_VALIDATION
+The interactive walk verified:
 
-until the regression output is inspected and adjudicated interactively.
+- literal bounded-mutation opt-in remains mandatory;
+- JS positive and TS inverse transforms stay inside the approved syntax scope;
+- inverse rewriting remains `return !(C)` rather than operator-complement folding;
+- TSX and out-of-scope forms fail closed before authorization consumption;
+- pre-existing dirty checkout, baseline failure, shell execution, and validation
+  commands that dirty the checkout fail closed before authorization consumption;
+- exact replay of a consumed authorization is rejected after the disposable
+  target is reset clean;
+- successful application stops before postcondition validation and evidence
+  acceptance.
+
+The implementation status is therefore:
+
+    BOUNDED_MUTATION_CAPABILITY_READY
+
+This READY state means only that the approved internal bounded effectful
+capability passed its implementation-validation gate. It does not expose a
+public mutation command or grant broader mutation authority.
 
 ## Authority
 
-Implementation does not imply:
+READY does not imply:
 
     public PLW mutation command
     automatic patch authority
@@ -146,8 +169,11 @@ Implementation does not imply:
     primary-worktree mutation
     commit / push / PR authority
     upstream mutation authority
+    postcondition acceptance authority
+    evidence acceptance authority
     global behavioral equivalence
     truth
 
-The next checkpoint after interactive implementation validation determines
-whether the internal capability may move from pending to ready.
+The next proof gate remains:
+
+    TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE
