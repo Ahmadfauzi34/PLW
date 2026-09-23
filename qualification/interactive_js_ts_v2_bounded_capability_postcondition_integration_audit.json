@@ -1,0 +1,92 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-postcondition-interactive-audit-v1",
+  "status": "INTERACTIVE_BOUNDED_CAPABILITY_POSTCONDITION_INTEGRATION_AUDIT_PASSED",
+  "audit_authority": "DIRECT_EXECUTION_OUTSIDE_CI",
+  "source": {
+    "pr": 41,
+    "head_sha": "1accc36bfadc816ff16422b4d005b68918c95c72",
+    "workflow_run": 35909832185,
+    "artifact_id": 10771918745,
+    "artifact_sha256": "sha256:083f46cec21bfbac2cd347aa04975b19e822bf96e6b8eff6a8aefd4361e9bc7f",
+    "bundle_head_sha_matches_pr_head": true,
+    "bundle_sha256_manifest_verified": true
+  },
+  "environment": {
+    "python": "3.13.5",
+    "git": "2.47.3",
+    "platform": "Linux x86_64"
+  },
+  "execution": {
+    "command": "python scripts/check_js_ts_boolean_guard_bounded_capability_postconditions.py --output direct_regression.json --summary direct_summary.md",
+    "direct_report_sha256": "sha256:7690fbf9497b5d7956c3a104dd791371adef137bc065ef6c03b8526694710978",
+    "direct_summary_sha256": "sha256:e77650734e0e24e801d96caea53b9a6797c9afc26bea9a751d0429901822c95d",
+    "case_count": 8,
+    "passed_case_count": 8,
+    "failed_case_count": 0
+  },
+  "cases": [
+    {
+      "name": "positive_js_capability_to_postconditions",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITIONS_VALIDATED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "inverse_ts_capability_to_postconditions",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITIONS_VALIDATED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "capability_id_tamper_rejected",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_REJECTED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "embedded_primitive_tamper_rejected",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_REJECTED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "capability_authority_escalation_rejected",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_REJECTED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "authorization_capability_binding_tamper_rejected",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_REJECTED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "validation_spec_substitution_after_apply_rejected",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_REJECTED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "postwrite_focused_validation_failure_discards_worktree",
+      "result": "BOUNDED_MUTATION_CAPABILITY_POSTCONDITION_FAILED",
+      "validator_result": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "worktree_disposed": true
+    }
+  ],
+  "source_digests": {
+    "integration_script": "sha256:0103d46eccf6931db29449016d0f8f434d0cbafde9076a52ebd1528ec624e66c",
+    "integration_checker": "sha256:00445c517728ef780fcf5c6b2637ca48dd079358e8d571744ed89e66c3771469",
+    "bounded_capability_script": "sha256:94b1c8018a6e3f3639e95a947329e959f2b7bc052a1b4671c840ef40f4ecf6f3",
+    "postcondition_validator": "sha256:c2d44feff1f1792f597492e3a79bbd69f7f6f5115ab793bd0d7e4f6ca5b9cc50"
+  },
+  "authority": {
+    "bounded_capability_postcondition_integration_ready": true,
+    "public_product_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "postcondition_acceptance_authority_granted": false,
+    "evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+}
