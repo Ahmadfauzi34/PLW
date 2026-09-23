@@ -14,17 +14,21 @@ The Development Full archive contains experiments, fixtures, audit logs, interme
 
 Promotion therefore retains only evidence that is still useful for reconstructing the lineage of current architecture.
 
-The promoted record must preserve:
+A promoted exact record preserves:
 
-- the historical checkpoint identifier;
-- historical status and complete record content;
+- the historical checkpoint identifier and complete historical record bytes;
 - the exact source-file SHA-256;
-- the exact source-archive SHA-256;
-- an explicit statement that promotion does not grant new runtime or authority state.
+- the exact source-archive SHA-256 in the promotion ledger;
+- the repository path and Git blob identity;
+- an explicit boundary that historical retention grants no new runtime or authority state.
 
-## First promoted lineage: F128-F142
+## F128-F142 proof lineage — exact records retained
 
-`qualification/history/f128_f142_proof_lineage_v1.json` retains the historical proof chain covering:
+The first priority group is now retained as **21 exact historical records** under `qualification/history/`.
+
+`qualification/history/historical_evidence_promotion_ledger_v1.json` is the promotion index. It records the source path, source SHA-256, repository path, Git blob SHA-1, and byte-match result for every retained checkpoint.
+
+The retained chain covers:
 
 ```text
 F128  scenario-set validation planning
@@ -38,7 +42,11 @@ F135  attempt registration
 F136  dispatch intent
 F137  runtime dispatch/reconciliation
 F138  validation-result evidence acceptance
-F138.1-F138.5 agent/target/evidence routing checkpoints
+F138.1 semantic affordance / skill handoff
+F138.2 target-codebase topology bootstrap
+F138.3 target resolution
+F138.4 evidence-need derivation
+F138.5 evidence-driven capability selection
 F139  execution-backed scenario binding
 F139.1 agent-tool communication
 F140  proof-obligation re-derivation
@@ -46,7 +54,15 @@ F141  postcondition proof
 F142  full-stack validated state
 ```
 
-These records are historical lineage, not a promotion to F143 and not a truth commit.
+All 21 records are marked `EXACT_RECORD_RETAINED`. The Development Full ZIP is therefore **not required for normal current work on this lineage**. It remains useful only for historical reconstruction or independent byte verification against the retained source hashes.
+
+These records are historical lineage only. Retention does **not**:
+
+- promote PLW to F143;
+- grant mutation or execution authority;
+- grant evidence-acceptance or postcondition authority beyond current `main`;
+- promote stable state;
+- commit truth.
 
 ## Promotion order after F128-F142
 
