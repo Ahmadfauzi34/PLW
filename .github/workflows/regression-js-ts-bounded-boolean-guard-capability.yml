@@ -1,0 +1,40 @@
+name: Regression check bounded boolean-guard mutation capability
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/regression-js-ts-bounded-boolean-guard-capability.yml"
+      - "qualification/js_ts_v2_bounded_boolean_guard_mutation_capability.json"
+      - "scripts/apply_js_ts_boolean_guard_bounded_capability.py"
+      - "scripts/check_js_ts_boolean_guard_bounded_capability.py"
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run deterministic capability regression
+        run: |
+          mkdir -p regression-evidence
+          python scripts/check_js_ts_boolean_guard_bounded_capability.py             --output regression-evidence/report.json             --summary regression-evidence/summary.md
+          cat regression-evidence/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload regression evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-v2-bounded-boolean-guard-capability-regression
+          path: regression-evidence
+          if-no-files-found: error
