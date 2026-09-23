@@ -1,0 +1,80 @@
+{
+  "authority": {
+    "automatic_patch_authority_granted": false,
+    "commit_creation_authorized": false,
+    "evidence_acceptance_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "implementation_only": true,
+    "internal_capability_implemented": true,
+    "postcondition_acceptance_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "public_product_surface_exposed": false,
+    "pull_request_creation_authorized": false,
+    "push_authorized": false,
+    "truth_commit": false,
+    "upstream_mutation_authorized": false
+  },
+  "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+  "execution": {
+    "authorization_single_use": true,
+    "candidate_specific_external_authorization_required": true,
+    "capability_contract_digest_must_be_authorization_bound": true,
+    "checkout_must_remain_clean_after_each_prewrite_command": true,
+    "disposable_temp_worktree_only": true,
+    "evidence_acceptance_separate": true,
+    "explicit_literal_allow_flag_required": true,
+    "implementation_surface": "INTERNAL_SCRIPT_NOT_REGISTERED_IN_PLW_DISCOVERY",
+    "postcondition_validation_separate": true,
+    "prewrite_baseline_commands": [
+      "parse_after_rewrite",
+      "focused_target_native_after",
+      "target_typecheck_or_type_tests_after"
+    ],
+    "prewrite_baseline_revalidation_required": true,
+    "primary_worktree_forbidden": true,
+    "stops_after_state": "BOUNDED_MUTATION_CAPABILITY_APPLIED",
+    "trusted_effect_primitive": "apply_js_ts_boolean_guard_temp_worktree_reference.apply_reference_mutation",
+    "validation_commands_shell_false": true
+  },
+  "implementation_status": "BOUNDED_MUTATION_CAPABILITY_READY",
+  "interactive_validation": {
+    "interactive_cases_passed": 11,
+    "interactive_cases_total": 11,
+    "regression_cases_passed": 16,
+    "regression_cases_total": 16,
+    "source_artifact_id": 10755986435,
+    "source_artifact_sha256": "sha256:122d441cd90c80e34dfe6bafba178f71c825378f49212fcdd149a8bfb73e59ce",
+    "source_head": "ab8415379b8771d5b80b4ddeef5646123d2723a6",
+    "status": "INTERACTIVE_BOUNDED_MUTATION_CAPABILITY_AUDIT_PASSED"
+  },
+  "next_gate": "TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE",
+  "promotion_review": {
+    "accepted_record_digests": [
+      "sha256:611f2faa1cbbea8c9a9774acc8a480b5423cdddbbc7bb3ec26477da28312656c",
+      "sha256:1edb3876d2824abded6ac2b9adc54d6f195224dfbe1ec2f3c3ec86aeddd225dc"
+    ],
+    "merged_commit": "59880fdc03324b3e8237d67b7035748d31aaadce",
+    "status": "BOUNDED_MUTATION_CAPABILITY_PROMOTION_APPROVED_FOR_IMPLEMENTATION"
+  },
+  "rule": "js_boolean_guard_return",
+  "schema_version": "plw-js-ts-v2-bounded-boolean-guard-mutation-capability-v1",
+  "scope": {
+    "comparison_operator_complement_folding": false,
+    "condition": {
+      "left_operand": "IDENT_OR_MEMBER_CHAIN_NO_OPTIONAL_CHAINING",
+      "operator": "===",
+      "reversed_operand_order_allowed": false,
+      "right_operand": "STRING_LITERAL"
+    },
+    "exact_planner_text_required": true,
+    "source_extensions": [
+      ".js",
+      ".ts"
+    ],
+    "transformations": [
+      "positive",
+      "inverse"
+    ]
+  }
+}
