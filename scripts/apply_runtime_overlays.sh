@@ -44,16 +44,6 @@ apply_b64_overlay "portable_agent_v1"
 grep -q 'plw-portable-agent-v1' core/portable_agent.py
 grep -q 'plw agent orient' plw_cli.py
 
-if [[ -f runtime_overlay/validation_runtime_cli_v1/OVERLAY_SHA256 ]]; then
-  echo '=== validation_runtime_cli_v1 exact preimage diagnostics ==='
-  sed -n '55,78p' plw_cli.py
-  sed -n '3948,4002p' plw_cli.py
-  sed -n '4396,4412p' plw_cli.py
-  sed -n '1,70p' skills/validation-runtime-dispatch-workflow.md
-  sed -n '55,82p' validation_runtime_reference_check.py
-  echo '=== end diagnostics ==='
-fi
-
 apply_b64_overlay "validation_runtime_cli_v1"
 grep -q 'parser.add_argument("--evidence-id", action="append"' plw_cli.py
-grep -q 'test_cli_observe_forwards_explicit_evidence_ids' validation_runtime_reference_check.py
+grep -q 'F138 still requires exact identity/content agreement' skills/validation-runtime-dispatch-workflow.md
