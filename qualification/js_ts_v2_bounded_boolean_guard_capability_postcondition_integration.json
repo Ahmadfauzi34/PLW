@@ -1,0 +1,70 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-postcondition-integration-v1",
+  "status": "IMPLEMENTED_PENDING_INTERACTIVE_VALIDATION",
+  "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
+  "goal": "Bind the interactively validated bounded mutation capability to the existing interactively validated TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE without widening mutation scope or granting evidence/truth authority.",
+  "composition": [
+    "BOUNDED_MUTATION_CAPABILITY_APPLIED",
+    "verify capability receipt identity and authority boundary",
+    "verify embedded TEMP_WORKTREE_APPLIED canonical identity",
+    "verify capability-specific authorization binding",
+    "materialize exact embedded primitive outside target",
+    "delegate to existing postcondition validator",
+    "dispose worktree on success or failure"
+  ],
+  "required_existing_authority": {
+    "bounded_capability_contract": "qualification/js_ts_v2_bounded_boolean_guard_mutation_capability.json",
+    "bounded_capability_status": "BOUNDED_MUTATION_CAPABILITY_READY",
+    "postcondition_reference": "qualification/js_ts_v2_postcondition_validation_reference.json",
+    "postcondition_reference_status": "POSTCONDITION_VALIDATION_REFERENCE_REVIEW_PASSED"
+  },
+  "accepted_scope": {
+    "rule": "js_boolean_guard_return",
+    "extensions": [".js", ".ts"],
+    "operator": "===",
+    "right_operand": "STRING_LITERAL",
+    "transformations": ["positive", "inverse"],
+    "execution": "disposable system-temp worktree only"
+  },
+  "fail_closed_requirements": [
+    "capability receipt schema/status/id mismatch",
+    "capability contract digest mismatch",
+    "capability authority escalation",
+    "embedded primitive canonical digest mismatch",
+    "primitive evidence-binding mismatch",
+    "authorization capability binding mismatch",
+    "validation-spec substitution",
+    "postcondition command failure",
+    "validation-induced target mutation",
+    "worktree disposal failure"
+  ],
+  "authority": {
+    "public_product_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "postcondition_acceptance_authority_granted": false,
+    "evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "interactive_validation": {
+    "required": true,
+    "completed": false,
+    "minimum_cases": [
+      "positive JS capability -> postconditions",
+      "inverse TS capability -> postconditions",
+      "capability identity tamper rejection",
+      "embedded primitive tamper rejection",
+      "authority-escalation rejection",
+      "authorization capability-binding tamper rejection",
+      "validation-spec substitution rejection",
+      "postwrite validation failure -> discard"
+    ]
+  },
+  "next_gate_on_success": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+}
