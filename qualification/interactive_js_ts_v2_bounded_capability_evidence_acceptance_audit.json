@@ -1,0 +1,107 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-evidence-acceptance-interactive-audit-v1",
+  "status": "INTERACTIVE_BOUNDED_CAPABILITY_EVIDENCE_ACCEPTANCE_AUDIT_PASSED",
+  "audit_authority": "DIRECT_EXECUTION_OUTSIDE_CI",
+  "source": {
+    "pr": 43,
+    "head_sha": "46f3d9e1e74a2303e4b9d8258b25df971b59b801",
+    "workflow_run": 35912070931,
+    "artifact_id": 10773363061,
+    "artifact_sha256": "sha256:46be96d6d476da3b4e0c63bb1f071f20f6d3777ba76d2f450b1c4a146b543324",
+    "bundle_head_sha_matches_pr_head": true,
+    "bundle_sha256_manifest_verified": true
+  },
+  "environment": {
+    "python": "3.13.5",
+    "git": "2.47.3",
+    "platform": "Linux x86_64"
+  },
+  "execution": {
+    "command": "python3 scripts/check_js_ts_boolean_guard_bounded_capability_evidence_acceptance.py --output direct_regression.json --summary direct_summary.md",
+    "direct_report_sha256": "sha256:d83bc799c5287374820ac567912dc00fbf79f20afbbb9bbb257fa2214a24f3c8",
+    "direct_summary_sha256": "sha256:0994f371415fe7b420bd263b82b44f1e76eb9347fbb271cf7f744218652e7543",
+    "case_count": 6,
+    "passed_case_count": 6,
+    "failed_case_count": 0
+  },
+  "cases": [
+    {
+      "name": "positive_js_capability_evidence_acceptance",
+      "issuance_status": "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED",
+      "acceptance_status": "EXPERIMENT_EVIDENCE_ACCEPTED",
+      "replay_status": "EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED",
+      "issuance_records": 1,
+      "acceptance_records": 1,
+      "worktree_disposed": true,
+      "truth_commit": false
+    },
+    {
+      "name": "inverse_ts_capability_evidence_acceptance",
+      "issuance_status": "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED",
+      "acceptance_status": "EXPERIMENT_EVIDENCE_ACCEPTED",
+      "replay_status": "EXPERIMENT_EVIDENCE_ACCEPTANCE_RECOVERED",
+      "issuance_records": 1,
+      "acceptance_records": 1,
+      "worktree_disposed": true,
+      "truth_commit": false
+    },
+    {
+      "name": "validation_receipt_tamper_after_issuance_rejected",
+      "result": "REJECTED",
+      "reason": "exact validation receipt is not uniquely sealed in issuance ledger",
+      "acceptance_records": 0,
+      "worktree_disposed": true
+    },
+    {
+      "name": "primitive_receipt_tamper_after_issuance_rejected",
+      "result": "REJECTED",
+      "reason": "validation lineage digest mismatch: mutation_receipt_digest",
+      "acceptance_records": 0,
+      "worktree_disposed": true
+    },
+    {
+      "name": "failed_postconditions_sealed_but_not_accepted",
+      "issuance_status": "BOUNDED_CAPABILITY_POSTCONDITION_FAILURE_RECEIPT_ISSUED",
+      "result": "REJECTED",
+      "reason": "validation receipt is not POSTCONDITIONS_VALIDATED",
+      "issuance_records": 1,
+      "acceptance_records": 0,
+      "worktree_disposed": true
+    },
+    {
+      "name": "broken_acceptance_chain_rejected",
+      "result": "REJECTED",
+      "reason": "acceptance ledger record digest mismatch",
+      "worktree_disposed": true
+    }
+  ],
+  "source_digests": {
+    "integration_checker": "sha256:b4aa65140d533719cee8e4e99a7fc5ffb3ef43799bd8d9ee3eb242bc06229f80",
+    "existing_evidence_acceptor": "sha256:6e07e39f59aaa6e4d370e622e01808b8008ed8bd547ee66a69cad65520d99b94",
+    "postcondition_issuance_bridge": "sha256:2fa77b622f195a55de9f229b9eb42fef63763938312b4c30100f71df6f08ecc7",
+    "capability_postcondition_integration": "sha256:0103d46eccf6931db29449016d0f8f434d0cbafde9076a52ebd1528ec624e66c",
+    "qualification_before_promotion": "sha256:e7bd33d87fe710073c0b4353f0ba5afb46ab5828cf1578bacbabba2d05aca779"
+  },
+  "evidence_isolation": {
+    "fixture_local_acceptance_ledger_only": true,
+    "retained_global_evidence_ledger_modified": false,
+    "new_retained_experiment_created": false
+  },
+  "authority": {
+    "bounded_capability_evidence_acceptance_integration_ready": true,
+    "existing_evidence_acceptor_reused": true,
+    "new_evidence_acceptor_created": false,
+    "source_mutation_authority_granted": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "stable_promotion_authorized": false,
+    "truth_commit": false
+  },
+  "next_gate": "BOUNDED_MUTATION_EVIDENCE_SYNTHESIS_REVIEW"
+}
