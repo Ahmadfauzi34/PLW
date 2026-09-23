@@ -103,3 +103,47 @@ Regression/CI is not promotion authority. Promotion requires direct execution of
 - broken issuance chain rejection;
 - failed postcondition receipt sealed but not accepted;
 - invalid issuance/output path after effectful apply → worktree disposed.
+
+## Interactive audit result
+
+The exact PR-head source bundle was downloaded and executed outside CI:
+
+```text
+source head       be243d87b023586dba38505ff4b4427d0291200f
+workflow run      35911149108
+artifact id       10773286429
+artifact sha256   48cc54b4bfc5001208e24d92254fa40e4e2406e1bcba7956d6e0b5ee1a184a85
+bundle HEAD_SHA   exact match
+SHA256SUMS        all sources PASS
+direct execution  6 / 6 PASS
+```
+
+Direct report SHA-256:
+
+```text
+20b42301467afbfcce7be3c54824b82a03e8623f0e5875d353bbf28c18fac301
+```
+
+Observed boundaries:
+
+```text
+positive JS issuance                 PASS
+inverse TS issuance                  PASS
+exact issuance replay                recovered, 1 record only
+capability receipt tamper            no issuance + disposed
+broken existing issuance chain       rejected
+postwrite validation failure         failure receipt sealed, not accepted
+validation receipt path inside target rejected + disposed
+```
+
+The retained authority record is:
+
+`qualification/interactive_js_ts_v2_bounded_capability_postcondition_issuance_audit.json`
+
+The gate is therefore:
+
+```text
+BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_READY
+```
+
+READY still grants no experiment-evidence acceptance. The next checkpoint remains the existing evidence-acceptance reference.
