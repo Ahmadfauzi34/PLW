@@ -1,0 +1,86 @@
+{
+  "schema_version": "workflow-delivery-accountability-link-v1",
+  "checkpoint": "F112",
+  "base_checkpoint": "F111",
+  "stable_baseline": "F85",
+  "status": "WORKFLOW_DELIVERY_ACCOUNTABILITY_LINK_ACTIVE",
+  "goal": "Link an explicit F111 relevance accountability record to the actual F108 workflow delivery outcome without storing raw prompt/source or changing context semantics.",
+  "design": {
+    "parent_record_required": "F111 capability_workflow_relevance accountability id",
+    "delivery_outcomes": [
+      "INCLUDED",
+      "BUDGET_OMITTED",
+      "DENIED",
+      "INVALID"
+    ],
+    "included_requires_context_marker": true,
+    "omitted_denied_invalid_require_marker_absent": true,
+    "final_context_bound_by_digest_only": true,
+    "raw_prompt_stored": false,
+    "raw_source_stored": false,
+    "recording_is_explicit_on_demand": true,
+    "context_optimizer_io_added": false,
+    "kernel_io_added": false,
+    "accountability_record_changes_prompt": false,
+    "accountability_record_changes_relevance": false,
+    "manual_F108_path_without_F111_record_is_not_delivery_auditable": true
+  },
+  "authority": {
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false,
+    "delivery_record_is_relevance_authority": false,
+    "delivery_record_is_context_inclusion_authority": false
+  },
+  "implementation": {
+    "capability_delivery_loc": 209,
+    "capability_delivery_sha256": "sha256:fe065ce0fc90b01001a3cc92f57c862eb746d9aafd28183f7a60eb8ed143f3c9",
+    "capability_relevance_sha256": "sha256:7f3a2e5d47b5bd8502c428818daef54b6fe5c98ca29c147a274a329f4aeef002",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c",
+    "F111_relevance_semantics_changed": false,
+    "F108_context_optimizer_changed": false,
+    "kernel_changed": false,
+    "simplification_analyzer_changed": false
+  },
+  "proof": {
+    "included_delivery_link": "PASS",
+    "budget_omitted_delivery_link": "PASS",
+    "denied_delivery_link": "PASS",
+    "invalid_delivery_link": "PASS",
+    "content_addressed_repeat": "PASS",
+    "raw_prompt_omission": "PASS",
+    "forged_delivery_metadata_rejection": "PASS",
+    "wrong_parent_accountability_type_rejection": "PASS"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F112_is_current_development": true,
+    "rule3_remains_retired": true,
+    "runtime_ts_js_rule_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0,
+    "F110_fast_lane_preserved": true
+  },
+  "validation": {
+    "status": "PASS",
+    "fast_lane": "E31 + E32 + E33 + E29 + E30 + F15/F34/F35/F46/F64 PASS",
+    "fast_lane_internal_seconds_observed": 21.516,
+    "within_45_second_target": true,
+    "compileall": "PASS",
+    "kernel_smoke": "not required because context optimizer and kernel bytes are unchanged from F111/F110/F108",
+    "full_release_suites": "preserved; not run for explicit audit-link extension"
+  },
+  "next_target": {
+    "checkpoint": "F113",
+    "name": "Workflow Accountability Chain Query",
+    "goal": "Expose a compact audit view that follows relevance accountability to delivery accountability without scanning raw prompts or granting execution authority."
+  }
+}
