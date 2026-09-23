@@ -1,0 +1,59 @@
+name: Regression JS TS bounded capability postconditions
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/validate_js_ts_boolean_guard_bounded_capability_postconditions.py'
+      - 'scripts/check_js_ts_boolean_guard_bounded_capability_postconditions.py'
+      - 'qualification/js_ts_v2_bounded_boolean_guard_capability_postcondition_integration.json'
+      - 'docs/JS_TS_V2_BOUNDED_BOOLEAN_GUARD_CAPABILITY_POSTCONDITIONS.md'
+      - '.github/workflows/regression-js-ts-bounded-capability-postconditions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile integration sources
+        run: |
+          python -m py_compile \
+            scripts/validate_js_ts_boolean_guard_bounded_capability_postconditions.py \
+            scripts/check_js_ts_boolean_guard_bounded_capability_postconditions.py
+      - name: Run deterministic regression
+        run: |
+          mkdir -p artifacts
+          python scripts/check_js_ts_boolean_guard_bounded_capability_postconditions.py \
+            --output artifacts/regression.json \
+            --summary artifacts/summary.md
+      - name: Package exact interactive-audit source bundle
+        run: |
+          mkdir -p artifacts/source/scripts artifacts/source/qualification artifacts/source/docs
+          cp scripts/validate_js_ts_boolean_guard_bounded_capability_postconditions.py artifacts/source/scripts/
+          cp scripts/check_js_ts_boolean_guard_bounded_capability_postconditions.py artifacts/source/scripts/
+          cp scripts/apply_js_ts_boolean_guard_bounded_capability.py artifacts/source/scripts/
+          cp scripts/check_js_ts_boolean_guard_bounded_capability.py artifacts/source/scripts/
+          cp scripts/apply_js_ts_boolean_guard_temp_worktree_reference.py artifacts/source/scripts/
+          cp scripts/validate_js_ts_boolean_guard_temp_worktree_postconditions.py artifacts/source/scripts/
+          cp scripts/plan_js_ts_boolean_guard_rewrite.py artifacts/source/scripts/
+          cp qualification/js_ts_v2_bounded_boolean_guard_mutation_capability.json artifacts/source/qualification/
+          cp qualification/js_ts_v2_postcondition_validation_reference.json artifacts/source/qualification/
+          cp qualification/js_ts_v2_bounded_boolean_guard_capability_postcondition_integration.json artifacts/source/qualification/
+          cp docs/JS_TS_V2_BOUNDED_BOOLEAN_GUARD_CAPABILITY_POSTCONDITIONS.md artifacts/source/docs/
+          git rev-parse HEAD > artifacts/source/HEAD_SHA.txt
+          sha256sum \
+            artifacts/source/scripts/*.py \
+            artifacts/source/qualification/*.json \
+            artifacts/source/docs/*.md \
+            > artifacts/source/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: js-ts-bounded-capability-postcondition-integration
+          path: artifacts/
+          if-no-files-found: error
