@@ -1,0 +1,63 @@
+{
+  "schema_version": "f139-execution-backed-scenario-evidence-binding-v1",
+  "checkpoint": "F139",
+  "base_checkpoint": "F138.5",
+  "stable_baseline": "F85",
+  "status": "EXECUTION_BACKED_SCENARIO_EVIDENCE_BINDING_ACTIVE",
+  "goal": "Bind one exact F138-accepted validation.result into the exact F128 selected-scenario evidence space using F137/F138 execution provenance without rerunning validators or promoting evidence into proof completion.",
+  "contract": {
+    "command": "plw validation-scenario-bind <acceptance-id> <plan.json> <result.json> --store-dir DIR --json",
+    "read_only": true,
+    "provenance_class": "F138_ACCEPTED_RUNTIME_RESULT",
+    "f129_style_binding_semantics": true,
+    "validator_execution": false,
+    "runtime_dispatch": false,
+    "proof_obligation_coverage": false,
+    "postcondition_proven": false,
+    "truth_commit": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 47,
+    "semantic_contracts": 47,
+    "operational_skill_modules": 32,
+    "experimental_fixture_count": 67,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E67",
+    "reference_checker": "execution_backed_evidence_reference_check.py",
+    "reference_tests": 12,
+    "pass_and_fail_outcome_probe": true,
+    "result_substitution_probe": true,
+    "plan_substitution_probe": true,
+    "provenance_widening_probe": true,
+    "read_only_store_probe": true,
+    "cli_agent_authority_probe": true,
+    "semantic_registry_full_coverage": true,
+    "external_network_required": false
+  },
+  "implementation": {
+    "fullstack/execution_backed_evidence.py": "sha256:719cf55e7a78ea6c77d37197c9d9d680a6d643370b598fac21221b0a825c0d1f",
+    "fullstack/validation_evidence.py": "sha256:db789f3c0f538b39fa7961eb4d3a77d94cf508a9045b5c831e9abea47ba42a19",
+    "fullstack/__init__.py": "sha256:fa49db6b6c1ba13f13fe8815f68131f30f9598ba67a1a7bafefedce2d98f3f2d",
+    "core/semantic_affordance.py": "sha256:05f4a92d5a7b7d1768d4dd5e56f1bcd8e1419c0d30f52a943664a96caca54a08",
+    "plw_cli.py": "sha256:f4561cf5b168b0a771eea0dcf22597e5e88b056d316fde2c45bdd4c29e8b1c53",
+    "agent_tool.py": "sha256:e4326f92d587be96e43e2b6505ca68cf35101dd4629591b5bebfe09e5e1feccb",
+    "skills/execution-backed-scenario-evidence-workflow.md": "sha256:8c696524912518609b683c43ceae5ff0c704dd3cff9adc0ec26b3f8082f086d2",
+    "SKILL.md": "sha256:1fbb1ad7b4dea12aa8a9cba24d23cab405d84563ee868dde4dee3a5d98693f7c",
+    "README.md": "sha256:b51941626a7d35b94681be950528ce5f1839db664cb14df4494e51bc4aa2426f",
+    "tools_schema_compact.json": "sha256:e691fd6f151062dd2d7dcc069d0164d52f38045dacf58976bb393282a161b29f",
+    "tools_schema.json": "sha256:8534aa5939d5d662b475e085eb84fdacb0116820f989e03e720745446104fe45",
+    "execution_backed_evidence_reference_check.py": "sha256:78b21d65a914a176c76bb29d916cb80006f379073b539a101a218cf75bac7b15",
+    "experimental_fixture_check.py": "sha256:ec81f1629e8e54a9eaa474ca6ef0957fc8c94db2032ce8ca4f04ae99ab7740e9",
+    "fixture_fast.py": "sha256:34b166dcfbdc974a2cf5b50d5a04cc4474f88ee2372c397cfa4d64c50153adf0"
+  },
+  "next_target": {
+    "checkpoint": "F140",
+    "name": "Execution-Backed Proof-Obligation Re-Derivation",
+    "goal": "Re-derive proof-obligation coverage from F139 execution-backed scenario evidence without assuming F123-only provenance or promoting coverage into postcondition truth."
+  }
+}
