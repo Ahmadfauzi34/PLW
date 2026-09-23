@@ -1,0 +1,207 @@
+{
+  "schema_version": "layered-skill-router-v3",
+  "checkpoint": "F115",
+  "base_checkpoint": "F114",
+  "stable_baseline": "F85",
+  "status": "LAYERED_SKILL_ROUTER_ACTIVE",
+  "goal": "Keep the canonical always-loaded SKILL.md small and operational while routing agents through descriptively named, bounded, bidirectionally linked skill modules.",
+  "instruction_budget": {
+    "previous_root_lines": 1114,
+    "previous_root_bytes": 65004,
+    "root_lines": 269,
+    "root_bytes": 14747,
+    "root_max_lines": 300,
+    "root_max_bytes": 15360,
+    "root_is_level_1_router": true,
+    "modules_are_on_demand": true,
+    "historical_logs_forbidden_in_root": true
+  },
+  "modules": {
+    "skills/adaptive-agent-workflow.md": {
+      "lines": 100,
+      "bytes": 6163,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:95d83731084e0509306a293a4c469aa67825e580548ca50408558d49b31d72d0"
+    },
+    "skills/context-and-proof-workflow.md": {
+      "lines": 297,
+      "bytes": 13320,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:36bda92fee2a75d739d9eb1553101ff6b23265f9d2a2827511ed1902b950fb44"
+    },
+    "skills/code-change-and-session-workflow.md": {
+      "lines": 191,
+      "bytes": 6705,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:5d8c5c201c188285c6441a558d6939fb23e7fff0f02aba6faccbb152251e5151"
+    },
+    "skills/external-corpus-audit-workflow.md": {
+      "lines": 120,
+      "bytes": 5303,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:7f90a2dc93bfe5e71be796eec296e54701a4b65f52b0f5aabc4696f30761e939"
+    },
+    "skills/analysis-output-reference.md": {
+      "lines": 197,
+      "bytes": 14735,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:a316a18eecc756dbc9ecd11d0bc9398f88a9807ba63454039a4819dad1a91b09"
+    },
+    "skills/tool-call-and-cli-workflow.md": {
+      "lines": 213,
+      "bytes": 8678,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:2476dc4606d47a11ad56fade1a4b662063c2d2d6c8709a7217350f41582dc6ce"
+    },
+    "skills/repository-structure-and-api-reference.md": {
+      "lines": 136,
+      "bytes": 8523,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:d608bfddd11a58b11b3cd96a267cd530d5b42fd8f866df561c0edaa2caa4d523"
+    },
+    "skills/capability-governance-workflow.md": {
+      "lines": 83,
+      "bytes": 10943,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:63e647288a3b2a3cc24791574a3f0a6839144ec0868ca1430af11afc0d0b90d3"
+    },
+    "skills/atomic-execution-lease-workflow.md": {
+      "lines": 80,
+      "bytes": 4782,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:22392df94e406d641b6be2a1da670f4f0a09b99d9071a2af304788c609282d08"
+    },
+    "skills/history/f86-f105-simplification-decisions.md": {
+      "lines": 90,
+      "bytes": 9545,
+      "max_lines": 300,
+      "max_bytes": 15360,
+      "sha256": "sha256:e5c9c697c91f63d47746e8a507728a241c8bf33f23b100d3054a9d5aba1db437"
+    }
+  },
+  "routing_policy": {
+    "canonical_entrypoint": "SKILL.md",
+    "module_directory": "skills",
+    "preload_all_modules": false,
+    "load_smallest_relevant_module": true,
+    "history_default_loaded": false,
+    "root_contains_core_commands": true,
+    "root_contains_current_authority_boundary": true,
+    "descriptive_module_names": true,
+    "bidirectional_module_navigation": true,
+    "conditional_cross_module_transitions": true,
+    "standalone_module_headings": true,
+    "markdown_link_graph_validated": true,
+    "documentation_routing_hardened_at": "F120"
+  },
+  "protected_runtime": {
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256_before_f120_adaptive_surface": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "action_proposal_sha256": "sha256:d270214cd2527a3b1ca3c3bc0a65e29d7040f23f9d8d81390e83d5f23e239925"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F115_is_current_development": true,
+    "instruction_packaging_only": true,
+    "no_context_semantics_change": true,
+    "no_kernel_change": true,
+    "no_lifecycle_change": true,
+    "no_proposal_semantics_change": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "operational_modules_restored_under_skills": true,
+    "adaptive_kernel_extension_owned_by_f120": true,
+    "atomic_lease_module_owned_by_f121": true,
+    "executor_outcome_module_owned_by_f122": true,
+    "executor_adapter_bridge_owned_by_f123": true,
+    "latest_documentation_routing_update": "F138.1",
+    "F115_instruction_packaging_claim_remains_historical": true,
+    "angular_semantic_ownership_owned_by_f124": true,
+    "geometry_ui_correspondence_owned_by_f125": true,
+    "runtime_geometry_capture_owned_by_f126": true,
+    "geometric_impact_projection_owned_by_f127": true,
+    "scenario_validation_planning_owned_by_f128": true,
+    "scenario_validation_evidence_owned_by_f129": true,
+    "validation_proof_obligation_projection_owned_by_f130": true,
+    "validation_proof_integrity_owned_by_f131": true,
+    "validation_execution_request_owned_by_f132": true,
+    "validation_authorization_binding_owned_by_f133": true,
+    "validation_execution_lease_owned_by_f134": true,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  },
+  "implementation": {
+    "skill_root_sha256": "sha256:1dc1b99354980e5bcad5015915d207f245eef39569e9fc8af4bafe227eaf8c93",
+    "readme_sha256": "sha256:15bce7ed78761f93d550e5c12c0d0c3cc190cd6d74ab9b3ca3189966e0530745",
+    "experimental_fixture_check_sha256": "sha256:f427e927f7d77d4185ca9dc2f317d5fdc6d7b6e0b8d912cee7344a7831c2048d",
+    "fixture_fast_sha256": "sha256:ee35878afdb8b5cdd66862f5c0891f704ae5782a0c5d38cb4d766e0d3e3b1c6c"
+  },
+  "next_target": {
+    "checkpoint": "F116",
+    "name": "Workflow Action Authorization Receipt Contract",
+    "goal": "Define an explicit content-addressed authorization receipt bound to one F114 ready proposal while keeping actual execution outside the authorization artifact."
+  }
+}

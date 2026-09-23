@@ -1,0 +1,218 @@
+{
+  "schema_version": "adaptive-agent-reference-machine-v1",
+  "checkpoint": "F120",
+  "patch_id": "F120_ADAPTIVE_AGENT_SURFACE",
+  "base_checkpoint": "F119",
+  "stable_baseline": "F85",
+  "status": "ADAPTIVE_AGENT_REFERENCE_MACHINE_ACTIVE",
+  "goal": "Reduce repeated repository-inspection tool calls by selecting a bounded evidence pack adaptively while preserving every specialized capability and authority boundary.",
+  "product_boundary": {
+    "deliverable": "downloadable_zip",
+    "external_corpus_repository": "Ahmadfauzi34/Tool.py",
+    "external_corpus_role": "running_evidence_input_only",
+    "external_corpus_source_vendored": false,
+    "external_corpus_modified_by_this_patch": false,
+    "portable_tool_installed_into_corpus": false
+  },
+  "baseline_proof_state": {
+    "canonical_tool_declarations": 1,
+    "executable_json_tool_adapter": false,
+    "kernel_modes_executable": 30,
+    "kernel_modes_declared_by_canonical_schema": 22,
+    "unadvertised_kernel_modes": [
+      "cycle_break",
+      "fiber",
+      "memory",
+      "memory_bridge",
+      "memory_bridge_auto",
+      "memory_bridge_candidates",
+      "memory_compact",
+      "memory_kan"
+    ],
+    "ordinary_one_target_sequence": [
+      "context",
+      "analyze_summary",
+      "brief"
+    ],
+    "ordinary_one_target_external_calls": 3,
+    "ordinary_one_target_graph_acquisitions": 3,
+    "operational_markdown_directory": "references"
+  },
+  "valid_transition": {
+    "default_mode": "work",
+    "routing_kind": "deterministic_bounded_evidence_routing",
+    "goal_order": [
+      "explicit_goal",
+      "claim_obligation",
+      "bounded_task_signal",
+      "safe_default"
+    ],
+    "depths": [
+      "auto",
+      "quick",
+      "standard",
+      "deep"
+    ],
+    "maximum_explicit_targets": 8,
+    "maximum_selected_findings": 100,
+    "shared_snapshot_consumers": [
+      "context",
+      "analysis_summary",
+      "target_briefs"
+    ],
+    "advanced_surface": [
+      "kernel",
+      "plw"
+    ],
+    "advanced_invocation_uses_shell": false,
+    "advanced_timeout_seconds_range": [
+      1,
+      3600
+    ],
+    "advanced_state_change_requires_literal_true": true,
+    "invalid_routing_input_scans_repository": false
+  },
+  "final_proof_state": {
+    "canonical_tool_declarations": 1,
+    "executable_json_tool_adapter": true,
+    "public_kernel_modes": 31,
+    "public_plw_commands": 23,
+    "all_public_modes_discoverable": true,
+    "ordinary_one_target_external_calls": 1,
+    "ordinary_one_target_equivalent_separate_calls": 3,
+    "ordinary_one_target_avoided_follow_up_calls": 2,
+    "canonical_graph_builds_per_work_call": 1,
+    "filesystem_rescans_inside_work_call": 0,
+    "standard_analyzer_execution": "one_goal_specific_subset_pass",
+    "deep_analyzer_execution": "one_complete_registry_pass",
+    "standard_response_projection": "compact_recoverable",
+    "deep_response_projection": "full",
+    "reference_fixture_output_bytes_before_compact_response": 49362,
+    "reference_fixture_output_bytes_after_compact_response": 16352,
+    "reference_fixture_output_byte_reduction_percent": 66.9,
+    "combined_target_brief_contains": [
+      "outline",
+      "impact"
+    ],
+    "routing_rationale_observable": true,
+    "proof_gate_and_stop_reason_returned": true,
+    "operational_markdown_directory": "skills",
+    "operational_skill_module_count": 9,
+    "ambiguous_references_directory_present": false
+  },
+  "state_effect_contract": {
+    "local_derived_cache_or_provenance_may_change": true,
+    "canonical_memory_or_fiber_change_authorized_by_work": false,
+    "source_or_repository_change_authorized_by_work": false,
+    "external_runtime_execution_authorized_by_work": false
+  },
+  "authority": {
+    "adaptive_routing_is_claim_proof": false,
+    "adaptive_routing_grants_workflow_authority": false,
+    "work_executes_external_runtime": false,
+    "work_mutates_source": false,
+    "work_mutates_external_corpus": false,
+    "work_promotes_stable_state": false,
+    "work_commits_truth": false
+  },
+  "documentation": {
+    "canonical_entrypoint": "SKILL.md",
+    "module_directory": "skills",
+    "default_workflow_module": "skills/adaptive-agent-workflow.md",
+    "module_contract_markers": [
+      "Load when",
+      "Provides",
+      "Return to",
+      "Related modules"
+    ],
+    "module_filenames_describe_workflow_or_decision_surface": true,
+    "bidirectional_routes_validated": true
+  },
+  "implementation": {
+    "adaptive_work_sha256": "sha256:6f0899ee7c2094520086c97eab751af0c841eeb9065613b25b93feb67c7b2d53",
+    "kernel_sha256": "sha256:f97d54ff5b8bebcc11dcbbe441f52beab70f5243ba95f650a2a8666da711e6d0",
+    "agent_tool_sha256": "sha256:691f9eb742585d873eea6972320f5baedc62a7c75287bcab7b1174a15047b128",
+    "plw_cli_sha256": "sha256:a7d715b31f078af1ac0bafb66f7add303702ec6fca742acbfcef95b576a4f406",
+    "setup_sha256": "sha256:2d0c1e68922e5f16410d7bc8c337fc233325816a18afcd60922f98fc41bfe3ab",
+    "compact_schema_sha256": "sha256:ea17eb28d436642d3b07f6a403a17761db5cfd05449daccdc3d85c5be6d565c0",
+    "legacy_schema_sha256": "sha256:6b73dd1f3b83ad3f39ba15ef2de4ea8fd2f6a56c3d8061c6bd39e6116434abba",
+    "skill_root_sha256": "sha256:27f9c8c422cc6cadd3d36e09d2606f4623c7fc94faf2be6a3fb8e7bd7a93bc9e",
+    "adaptive_skill_module_sha256": "sha256:95d83731084e0509306a293a4c469aa67825e580548ca50408558d49b31d72d0",
+    "stable_fixture_sha256": "sha256:83892b1f41b340868ca810e5081aff43857129808a6b12868b06dc9290c7f534",
+    "experimental_fixture_sha256": "sha256:8d7695dd6f9114028eb3960108dbd07f716943e9ffa90631f66a7909afc2c18e",
+    "fast_fixture_sha256": "sha256:88207c3c89f01950d1ffedef0410bbb8d658034ae10061fc21958a52f0257d73",
+    "readme_sha256": "sha256:9e1b0eb81f969a29de3c6c30801b0b537cc59ef10b58092cdceeace290e8be2f"
+  },
+  "validation": {
+    "stable_fixture_count": 61,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 43,
+    "external_corpus_validation_mode": "read_only_against_pinned_merged_commit",
+    "external_network_required_by_packaged_fixture": false
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F120_implementation_fingerprints_are_historical": true,
+    "F121_action_lease_is_not_attributed_to_F120": true,
+    "F122_executor_outcome_is_not_attributed_to_F120": true,
+    "F123_executor_adapter_bridge_is_not_attributed_to_F120": true,
+    "F124_angular_semantic_ownership_is_not_attributed_to_F120": true,
+    "F125_geometry_correspondence_is_not_attributed_to_F120": true,
+    "F126_runtime_geometry_capture_is_not_attributed_to_F120": true,
+    "F127_geometric_impact_projection_is_not_attributed_to_F120": true,
+    "F128_validation_scenario_planning_is_not_attributed_to_F120": true,
+    "F129_validation_evidence_is_not_attributed_to_F120": true,
+    "F130_validation_proof_obligations_is_not_attributed_to_F120": true,
+    "F131_validation_proof_integrity_is_not_attributed_to_F120": true,
+    "F131_system_cli_install_support_is_not_attributed_to_F120": true,
+    "F132_validation_execution_request_is_not_attributed_to_F120": true,
+    "F133_validation_authorization_binding_is_not_attributed_to_F120": true,
+    "F134_validation_execution_lease_is_not_attributed_to_F120": true,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  },
+  "next_target": {
+    "checkpoint": "F121",
+    "name": "Atomic Authorized Action Lease Contract",
+    "goal": "Introduce a single-use, crash-safe compare-and-swap execution lease without conflating adaptive evidence routing with action authority."
+  }
+}

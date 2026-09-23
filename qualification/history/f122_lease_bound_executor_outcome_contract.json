@@ -1,0 +1,171 @@
+{
+  "schema_version": "lease-bound-executor-outcome-contract-v1",
+  "checkpoint": "F122",
+  "base_checkpoint": "F121",
+  "stable_baseline": "F85",
+  "status": "LEASE_BOUND_EXECUTOR_OUTCOME_CONTRACT_ACTIVE",
+  "goal": "Bind one durable executor attempt and exactly one terminal executor observation to the exact F121 lease without conflating registration, executor report, postcondition proof, or truth settlement.",
+  "product_boundary": {
+    "deliverable": "downloadable_zip",
+    "external_corpus_repository": "Ahmadfauzi34/Tool.py",
+    "external_corpus_role": "read_only_regression_witness",
+    "external_corpus_modified_by_f122": false,
+    "corpus_source_vendored": false
+  },
+  "baseline_proof_state": {
+    "F121_atomic_single_use_lease_active": true,
+    "F121_executor_start_handoff_is_durable_outcome_evidence": false,
+    "durable_executor_attempt_ledger_present": false,
+    "terminal_outcome_receipt_present": false,
+    "public_plw_commands": 24,
+    "operational_skill_modules": 10,
+    "experimental_fixture_count": 44
+  },
+  "valid_transitions": {
+    "attempt": {
+      "from": "F121_LEASED",
+      "to": "ATTEMPT_REGISTERED",
+      "preconditions": [
+        "issuer-sealed F121 lease verifies",
+        "lease is active at registration commit",
+        "executor id exactly matches lease",
+        "plan digest is present and content-addressed",
+        "literal attempt registration intent",
+        "one attempt identity wins per lease"
+      ],
+      "meaning": "durable pre-execution handoff barrier only; not proof external execution started"
+    },
+    "terminal": {
+      "from": "ATTEMPT_REGISTERED",
+      "to": [
+        "SUCCEEDED",
+        "FAILED",
+        "INDETERMINATE"
+      ],
+      "preconditions": [
+        "registered attempt receipt verifies",
+        "lease/attempt/executor bindings match",
+        "bounded observation digest matches supplied observation",
+        "no prior conflicting terminal receipt"
+      ],
+      "meaning": "executor terminal observation only; not automatic postcondition or truth proof"
+    }
+  },
+  "outcome_store": {
+    "engine": "Python stdlib sqlite3",
+    "canonical_location": "<accountability-trust-store>/executor_outcomes.sqlite3",
+    "caller_selectable_parallel_database": false,
+    "journal_mode": "DELETE",
+    "synchronous": "FULL",
+    "transaction_lock": "BEGIN IMMEDIATE",
+    "database_mode": "0600",
+    "directory_mode": "0700",
+    "unique_constraints": [
+      "lease_id",
+      "attempt_id",
+      "attempt_key"
+    ],
+    "raw_observation_stored": false,
+    "terminal_outcome_is_single_assignment": true
+  },
+  "crash_semantics": {
+    "registration_committed_then_crash_before_external_invocation": "ATTEMPT_REGISTERED_UNRESOLVED",
+    "external_effect_then_crash_before_terminal_receipt": "ATTEMPT_REGISTERED_UNRESOLVED",
+    "precommit_registration_failure_rolls_back": true,
+    "precommit_terminal_failure_rolls_back": true,
+    "absence_or_timeout_infers_success_or_failure": false,
+    "indeterminate_is_first_class_terminal_state": true
+  },
+  "final_proof_state": {
+    "one_registered_attempt_per_lease": true,
+    "idempotent_attempt_recovery_claims_second_handoff": false,
+    "one_terminal_outcome_per_attempt": true,
+    "idempotent_terminal_recovery_changes_terminal_state": false,
+    "registered_without_terminal_is_success_or_failure": false,
+    "terminal_report_proves_postcondition": false,
+    "terminal_report_commits_truth": false,
+    "outcome_can_be_recorded_after_lease_expiry": true,
+    "public_plw_commands": 25,
+    "operational_skill_modules": 11
+  },
+  "authority": {
+    "F122_executes_external_plan": false,
+    "F122_mutates_source": false,
+    "F122_promotes_stable_state": false,
+    "F122_commits_truth": false,
+    "first_attempt_registration_claims_exact_existing_lease_handoff": true,
+    "attempt_recovery_claims_second_handoff": false,
+    "inspection_claims_handoff": false,
+    "terminal_SUCCEEDED_is_postcondition_proof": false,
+    "terminal_FAILED_proves_no_partial_side_effect": false
+  },
+  "tool_surface": {
+    "command": "plw action-outcome",
+    "operations": [
+      "register",
+      "record",
+      "status"
+    ],
+    "register_requires_cli_allow_state_change": true,
+    "record_requires_cli_allow_state_change": true,
+    "agent_adapter_requires_literal_allow_state_change": true,
+    "status_is_read_only": true,
+    "shell_used_by_agent_adapter": false
+  },
+  "implementation": {
+    "executor_outcome_sha256": "sha256:af5faef7c52da2ffca1ee0c25b104b03b1f03d177a36638b97ca78ed0ffd1810",
+    "core_init_sha256": "sha256:bd286b62a77846875192835a7e3a6d87221ffc33150bbda36bd2b0853f4d9208",
+    "agent_tool_sha256": "sha256:57199207e8be9051823e52a1e226db253521fb8b0767586dffc45df24ae781f4",
+    "plw_cli_sha256": "sha256:0594e956b425007db77fa31ebd4dec8f7b82ddbe24fab124d13289deebb5a53a",
+    "compact_schema_sha256": "sha256:f8f561cf5506d5f26f2222840d86a0e27e0042a601f087f4f1258975127b1fe2",
+    "legacy_schema_sha256": "sha256:305f6e74fbeb3ac5cdc13812744bc92e6331a7f54789eb4c285f8bfa9e975fae",
+    "skill_root_sha256": "sha256:0fa89ed560885b521681455d73c952e287be7d2c2a7bc5a3122086027a34f2a0",
+    "outcome_skill_sha256": "sha256:f93392c46d2a9096ad7e4979251519cc828094aa29070f1788330b7a0da83e39",
+    "readme_sha256": "sha256:16e6f1c615dfba95c454eb4f0168aa09099766ee3d6231c3ee193062265ed755",
+    "experimental_fixture_sha256": "sha256:6346a5227fd014cbef021774a2d8f9cc286d923fb9690fb0e9294e7a2c13be14",
+    "fast_fixture_sha256": "sha256:70022b95158f488bfa15adbe702cecfcfbae65628cd2808a64955d21fbbc5cd1"
+  },
+  "validation": {
+    "stable_fixture_count": 61,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 45,
+    "adversarial_cases": [
+      "truthy non-boolean attempt intent",
+      "unknown heuristic request field",
+      "same-attempt recovery",
+      "changed-attempt replay on same lease",
+      "precommit registration crash rollback",
+      "twelve-way attempt race",
+      "unresolved state preservation",
+      "observation digest tamper",
+      "same-outcome recovery",
+      "conflicting second terminal report",
+      "precommit terminal crash rollback",
+      "terminal report after lease expiry",
+      "INDETERMINATE terminal state",
+      "non-literal agent state acknowledgement",
+      "durable receipt tamper"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F123",
+    "name": "Lease-Bound Executor Adapter and Reconciliation Bridge",
+    "goal": "Connect concrete executor adapters to the F122 registration/report protocol and reconcile unresolved crash windows without claiming generic exactly-once external effects."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F122_cross_checkpoint_fingerprints_are_historical": true,
+    "F122_executor_outcome_module_unchanged": true,
+    "F123_executor_adapter_bridge_owned_by_f123": true,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

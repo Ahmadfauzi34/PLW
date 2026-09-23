@@ -1,0 +1,271 @@
+{
+  "schema_version": "tool-py-external-corpus-audit-v1",
+  "checkpoint": "F120",
+  "base_checkpoint": "F119",
+  "stable_baseline": "F85",
+  "status": "EXTERNAL_CORPUS_AUDIT_CONTRACT_ACTIVE",
+  "goal": "Make a public commit-pinned repository a durable running corpus, use its counterexamples to harden portable query and loop-scope behavior, and keep native, runtime, static, CI, and mutation-authority evidence distinct.",
+  "corpus_identity": {
+    "repository": "Ahmadfauzi34/Tool.py",
+    "repository_url": "https://github.com/Ahmadfauzi34/Tool.py",
+    "default_branch": "main",
+    "baseline_commit_sha": "a61b0ad38fd087a1784c3ffc3d5ced70ddab3dd4",
+    "audit_branch": "codex/external-corpus-audit-f120",
+    "validated_head_sha": "477df865ba78528ab035c34e8ab6b9c1c473bce4",
+    "validated_head_tree_sha": "bea01afc12ac37d79c5675ac3d3b61871737477a",
+    "pull_request_number": 1,
+    "pull_request_url": "https://github.com/Ahmadfauzi34/Tool.py/pull/1",
+    "merged_commit_sha": "82fb5f3c8599c4d053df554d488711da3b00e87d",
+    "merged_tree_sha": "bea01afc12ac37d79c5675ac3d3b61871737477a",
+    "merged_tree_matches_validated_head": true,
+    "tool_vendored_in_corpus": false,
+    "dependency_direction": "external_corpus_adapter_to_portable_hott_kernel_only"
+  },
+  "baseline_proof_state": {
+    "native": {
+      "npm_install": "PASS; generated an untracked lockfile for investigation",
+      "lint": "PASS",
+      "tests": "PASS 1/1",
+      "build": "PASS with SSR relative-fetch URL failure logged during prerender"
+    },
+    "runtime": {
+      "root_http_status": 200,
+      "python_info_http_status": 200,
+      "python_info_false_active_claim": true,
+      "topology_http_status": 500,
+      "impact_http_status": 500,
+      "cause": "server referenced tools/ai_studio_tool/file_scanner.py after that directory was deleted"
+    },
+    "static": {
+      "supported_files": 22,
+      "internal_edges": 23,
+      "boundaries": 2,
+      "type_shapes": 9,
+      "entrypoints": 3,
+      "test_files": 1,
+      "findings_total": 61,
+      "findings_by_severity": {
+        "high": 9,
+        "medium": 29,
+        "low": 20,
+        "info": 3
+      },
+      "analyzers_executed": 13,
+      "analyzers_failed": 0,
+      "graph_content_signature": "sha256:45c89cfb7574fe3ad81ec0f948acb1eea9908c1fd9925f31c7b78187430690ea"
+    }
+  },
+  "corpus_transition": {
+    "scope": [
+      "external kernel configuration and truthful availability",
+      "kernel-backed topology/impact/outline/brief routes",
+      "corpus-root target containment and root-relative API paths",
+      "SSR browser-call guard and regression test",
+      "native dependency lock, README, and GitHub Actions baseline"
+    ],
+    "intentional_signals_preserved": [
+      "three dependency cycles",
+      "await in corpus service loop",
+      "delete and eval usage",
+      "JSON parsing in a loop",
+      "uncleared interval",
+      "nondeterministic cache key",
+      "thin test reachability"
+    ],
+    "legacy_deleted_script_routes": "HTTP_410_WITH_CONSOLIDATED_REPLACEMENTS",
+    "ci": {
+      "workflow": "Native corpus baseline",
+      "head_sha": "477df865ba78528ab035c34e8ab6b9c1c473bce4",
+      "run_id": 34979408036,
+      "conclusion": "success"
+    }
+  },
+  "portable_gaps_closed": {
+    "target_resolution": {
+      "observed_gap": "impact, outline, and brief rejected root-relative targets when external graph vertices were absolute",
+      "resolution_order": [
+        "exact_graph_vertex",
+        "unique_root_relative_suffix",
+        "explicit_failure"
+      ],
+      "zero_match_error": "file_not_found_in_graph",
+      "multiple_match_error": "ambiguous_file_target",
+      "ambiguity_candidates_returned": true,
+      "heuristic_ambiguous_choice": false
+    },
+    "loop_scope": {
+      "observed_gap": "backward brace counting treated awaits and JSON operations after a closed loop as loop-contained",
+      "intermediate_false_high_findings_removed": 5,
+      "positive_and_negative_boundary_fixtures": true,
+      "corpus_specific_path_special_case": false
+    }
+  },
+  "final_proof_state": {
+    "native": {
+      "npm_ci": "PASS",
+      "lint": "PASS",
+      "tests": "PASS 2/2 including server-platform no-fetch regression",
+      "build": "PASS; one static route prerendered without relative-fetch URL failure"
+    },
+    "runtime_with_external_kernel": {
+      "python_info_http_status": 200,
+      "python_info_supported": true,
+      "topology_http_status": 200,
+      "topology_nodes": 22,
+      "topology_edges": 23,
+      "impact_http_status": 200,
+      "outline_http_status": 200,
+      "brief_http_status": 200,
+      "traversal_http_status": 400,
+      "retired_endpoint_http_status": 410
+    },
+    "runtime_without_external_kernel": {
+      "python_info_http_status": 200,
+      "python_info_supported": false,
+      "topology_http_status": 500,
+      "explicit_configuration_guidance": true
+    },
+    "static_after_portable_fixes": {
+      "supported_files": 22,
+      "internal_edges": 23,
+      "boundaries": 2,
+      "type_shapes": 11,
+      "entrypoints": 3,
+      "test_files": 1,
+      "findings_total": 61,
+      "findings_by_severity": {
+        "high": 10,
+        "medium": 28,
+        "low": 20,
+        "info": 3
+      },
+      "analyzers_executed": 13,
+      "analyzers_failed": 0,
+      "graph_content_signature": "sha256:8b519e2cb9b11efe171a0ba9aa5be499cbc5612189d14ae6fdeb78624c511dd5"
+    }
+  },
+  "proof_authority": {
+    "static_findings_are_runtime_proof": false,
+    "native_build_is_complete_static_proof": false,
+    "PLW_records_granted_repository_mutation": false,
+    "external_mutation_authority_source": "direct_user_instruction_as_repository_owner",
+    "github_pr_and_ci_are_integration_witnesses": true,
+    "F119_governance_chain_changed": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "documentation": {
+    "canonical_entrypoint": "SKILL.md",
+    "primary_module": "skills/external-corpus-audit-workflow.md",
+    "filename_describes_decision_domain": true,
+    "root_routes_to_module": true,
+    "module_routes_back_to_root": true,
+    "conditional_neighbor_routes": true
+  },
+  "implementation": {
+    "topology_analyzers_sha256": "sha256:a8fa2f2375664ccea70834177d7ef3fe7cacb6bf69653ed671c9aa2b57ba22f5",
+    "performance_analyzers_sha256": "sha256:14dea9d05417440326b54d24e0cece7d5399d24cdec047e0c13cce838a5ab9d0",
+    "stable_fixture_sha256": "sha256:83892b1f41b340868ca810e5081aff43857129808a6b12868b06dc9290c7f534",
+    "skill_root_sha256": "sha256:27f9c8c422cc6cadd3d36e09d2606f4623c7fc94faf2be6a3fb8e7bd7a93bc9e",
+    "external_corpus_module_sha256": "sha256:7f90a2dc93bfe5e71be796eec296e54701a4b65f52b0f5aabc4696f30761e939",
+    "repository_module_sha256": "sha256:b192023854c4d56759867546828e3599b4c59b95596ca68c746cff061036410f",
+    "workflow_module_sha256": "sha256:6eb34af80cb5cfdfe9c79fc48f176d077fa56b14afe5572ff8e9748671f23517",
+    "readme_sha256": "sha256:9e1b0eb81f969a29de3c6c30801b0b537cc59ef10b58092cdceeace290e8be2f",
+    "experimental_fixture_check_sha256": "sha256:8d7695dd6f9114028eb3960108dbd07f716943e9ffa90631f66a7909afc2c18e",
+    "fixture_fast_sha256": "sha256:88207c3c89f01950d1ffedef0410bbb8d658034ae10061fc21958a52f0257d73"
+  },
+  "validation": {
+    "stable_fixture_count": 61,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 43,
+    "external_network_required_by_packaged_fixture": false,
+    "external_corpus_source_vendored": false
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "experimental_fixture_count": 71,
+    "F120_cross_checkpoint_fingerprints_are_historical": true,
+    "F121_changes_portable_governance_only": true,
+    "external_corpus_modified_by_F121": false,
+    "F122_changes_portable_executor_outcome_governance_only": true,
+    "external_corpus_modified_by_F122": false,
+    "F123_changes_portable_executor_adapter_governance_only": true,
+    "external_corpus_modified_by_F123": false,
+    "F124_changes_portable_angular_semantic_ownership_only": true,
+    "external_corpus_modified_by_F124": false,
+    "F125_changes_portable_geometry_correspondence_only": true,
+    "external_corpus_modified_by_F125": false,
+    "F126_changes_portable_runtime_geometry_capture_binding_only": true,
+    "external_corpus_modified_by_F126": false,
+    "F127_changes_portable_geometric_impact_projection_only": true,
+    "external_corpus_modified_by_F127": false,
+    "F128_changes_portable_validation_planning_only": true,
+    "external_corpus_modified_by_F128": false,
+    "F129_changes_portable_validation_evidence_only": true,
+    "external_corpus_modified_by_F129": false,
+    "F130_validation_proof_obligations_not_attributed_to_F120": true,
+    "F131_validation_proof_integrity_not_attributed_to_F120": true,
+    "external_corpus_modified_by_F131": false,
+    "F132_changes_portable_validation_execution_request_only": true,
+    "external_corpus_modified_by_F132": false,
+    "F133_changes_portable_validation_authorization_only": true,
+    "external_corpus_modified_by_F133": false,
+    "F134_changes_portable_validation_execution_lease_only": true,
+    "external_corpus_modified_by_F134": false,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F120_is_current_development": true,
+    "portable_tool_has_no_framework_dependency": true,
+    "corpus_commit_is_pinned": true,
+    "native_runtime_static_and_authority_proofs_are_distinct": true,
+    "ambiguous_target_resolution_fails_closed": true,
+    "loop_boundary_has_negative_fixture": true,
+    "atomic_executor_lease_not_implemented": true
+  },
+  "next_target": {
+    "checkpoint": "F121",
+    "name": "Atomic Authorized Action Lease Contract",
+    "goal": "Introduce a single-use, crash-safe compare-and-swap execution lease that atomically consumes the authorization and preflight nonces before a narrowly allowlisted executor may start."
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "schema_version": "executor-adapter-reconciliation-bridge-v1",
+  "checkpoint": "F123",
+  "base_checkpoint": "F122",
+  "stable_baseline": "F85",
+  "status": "EXECUTOR_ADAPTER_RECONCILIATION_BRIDGE_ACTIVE",
+  "goal": "Connect concrete executor adapters to the F122 attempt/outcome protocol with a durable dispatch-intent barrier and append-only reconciliation observations, without claiming generic exactly-once external effects.",
+  "product_boundary": {
+    "deliverable": "downloadable_zip",
+    "external_corpus_repository": "Ahmadfauzi34/Tool.py",
+    "external_corpus_role": "read_only_regression_witness",
+    "external_corpus_modified_by_f123": false,
+    "corpus_source_vendored": false
+  },
+  "baseline_proof_state": {
+    "F121_atomic_single_use_lease_active": true,
+    "F122_one_attempt_one_terminal_outcome_active": true,
+    "concrete_adapter_protocol_present": false,
+    "durable_dispatch_intent_present": false,
+    "append_only_adapter_observation_ledger_present": false,
+    "public_plw_commands": 25,
+    "operational_skill_modules": 11,
+    "experimental_fixture_count": 45
+  },
+  "valid_transitions": {
+    "dispatch_prepare": {
+      "from": "F122_ATTEMPT_REGISTERED",
+      "to": "DISPATCH_PREPARED",
+      "preconditions": [
+        "issuer-sealed F121 lease still active for first dispatch",
+        "F122 attempt exists and is unresolved",
+        "lease/attempt/executor/plan bindings match",
+        "adapter id and operation key are explicit",
+        "one dispatch identity wins per attempt"
+      ],
+      "meaning": "durable dispatch intent only; not proof external adapter invocation occurred"
+    },
+    "adapter_observation": {
+      "from": "DISPATCH_PREPARED",
+      "to": "ADAPTER_OBSERVATION_RECORDED",
+      "preconditions": [
+        "dispatch receipt verifies",
+        "lease/attempt/executor/adapter/operation bindings match",
+        "raw observation matches bounded digest",
+        "observation append preserves prior history"
+      ],
+      "meaning": "adapter evidence only; nonterminal observations remain unresolved"
+    },
+    "terminal_forwarding": {
+      "from": "ADAPTER_OBSERVATION_RECORDED",
+      "to": [
+        "F122_SUCCEEDED",
+        "F122_FAILED",
+        "F122_INDETERMINATE"
+      ],
+      "preconditions": [
+        "adapter observation contains one F122 terminal status",
+        "F122 does not already hold a conflicting terminal result"
+      ],
+      "meaning": "forwards executor observation only; does not prove postcondition or truth"
+    }
+  },
+  "adapter_contract": {
+    "python_protocol": "core.capability_executor_adapter.ExecutorAdapter",
+    "required_identity_fields": [
+      "adapter_id",
+      "executor_id"
+    ],
+    "required_methods": [
+      "dispatch(context)",
+      "reconcile(context)"
+    ],
+    "concrete_adapter_bundled": false,
+    "generic_shell_executor_bundled": false,
+    "host_invocation_requires_literal_allow_external_execution": true,
+    "context_is_reference_only": true
+  },
+  "adapter_store": {
+    "engine": "Python stdlib sqlite3",
+    "canonical_location": "<accountability-trust-store>/executor_adapter_bridge.sqlite3",
+    "journal_mode": "DELETE",
+    "synchronous": "FULL",
+    "transaction_lock": "BEGIN IMMEDIATE",
+    "database_mode": "0600",
+    "directory_mode": "0700",
+    "dispatch_unique_constraints": [
+      "lease_id",
+      "attempt_id",
+      "dispatch_id",
+      "operation_key"
+    ],
+    "observations_append_only": true,
+    "raw_observation_stored": false,
+    "one_terminal_observation_per_dispatch_db_barrier": true
+  },
+  "crash_and_reconciliation_semantics": {
+    "dispatch_prepared_then_crash_before_host_call": "UNRESOLVED_RECONCILIATION_REQUIRED",
+    "host_call_then_crash_before_observation": "UNRESOLVED_RECONCILIATION_REQUIRED",
+    "recovered_dispatch_is_blindly_reinvoked": false,
+    "exact_dispatch_recovery_after_lease_expiry": true,
+    "post_expiry_recovery_authorizes_second_dispatch": false,
+    "pending_not_found_unknown_infer_failure_or_no_effect": false,
+    "terminal_observation_may_forward_to_f122": true,
+    "generic_exactly_once_external_effect_claimed": false,
+    "terminal_reconciliation_state": "RESOLVED_ONLY"
+  },
+  "final_proof_state": {
+    "one_dispatch_intent_per_attempt": true,
+    "exact_dispatch_recovery_claims_second_intent": false,
+    "first_dispatch_requires_active_lease": true,
+    "observation_history_is_append_only": true,
+    "multiple_nonterminal_observations_supported": true,
+    "contradictory_post_terminal_observation_replaces_f122_terminal": false,
+    "adapter_success_proves_postcondition": false,
+    "adapter_failure_proves_no_partial_side_effect": false,
+    "not_found_proves_no_external_effect": false,
+    "public_plw_commands": 26,
+    "operational_skill_modules": 12,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0,
+    "competing_terminal_observations_can_both_become_history": false,
+    "invalid_observation_creates_bridge_store": false
+  },
+  "authority": {
+    "F123_cli_invokes_external_adapter": false,
+    "F123_library_may_invoke_host_adapter_only_with_literal_acknowledgement": true,
+    "F123_mutates_source_directly": false,
+    "F123_promotes_stable_state": false,
+    "F123_commits_truth": false,
+    "dispatch_preparation_is_external_execution_proof": false,
+    "adapter_terminal_report_is_postcondition_proof": false
+  },
+  "tool_surface": {
+    "command": "plw action-adapter",
+    "operations": [
+      "prepare",
+      "observe",
+      "status"
+    ],
+    "prepare_requires_cli_allow_state_change": true,
+    "observe_requires_cli_allow_state_change": true,
+    "status_is_read_only": true,
+    "agent_adapter_requires_literal_allow_state_change": true,
+    "shell_used_by_agent_adapter": false,
+    "concrete_external_invocation_available_via_cli": false
+  },
+  "implementation": {
+    "executor_adapter_sha256": "sha256:ec8954e6b16b1d205a89e3e818106c26892eb1fef934931b5d2531ff3f9f63e3",
+    "core_init_sha256": "sha256:bb13f523d7a521019e453dcb6c184802efc3c5ee73ffa3cb9691fad98698326c",
+    "agent_tool_sha256": "sha256:70762be453cfed030161c5b53ff8372822b927bb467535a5159cce6d5e8c714e",
+    "plw_cli_sha256": "sha256:97e2acc8a1a984dcc7444c1a7a599559fa243c6d362d0d874390794ed21db81e",
+    "compact_schema_sha256": "sha256:f22d10ce819dc271add7fb9c2aadffd8a2d877e1bf9060a51432dfcfa6e9574d",
+    "legacy_schema_sha256": "sha256:1e3154a00023a7ed649b2b8cda3660c2368f92b5b554e04a73349d58d803e046",
+    "skill_root_sha256": "sha256:34225b40b3ab915c73f3172e57f79c5d93316914a5e97c99d98476ce2f073b36",
+    "adapter_skill_sha256": "sha256:f42502266872ebf644fe1ae9eb1598670dff9ce13ad53a0eac4c7c0ba686db4f",
+    "readme_sha256": "sha256:3c274f8c8ef9673ad6a5062dbb8e7e0effa8dd2babff3c958fdb3bf1da04436f",
+    "experimental_fixture_sha256": "sha256:ca10196c0a7effe2833062d0a3102b270aff527ea7f2c1a07b8cd6aa5fe2f499",
+    "fast_fixture_sha256": "sha256:5050517ef786aaa1bb4a74146d52a1e21bf04e6328ad876b0f329a9a56a5cb49"
+  },
+  "validation": {
+    "stable_fixture_count": 61,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 46,
+    "adversarial_cases": [
+      "truthy non-boolean dispatch intent",
+      "unknown heuristic dispatch field",
+      "same-dispatch recovery",
+      "changed operation key on same attempt",
+      "precommit dispatch crash rollback",
+      "twelve-way dispatch race",
+      "missing adapter observation remains unresolved",
+      "append-only nonterminal then terminal observation",
+      "raw observation non-retention",
+      "terminal observation replay",
+      "contradictory post-terminal observation",
+      "first dispatch after lease expiry",
+      "dispatch recovery after lease expiry without redispatch",
+      "truthy non-boolean external-execution acknowledgement",
+      "blind redispatch after ambiguous recovery",
+      "pending reconciliation followed by terminal reconciliation",
+      "non-literal agent state acknowledgement",
+      "durable dispatch receipt tamper",
+      "malformed observation rejected before bridge-store creation",
+      "competing terminal-observation race single-assignment",
+      "unknown reconciliation state cannot carry terminal authority"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F124",
+    "name": "Angular Semantic Ownership Anchors",
+    "goal": "Add source-grounded Angular component/template/selector/binding ownership metadata so the future GeometrySnapshot and UI-to-code correspondence kernel starts from proven static anchors rather than naming heuristics."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F123_cross_checkpoint_fingerprints_are_historical": true,
+    "F123_executor_adapter_bridge_unchanged": true,
+    "F124_angular_semantic_ownership_owned_by_f124": true,
+    "F125_geometry_correspondence_owned_by_f125": true,
+    "F126_runtime_geometry_capture_owned_by_f126": true,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}
