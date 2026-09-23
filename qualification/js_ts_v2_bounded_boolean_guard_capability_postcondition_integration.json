@@ -1,6 +1,6 @@
 {
   "schema_version": "plw-js-ts-v2-bounded-capability-postcondition-integration-v1",
-  "status": "IMPLEMENTED_PENDING_INTERACTIVE_VALIDATION",
+  "status": "BOUNDED_CAPABILITY_POSTCONDITION_INTEGRATION_READY",
   "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
   "goal": "Bind the interactively validated bounded mutation capability to the existing interactively validated TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE without widening mutation scope or granting evidence/truth authority.",
   "composition": [
@@ -54,7 +54,14 @@
   },
   "interactive_validation": {
     "required": true,
-    "completed": false,
+    "completed": true,
+    "audit_record": "qualification/interactive_js_ts_v2_bounded_capability_postcondition_integration_audit.json",
+    "audited_source_head": "1accc36bfadc816ff16422b4d005b68918c95c72",
+    "artifact_id": 10771918745,
+    "artifact_sha256": "sha256:083f46cec21bfbac2cd347aa04975b19e822bf96e6b8eff6a8aefd4361e9bc7f",
+    "direct_report_sha256": "sha256:7690fbf9497b5d7956c3a104dd791371adef137bc065ef6c03b8526694710978",
+    "case_count": 8,
+    "passed_case_count": 8,
     "minimum_cases": [
       "positive JS capability -> postconditions",
       "inverse TS capability -> postconditions",
@@ -66,5 +73,6 @@
       "postwrite validation failure -> discard"
     ]
   },
+  "ready_meaning": "The internal bounded capability may hand its exact embedded mutation primitive to the existing postcondition reference and reach validated postconditions inside a disposable worktree. READY grants no evidence acceptance, upstream mutation, stable promotion, or truth authority.",
   "next_gate_on_success": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
 }
