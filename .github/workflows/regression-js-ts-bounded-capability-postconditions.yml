@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -47,11 +49,10 @@ jobs:
           cp qualification/js_ts_v2_bounded_boolean_guard_capability_postcondition_integration.json artifacts/source/qualification/
           cp docs/JS_TS_V2_BOUNDED_BOOLEAN_GUARD_CAPABILITY_POSTCONDITIONS.md artifacts/source/docs/
           git rev-parse HEAD > artifacts/source/HEAD_SHA.txt
-          sha256sum \
-            artifacts/source/scripts/*.py \
-            artifacts/source/qualification/*.json \
-            artifacts/source/docs/*.md \
-            > artifacts/source/SHA256SUMS.txt
+          (
+            cd artifacts/source
+            sha256sum scripts/*.py qualification/*.json docs/*.md > SHA256SUMS.txt
+          )
       - uses: actions/upload-artifact@v4
         with:
           name: js-ts-bounded-capability-postcondition-integration
