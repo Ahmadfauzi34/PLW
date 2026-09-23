@@ -1,0 +1,150 @@
+{
+  "schema_version": "frontend-freeze-reopen-contract-v1",
+  "checkpoint": "F102",
+  "base_checkpoint": "F101",
+  "stable_baseline": "F85",
+  "status": "FRONTEND_FROZEN_REUSE_ONLY_REOPEN_CONTRACT_ACTIVE",
+  "goal": "Define measurable conditions for reopening a third TS/JS simplification rule without expanding the lexer/scanner or erasing sparse-yield economics.",
+  "current_evidence": {
+    "F101_analyzer_loc": 1448,
+    "F95_analyzer_loc": 1185,
+    "frontend_delta_vs_F95": 263,
+    "F100_precompression_frontend_delta_vs_F95": 340,
+    "compression_credit_loc": 77,
+    "existing_rule_count": 2,
+    "F98_local_corpus": {
+      "repository": "Ahmadfauzi34/Tool.py",
+      "loc": 812,
+      "candidate_count": 1,
+      "validated_gain_loc": 1
+    },
+    "F99_independent_local_corpus": {
+      "repository": "angular/angular",
+      "loc": 755,
+      "candidate_count": 0
+    },
+    "F98_F99_local_total": {
+      "repositories": 2,
+      "loc": 1567,
+      "candidate_count": 1,
+      "validated_gain_loc": 1
+    },
+    "F100_remote_large_slice": {
+      "repository": "bitwarden/clients",
+      "candidate_count": 0,
+      "authority": "REMOTE_LEXICAL_AUDIT_NOT_LOCAL_ANALYZER_EXECUTION"
+    },
+    "self_host_frontier": {
+      "remaining_candidate_count": 31,
+      "recommended_local_candidates": 0,
+      "js_rule1_candidates": 0,
+      "js_rule2_candidates": 0,
+      "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+    }
+  },
+  "reopen_for_shadow_prototype_gate": {
+    "semantics": "ALL conditions must be satisfied before implementing rule3 even in the experimental overlay.",
+    "conditions": {
+      "proposal_dossier_exists": true,
+      "proposal_pattern_observed_before_implementation": true,
+      "independent_repositories_min": 2,
+      "verified_occurrences_total_min": 4,
+      "verified_occurrences_per_repository_min": 2,
+      "selection_rule_fixed_before_occurrence_count": true,
+      "all_occurrences_expressible_with_existing_F101_frontend_primitives": true,
+      "new_lexer_or_scanner_allowed": false,
+      "second_source_mask_pass_allowed": false,
+      "marginal_rule3_implementation_loc_max": 77,
+      "marginal_budget_origin": "F101 compression credit = F100 frontend delta 340 - F101 frontend delta 263 = 77 LOC",
+      "threshold_note": "The 2-repository/4-occurrence rule is a conservative anti-one-off engineering policy, not a statistical significance claim."
+    },
+    "current_evaluation": {
+      "proposal_dossier_exists": false,
+      "qualifying_independent_repositories": 0,
+      "verified_rule3_occurrences": 0,
+      "cost_estimate_available": false,
+      "gate_open": false,
+      "decision": "KEEP_RULE3_FROZEN",
+      "failed_conditions": [
+        "proposal_dossier_exists",
+        "independent_repositories_min",
+        "verified_occurrences_total_min",
+        "cost_estimate_available"
+      ]
+    }
+  },
+  "post_prototype_acceptance_gate": {
+    "semantics": "Opening the shadow prototype does not accept rule3. Acceptance requires proof after implementation.",
+    "conditions": {
+      "marginal_rule3_loc_within_reopen_budget": true,
+      "old_rule_F98_projection_byte_identical": true,
+      "old_rule_F99_projection_byte_identical": true,
+      "existing_getScannerScript_candidate_id_stable": true,
+      "single_shared_mask_per_source_file_preserved": true,
+      "no_new_lexer_or_scanner": true,
+      "positive_and_negative_rule3_fixtures_pass": true,
+      "all_proposal_occurrences_rediscovered": true,
+      "known_false_positive_count_on_acceptance_corpus_max": 0,
+      "self_host_recommended_local_candidates_max": 0,
+      "self_host_remaining_debt_must_not_increase_above": 31,
+      "incremental_economics": "proven_rule3_target_gain_loc >= effective_rule3_machine_cost_loc",
+      "effective_rule3_machine_cost_definition": "max(0, marginal_rule3_implementation_loc - additional_frontend_compression_loc)",
+      "external_repo_mutation_authorized_by_acceptance": false,
+      "stable_promotion_authorized_by_acceptance": false
+    },
+    "current_evaluation": "NOT_APPLICABLE_RULE3_PROTOTYPE_CLOSED"
+  },
+  "freeze_contract": {
+    "rule3_state": "FROZEN",
+    "existing_two_rule_frontend_state": "EXPERIMENTAL_REUSE_ONLY",
+    "existing_rules_may_continue_to_measure_new_corpora": true,
+    "frontend_cost_compression_may_continue_without_new_semantics": true,
+    "rule3_implementation_without_gate": "FORBIDDEN_BY_EXPERIMENT_CONTRACT",
+    "new_lexer_scanner_without_separate_architecture_review": "FORBIDDEN",
+    "external_patch_state": "UNAUTHORIZED"
+  },
+  "economics": {
+    "current_frontend_machine_cost_loc": 263,
+    "unrecovered_frontend_machine_cost_loc": 262,
+    "currently_proven_external_target_gain_loc": 1,
+    "compression_credit_reserved_for_future_rule3_loc": 77,
+    "rule3_cannot_consume_more_than_compression_credit": true,
+    "interpretation": "F101 compression created a bounded 77-LOC prototype budget, but sparse generalized yield leaves the semantic expansion gate closed until independent rule3 evidence exists."
+  },
+  "implementation": {
+    "F101_core_simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "F102_core_simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "analyzer_changed_by_F102": false,
+    "analyzer_loc": 1448,
+    "new_runtime_module_added": false,
+    "new_rule_added": false,
+    "experimental_fixture_check_sha256": "sha256:b6fe91cf094ea49cc157bf9e4924ec1ea3910de09d678a417ad3a411d31a4e9b"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F102_is_current_development": true,
+    "freeze_is_policy_not_truth_claim": true,
+    "zero_candidate_corpora_do_not_prove_universal_uselessness": true,
+    "reopen_gate_does_not_authorize_patch": true,
+    "prototype_gate_does_not_equal_acceptance_gate": true,
+    "acceptance_gate_does_not_equal_stable_promotion": true,
+    "remote_F100_evidence_cannot_substitute_for_local_analyzer_execution": true,
+    "existing_frontend_primitives_must_be_reused": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E10 PASS; E11-E16 PASS; E17-E22 PASS in bounded batches; E23 PASS isolated",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "stable_full_registry": "not rerun because F102 is contract/docs/experimental-fixture only; analyzer and stable runtime unchanged",
+    "kernel_wiring_smoke": "PASS isolated",
+    "kernel_cli_contract": "PASS isolated",
+    "compileall": "PASS for runtime + fixture Python sources",
+    "analyzer_fingerprint": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "self_host_frontier": "31 remaining / 0 recommended"
+  },
+  "next_target": {
+    "checkpoint": "F103",
+    "name": "Rule3 Evidence Dossier Probe",
+    "goal": "Search for a repeated low-risk TS/JS simplification pattern using existing F101 lexical primitives only; do not implement rule3 unless the F102 shadow-prototype gate becomes true."
+  }
+}
