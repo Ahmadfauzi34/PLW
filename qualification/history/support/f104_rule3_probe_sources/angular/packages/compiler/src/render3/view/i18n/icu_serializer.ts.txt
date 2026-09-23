@@ -1,0 +1,9 @@
+class IcuSerializerVisitor {
+  visitIcu(icu: any): any {
+    const strCases = Object.keys(icu.cases).map(
+      (k: string) => `${k} {${icu.cases[k].visit(this)}}`,
+    );
+    const result = `{${icu.expressionPlaceholder}, ${icu.type}, ${strCases.join(' ')}}`;
+    return result;
+  }
+}
