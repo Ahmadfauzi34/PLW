@@ -47,3 +47,11 @@ grep -q 'plw agent orient' plw_cli.py
 apply_b64_overlay "validation_runtime_cli_v1"
 grep -q 'parser.add_argument("--evidence-id", action="append"' plw_cli.py
 grep -q 'F138 still requires exact identity/content agreement' skills/validation-runtime-dispatch-workflow.md
+
+if [[ "${PLW_DIAG_PORTABLE_AGENT_SOURCE:-}" == "1" ]]; then
+  echo '=== portable_agent.py exact preimage ==='
+  cat core/portable_agent.py
+  echo '=== plw_cli portable commands exact preimage ==='
+  grep -n -A140 -B12 -E '^def cmd_doctor|^def cmd_agent|^def cmd_capability|^def cmd_skill' plw_cli.py || true
+  echo '=== end portable-agent diagnostics ==='
+fi
