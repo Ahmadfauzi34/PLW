@@ -1,0 +1,173 @@
+{
+  "schema_version": "plw-historical-evidence-promotion-group-v1",
+  "group": "F106-F123",
+  "current_repository_role": "canonical current state",
+  "historical_archive_role": "supporting lineage only",
+  "source_archive": {
+    "name": "ai_studio_tool_js_ts_simplification_v2_development_full.zip",
+    "sha256": "sha256:9d9ee884c2bffc9ea3ac582c3a806610b2ca27f804fb00b4d082c71eb380d276",
+    "size_bytes": 2970045
+  },
+  "rule": "Historical evidence never overrides newer main state. Promotion does not grant runtime, mutation, postcondition, evidence-acceptance, stable-promotion, or truth authority.",
+  "records": [
+    {
+      "checkpoint": "F106",
+      "source_path": "tools/ai_studio_tool/experiments/f106_capability_lifecycle_contract.json",
+      "source_sha256": "sha256:3cfaa4f9dd474ae7b992c4cc0a00f92c6ab44839173853fbd42d8d09c084fdc3",
+      "repository_path": "qualification/history/f106_capability_lifecycle_contract.json",
+      "repository_git_blob_sha1": "44d55b32df6098610894610567fb1128c0720727",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F107",
+      "source_path": "tools/ai_studio_tool/experiments/f107_lifecycle_workflow_adapter.json",
+      "source_sha256": "sha256:ec0ad04b408453962d590ae6c6b4e7e475e0bdcc971c9d59eeb679e8f9fdfd87",
+      "repository_path": "qualification/history/f107_lifecycle_workflow_adapter.json",
+      "repository_git_blob_sha1": "ebae2d3f1a3e3b4dbf40275bc58fa7909bb5cdc8",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F108",
+      "source_path": "tools/ai_studio_tool/experiments/f108_workflow_context_pack_integration.json",
+      "source_sha256": "sha256:ba84de1eaddc450f10bbe5e16508846418f73b077be4d510a6774d5c223d89df",
+      "repository_path": "qualification/history/f108_workflow_context_pack_integration.json",
+      "repository_git_blob_sha1": "ccedde040b94e08eaa8ece2e74966441eb33ca97",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F109",
+      "source_path": "tools/ai_studio_tool/experiments/f109_workflow_relevance_trigger_contract.json",
+      "source_sha256": "sha256:7336c054c4c4a301094e4a66ef22d8edbe5158538ea98fa5673eb404d017edfe",
+      "repository_path": "qualification/history/f109_workflow_relevance_trigger_contract.json",
+      "repository_git_blob_sha1": "45664340c74bea9f36e435e365cf0954730f7fe7",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F110",
+      "source_path": "tools/ai_studio_tool/experiments/f110_fixture_fast_lane.json",
+      "source_sha256": "sha256:9d7b42cf09da83337a51cc4fcf351fb4723fd0ae771e4c4ed35db6449eb52c21",
+      "repository_path": "qualification/history/f110_fixture_fast_lane.json",
+      "repository_git_blob_sha1": "c7f1a0be7de6ebfd51268c2335cb6453c859f6e1",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F111",
+      "source_path": "tools/ai_studio_tool/experiments/f111_workflow_relevance_decision_accountability.json",
+      "source_sha256": "sha256:eb89d76437516139834d5672164582e54a188e509f4646acbfa3270ed8847ad6",
+      "repository_path": "qualification/history/f111_workflow_relevance_decision_accountability.json",
+      "repository_git_blob_sha1": "0e86214f82b657fb543311661b9ab77af1828bce",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F112",
+      "source_path": "tools/ai_studio_tool/experiments/f112_workflow_delivery_accountability_link.json",
+      "source_sha256": "sha256:17682509f0977752478f0780dfd4c31ac1782731d714a49f3dfe35856b22d651",
+      "repository_path": "qualification/history/f112_workflow_delivery_accountability_link.json",
+      "repository_git_blob_sha1": "0aabec746da8aa1e4a709fadc05ddbd83e894de9",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F113",
+      "source_path": "tools/ai_studio_tool/experiments/f113_workflow_accountability_chain_query.json",
+      "source_sha256": "sha256:0d2fc7dd55357f254f2bc7d3a2c2c0562cbbe02183e67a132eb8c0cc7772d54f",
+      "repository_path": "qualification/history/f113_workflow_accountability_chain_query.json",
+      "repository_git_blob_sha1": "8123ea730e697cb08a2f5246ce73dd1728e17c5b",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F114",
+      "source_path": "tools/ai_studio_tool/experiments/f114_workflow_action_proposal_boundary.json",
+      "source_sha256": "sha256:3f650faf42c54689739ef10b83686219d9d0bdf21fbb491d6522f667e88ac186",
+      "repository_path": "qualification/history/f114_workflow_action_proposal_boundary.json",
+      "repository_git_blob_sha1": "47006621069375cc3a0cb4b46b0bc5f4afc432b7",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F115",
+      "source_path": "tools/ai_studio_tool/experiments/f115_layered_skill_router.json",
+      "source_sha256": "sha256:b2bd16155d31027935946886d684cd9f32daff0eb6dbdce01aff82979d0507e8",
+      "repository_path": "qualification/history/f115_layered_skill_router.json",
+      "repository_git_blob_sha1": "7c103812a99e00eb664bce9172d6378c26dff0b3",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F116",
+      "source_path": "tools/ai_studio_tool/experiments/f116_workflow_action_authorization_receipt.json",
+      "source_sha256": "sha256:f09c5b71e06571dc89d9b1068d547275e4ac6ad90261fa545b397d803c88cb84",
+      "repository_path": "qualification/history/f116_workflow_action_authorization_receipt.json",
+      "repository_git_blob_sha1": "a52fe9f3fbf56550664d3dbce17013baeeb1e38d",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F117",
+      "source_path": "tools/ai_studio_tool/experiments/f117_authorized_action_gate_contract.json",
+      "source_sha256": "sha256:bbca7681851b3c5f02057ed13d889b6f0553d7d645c293b06ca8fe6b00f60235",
+      "repository_path": "qualification/history/f117_authorized_action_gate_contract.json",
+      "repository_git_blob_sha1": "c5c2f01b0ce32566222b92a29b1bc26eda142b6b",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F118",
+      "source_path": "tools/ai_studio_tool/experiments/f118_authorized_action_executor_dry_run_contract.json",
+      "source_sha256": "sha256:dd0a61b0772237689c9bfecb8e4dc0355a6dfa28632ca520e53a9756aa0e17d2",
+      "repository_path": "qualification/history/f118_authorized_action_executor_dry_run_contract.json",
+      "repository_git_blob_sha1": "7d1296bcf311c99a7b21bc08a083bba4bded5686",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F119",
+      "source_path": "tools/ai_studio_tool/experiments/f119_authority_provenance_preflight_hardening.json",
+      "source_sha256": "sha256:ef2184eeb972bb06260e7624b4dad3b5d231402d071006f839fd8dde6b47bcc0",
+      "repository_path": "qualification/history/f119_authority_provenance_preflight_hardening.json",
+      "repository_git_blob_sha1": "f1ebcb0f6a78b5e362f1c2defebb8113af140022",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F120",
+      "source_path": "tools/ai_studio_tool/experiments/f120_adaptive_agent_reference_machine.json",
+      "source_sha256": "sha256:bf6de0ace6574385eb32c383f6ec1c34c476e06db28376d7c33037c882c991c7",
+      "repository_path": "qualification/history/f120_adaptive_agent_reference_machine.json",
+      "repository_git_blob_sha1": "fc323d0f68fc6f7ff052b0739c1a264b7919655a",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F120",
+      "source_path": "tools/ai_studio_tool/experiments/f120_tool_py_external_corpus_audit.json",
+      "source_sha256": "sha256:3ed981b3295a505ef276eac1ee09183c2fda19b8bb8636b16154b1d43e6fdb9d",
+      "repository_path": "qualification/history/f120_tool_py_external_corpus_audit.json",
+      "repository_git_blob_sha1": "f056ac2a90cc6cf6791123b9e27f1d8821753e79",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F121",
+      "source_path": "tools/ai_studio_tool/experiments/f121_atomic_action_lease_contract.json",
+      "source_sha256": "sha256:e1608faf4a33bbfdb24cef88e3117f70910acac2c01139b79fb8290dd1b0c2da",
+      "repository_path": "qualification/history/f121_atomic_action_lease_contract.json",
+      "repository_git_blob_sha1": "78a8e360f76590dbef4e4058f77afc8f4d92dc22",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F122",
+      "source_path": "tools/ai_studio_tool/experiments/f122_lease_bound_executor_outcome_contract.json",
+      "source_sha256": "sha256:a66a051a1ed5e8aec72b1482582ed73b940089389e1794553b5a4434c9351c30",
+      "repository_path": "qualification/history/f122_lease_bound_executor_outcome_contract.json",
+      "repository_git_blob_sha1": "4badc6c27357cb27725e9215dc50f709e75fb622",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F123",
+      "source_path": "tools/ai_studio_tool/experiments/f123_executor_adapter_reconciliation_bridge.json",
+      "source_sha256": "sha256:9371cf973f9ac518b675486430f50957fc7510c61e5dcac08bb4824b11c056bf",
+      "repository_path": "qualification/history/f123_executor_adapter_reconciliation_bridge.json",
+      "repository_git_blob_sha1": "26861b5ca635c047cc1b37e8d9dca9aeb74b5123",
+      "retained_bytes_match_source_sha256": true
+    }
+  ],
+  "summary": {
+    "exact_records_retained": 19,
+    "pending_exact_records": 0,
+    "distinct_F120_records": 2,
+    "source_archive_required_for_normal_current_work_on_this_group": false
+  },
+  "next_group": "F124-F127 geometry/correspondence lineage"
+}

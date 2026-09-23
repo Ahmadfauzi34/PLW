@@ -1,0 +1,101 @@
+{
+  "schema_version": "fixture-fast-lane-v1",
+  "checkpoint": "F110",
+  "base_checkpoint": "F109",
+  "stable_baseline": "F85",
+  "status": "FIXTURE_FAST_LANE_ACTIVE_SHARED_ROOT_ANALYSIS",
+  "goal": "Keep iterative agent validation below common timeout windows without weakening release-gate fixtures.",
+  "problem": {
+    "single_self_host_analysis_observed_seconds_before": 20.83,
+    "historical_experimental_current_root_analysis_sites_before": 14,
+    "estimated_repeated_root_analysis_cost_if_all_sites_execute_independently_seconds": 291.62,
+    "agent_environment_failure_mode": "fixture batches frequently exceed 45-60 second execution windows and become workflow overhead"
+  },
+  "optimization": {
+    "shared_fixture_session_snapshot": "experimental_fixture_check._current_root_analysis",
+    "snapshot_semantics": "compute current unchanged tool-root simplification analysis once per Python process; historical fixtures read same object",
+    "mutated_or_temporary_corpora_still_analyzed_fresh": true,
+    "direct_current_root_analysis_sites_after": 1,
+    "new_fast_lane": "fixture_fast.py",
+    "fast_lane_profile": [
+      "E31 fast-lane contract",
+      "E32-E40 capability governance chain",
+      "E41 skill-module routing contract",
+      "E42 external-corpus contract",
+      "E43 adaptive agent reference machine",
+      "E44 atomic single-use action lease",
+      "E29 F108 context integration",
+      "E30 F109 relevance trigger",
+      "F15 alias paths",
+      "F34 context optimizer",
+      "F35 incremental graph cache",
+      "F46 type-only imports",
+      "F64 evidence-role explanation",
+      "F65 adaptive one-call reference machine"
+    ],
+    "release_full_suites_preserved": true,
+    "stable_fixture_semantics_changed": false,
+    "runtime_semantics_changed": false
+  },
+  "measurement": {
+    "fast_lane_internal_seconds_observed": 20.645,
+    "fast_lane_process_seconds_observed": 23.29,
+    "common_timeout_target_seconds": 45,
+    "within_45_second_target": true,
+    "first_expensive_analysis_seconds_in_fast_lane": 17.422,
+    "second_latest_fixture_after_shared_snapshot_seconds": 0.015,
+    "stable_critical_tail_seconds_approx": 2.955,
+    "note": "Wall-clock is environment-dependent; correctness contract is shared-analysis count and preserved fixture outputs, not a hard timing assertion."
+  },
+  "authority": {
+    "fast_lane_is_release_promotion_authority": false,
+    "fast_lane_is_truth_commit_authority": false,
+    "full_release_gate_still_required_when_runtime_or_promotion_boundary_changes": true,
+    "kernel_smoke_required_each_iteration_when_kernel_unchanged": false,
+    "kernel_smoke_required_when_kernel_or_context_runtime_changes": true
+  },
+  "implementation": {
+    "experimental_fixture_check_sha256": "sha256:f427e927f7d77d4185ca9dc2f317d5fdc6d7b6e0b8d912cee7344a7831c2048d",
+    "fixture_fast_sha256": "sha256:ee35878afdb8b5cdd66862f5c0891f704ae5782a0c5d38cb4d766e0d3e3b1c6c",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "kernel_sha256_at_f110": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "runtime_changed_by_F110": false
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F110_is_current_development": true,
+    "rule3_remains_retired": true,
+    "runtime_ts_js_rule_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0,
+    "ordinary_F108_F109_context_semantics_unchanged": true,
+    "full_fixture_files_not_deleted": true
+  },
+  "validation": {
+    "status": "PASS",
+    "fast_lane": "E31-E44 + E29 + E30 + F15/F34/F35/F46/F64/F65 PASS",
+    "fast_lane_internal_seconds": 20.645,
+    "fast_lane_process_seconds": 23.29,
+    "compileall": "PASS",
+    "kernel_smoke": "not required for F110 because kernel/context runtime bytes unchanged; redundant smoke exceeded environment timeout",
+    "full_release_suites": "preserved but intentionally not run in iterative lane"
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "adaptive_kernel_change_is_not_attributed_to_f110": true,
+    "current_fast_lane_includes_e43_e44_and_f65": true,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  },
+  "next_target": {
+    "checkpoint": "F111",
+    "name": "Workflow Relevance Decision Accountability",
+    "goal": "Resume deferred F109 roadmap only after the fast iterative fixture lane is proven operational."
+  }
+}

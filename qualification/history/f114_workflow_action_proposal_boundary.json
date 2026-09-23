@@ -1,0 +1,74 @@
+{
+  "schema_version": "workflow-action-proposal-boundary-v1",
+  "checkpoint": "F114",
+  "base_checkpoint": "F113",
+  "stable_baseline": "F85",
+  "status": "WORKFLOW_ACTION_PROPOSAL_BOUNDARY_ACTIVE",
+  "goal": "Convert a verified INCLUDED workflow delivery into a typed proposal-only lifecycle action request that still requires separate authorization and cannot execute, patch, promote, or commit truth.",
+  "design": {
+    "proposal_source": "verified F111 relevance + selected F112 delivery through F113 chain query",
+    "included_delivery_required": true,
+    "budget_omitted_delivery_can_propose": false,
+    "denied_delivery_can_propose": false,
+    "invalid_delivery_can_propose": false,
+    "explicit_caller_intent_required": true,
+    "query_keyword_embedding_trigger_forbidden": true,
+    "action_kind": "LIFECYCLE_TRANSITION",
+    "target_must_be_in_workflow_allowed_targets": true,
+    "capability_state_evidence_binding_required": true,
+    "proposal_record_content_addressed": true,
+    "raw_prompt_stored": false,
+    "raw_source_stored": false,
+    "raw_evidence_stored": false,
+    "authorization_required": true,
+    "authorization_granted_by_f114": false
+  },
+  "authority": {
+    "proposal_creation": true,
+    "action_authorization": false,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "implementation": {
+    "action_proposal_loc": 199,
+    "action_proposal_sha256": "sha256:d270214cd2527a3b1ca3c3bc0a65e29d7040f23f9d8d81390e83d5f23e239925",
+    "chain_query_sha256": "sha256:f6d35c7ce5dc2edf68aab941490c5b9ab3142d0c306cc695a2d007f6065bb01c",
+    "capability_delivery_sha256": "sha256:fe065ce0fc90b01001a3cc92f57c862eb746d9aafd28183f7a60eb8ed143f3c9",
+    "capability_relevance_sha256": "sha256:7f3a2e5d47b5bd8502c428818daef54b6fe5c98ca29c147a274a329f4aeef002",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F114_is_current_development": true,
+    "proposal_requires_verified_delivery": true,
+    "proposal_requires_included_advisory": true,
+    "proposal_is_not_authorization": true,
+    "proposal_is_not_execution": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true
+  },
+  "next_target": {
+    "checkpoint": "F115",
+    "name": "Workflow Action Authorization Receipt Contract",
+    "goal": "Define an explicit, content-addressed authorization receipt bound to one F114 ready proposal while still keeping actual transition/runtime/patch/promotion/truth execution outside the authorization artifact."
+  }
+}

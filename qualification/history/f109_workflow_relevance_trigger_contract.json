@@ -1,0 +1,112 @@
+{
+  "schema_version": "workflow-relevance-trigger-contract-v1",
+  "checkpoint": "F109",
+  "base_checkpoint": "F108",
+  "stable_baseline": "F85",
+  "status": "TYPED_EXPLICIT_WORKFLOW_RELEVANCE_TRIGGER_ACTIVE",
+  "goal": "Define a bounded, inspectable tool-generated relevance trigger for F108 workflow context without query heuristics, hidden prompt injection, or execution authority.",
+  "selective_design_reuse": {
+    "source": "PGAAS heterogeneous specialist graph v0.4 concepts supplied by user",
+    "adopted": [
+      "typed contract before use",
+      "fail-closed proof-style gate",
+      "exploration/recommendation authority remains separate from promotion/execution authority"
+    ],
+    "not_adopted": [
+      "heterogeneous mutation engine",
+      "specialist benchmark primitives",
+      "automatic promotion",
+      "Rust/WASM/burn-WASM portability assumptions"
+    ]
+  },
+  "contract": {
+    "manual_F108_explicit_relevant_path_preserved": true,
+    "tool_generated_path_requires_structured_request": true,
+    "caller_declared_relevant_must_be_literal_true": true,
+    "allowed_reason_kinds": [
+      "LIFECYCLE_STATUS",
+      "TRANSITION_READINESS",
+      "BLOCKED_EVIDENCE",
+      "RETIREMENT_REVIEW"
+    ],
+    "requested_fields_allowlist": [
+      "allowed_targets",
+      "blocked_targets",
+      "evidence_digest",
+      "next_action",
+      "state"
+    ],
+    "evidence_refs_min": 1,
+    "evidence_refs_max": 8,
+    "request_unknown_fields_fail_closed": true,
+    "query_text_is_not_trigger": true,
+    "keyword_match_is_not_trigger": true,
+    "semantic_similarity_is_not_trigger": true,
+    "capability_binding_required": true,
+    "state_binding_required": true,
+    "envelope_evidence_digest_binding_required": true,
+    "all_five_authorizations_must_be_literal_false": true,
+    "relevance_decision_only_requests_context": true,
+    "F108_budget_and_source_grounding_still_decide_inclusion": true,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "proof": {
+    "valid_structured_request": "REQUEST_WORKFLOW_CONTEXT",
+    "query_text_injection": "DO_NOT_REQUEST_WORKFLOW_CONTEXT",
+    "evidence_digest_mismatch": "DO_NOT_REQUEST_WORKFLOW_CONTEXT",
+    "forged_zero_authority": "DO_NOT_REQUEST_WORKFLOW_CONTEXT",
+    "truthy_integer_instead_of_true": "DO_NOT_REQUEST_WORKFLOW_CONTEXT",
+    "denied_request_prompt_change_chars": 0,
+    "valid_advisory_rendered_chars_observed": 334,
+    "raw_relevance_decision_rendered_into_prompt": false
+  },
+  "implementation": {
+    "new_module": "core/capability_relevance.py",
+    "new_module_loc": 179,
+    "new_module_sha256": "sha256:df1d24c05654a0230c674cd8e2bba6d2753bf7a2f24cc9a9355999f9b90e2c35",
+    "core_init_loc_before": 129,
+    "core_init_loc_after": 137,
+    "core_init_sha256": "sha256:4d7c95148035fc9367f4d7f5c9fec52e9c2c1282e7028ac4afd713552e39f8f9",
+    "context_optimizer_changed": false,
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "workflow_adapter_changed": false,
+    "workflow_adapter_sha256": "sha256:5e8dac389983ac317bf422297a3e2f488ac3137e0de827f6fe1adf0b5e4274f6",
+    "kernel_changed": false,
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_changed": false,
+    "simplification_analyzer_loc": 1448,
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F109_is_current_development": true,
+    "ordinary_context_path_unchanged": true,
+    "denied_tool_generated_relevance_is_exact_noop": true,
+    "manual_F108_explicit_relevance_contract_remains_valid": true,
+    "tool_generated_relevance_cannot_be_inferred_from_query": true,
+    "request_authority_is_not_workflow_authority": true,
+    "workflow_authority_is_not_transition_authority": true,
+    "rule3_remains_retired": true,
+    "runtime_ts_js_rule_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation": {
+    "status": "TARGETED_PASS",
+    "experimental_lineage": "E27/E28/E29/E30 PASS in targeted runs",
+    "stable_critical": "F15/F34/F35/F46/F64 PASS via fast lane",
+    "kernel_wiring_smoke": "NOT_RERUN_TO_COMPLETION; F109 does not change kernel/context runtime and environment timed out during redundant smoke",
+    "kernel_cli_contract": "NOT_RERUN; kernel byte-identical to F108",
+    "compileall": "PASS for F109 sources before F110 harness optimization",
+    "note": "F110 prioritizes fixture execution cost after user reported agent workflow timeouts."
+  },
+  "next_target": {
+    "checkpoint": "F110",
+    "name": "Fixture Fast-Lane",
+    "goal": "Reduce iterative agent regression cost by reusing one immutable self-host analysis snapshot and providing a bounded latest+stable-critical fixture lane; defer workflow relevance accountability to F111."
+  }
+}

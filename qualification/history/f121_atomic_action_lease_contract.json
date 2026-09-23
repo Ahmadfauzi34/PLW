@@ -1,0 +1,149 @@
+{
+  "schema_version": "atomic-action-lease-contract-v1",
+  "checkpoint": "F121",
+  "base_checkpoint": "F120",
+  "stable_baseline": "F85",
+  "status": "ATOMIC_SINGLE_USE_ACTION_LEASE_ACTIVE",
+  "goal": "Turn one fresh, issuer-sealed F119 preflight into exactly one crash-safe, store-bound executor-start lease without executing the bound plan.",
+  "product_boundary": {
+    "deliverable": "downloadable_zip",
+    "external_corpus_repository": "Ahmadfauzi34/Tool.py",
+    "external_corpus_role": "read_only_regression_witness",
+    "external_corpus_modified_by_f121": false,
+    "corpus_source_vendored": false
+  },
+  "baseline_proof_state": {
+    "F119_preflight_revalidates_full_chain": true,
+    "F119_preflight_consumes_authorization_nonce": false,
+    "F119_preflight_consumes_freshness_nonce": false,
+    "F119_preflight_starts_executor": false,
+    "atomic_nonce_pair_store_present": false,
+    "public_plw_commands": 23
+  },
+  "valid_transition": {
+    "from": "F119_PREFLIGHT_READY",
+    "expected_nonce_state": "UNCONSUMED",
+    "to": "LEASED_TO_ONE_EXECUTOR",
+    "mechanism": "SQLite_BEGIN_IMMEDIATE_plus_unique_constraints",
+    "preconditions": [
+      "schema-exact no-effect lease request",
+      "full F111-F119 chain revalidates against current envelope",
+      "issuer-sealed stored F119 record matches recomputation",
+      "executor id appears in protected allowlist",
+      "authorization and freshness assertions remain unexpired",
+      "both nonce values are unconsumed in the same trust store"
+    ],
+    "maximum_lease_ttl_seconds": 30,
+    "lease_expiry_is_bounded_by": [
+      "requested lease TTL",
+      "authorization assertion expiry",
+      "freshness assertion expiry"
+    ]
+  },
+  "atomic_store": {
+    "engine": "Python stdlib sqlite3",
+    "canonical_location": "<accountability-trust-store>/execution_leases.sqlite3",
+    "caller_selectable_parallel_database": false,
+    "journal_mode": "DELETE",
+    "synchronous": "FULL",
+    "transaction_lock": "BEGIN IMMEDIATE",
+    "database_mode": "0600",
+    "directory_mode": "0700",
+    "unique_constraints": [
+      "authorization_nonce",
+      "freshness_nonce",
+      "idempotency_key"
+    ],
+    "precommit_failure_rolls_back_both_nonces": true,
+    "expired_lease_releases_consumed_nonces": false
+  },
+  "final_proof_state": {
+    "atomic_nonce_pair_store_present": true,
+    "exactly_one_competing_lease_winner": true,
+    "idempotent_recovery_returns_same_lease": true,
+    "idempotent_recovery_grants_second_start": false,
+    "changed_idempotency_key_replays_nonce_pair": false,
+    "inspection_grants_executor_start": false,
+    "receipt_contains_raw_nonces": false,
+    "receipt_is_content_addressed": true,
+    "receipt_is_issuer_sealed": true,
+    "public_plw_commands": 24,
+    "operational_skill_modules": 10
+  },
+  "authority": {
+    "winning_lease_may_authorize_exact_executor_start": true,
+    "winning_lease_executes_transition": false,
+    "winning_lease_executes_runtime": false,
+    "winning_lease_applies_external_patch": false,
+    "winning_lease_promotes_stable_state": false,
+    "winning_lease_commits_truth": false,
+    "eligibility_evaluation_changes_state": false,
+    "inspection_changes_state": false,
+    "adaptive_work_may_acquire_lease": false
+  },
+  "tool_surface": {
+    "command": "plw action-lease",
+    "acquire_reads_complete_chain_bundle_from_stdin": true,
+    "acquire_requires_cli_allow_state_change": true,
+    "agent_adapter_requires_literal_allow_state_change": true,
+    "executor_allowlist_source": "protected PLW_EXECUTOR_ALLOWLIST or host API argument",
+    "shell_used_by_agent_adapter": false,
+    "status_is_read_only": true
+  },
+  "implementation": {
+    "action_lease_sha256": "sha256:19c054f7fafdfed968fefcc5668356fb84f40a36f3f9e55c7ea929932e0427bc",
+    "core_init_sha256": "sha256:952b6e9a93646e55f04bf865f83994cd78e219d6d76eadea7102b829e11fbaf8",
+    "agent_tool_sha256": "sha256:9ddbc1e07768772a2f496a60143feca6e614e34edbc18c67e843e7a8bacf7d4c",
+    "plw_cli_sha256": "sha256:c560e98d3cdb6e964a703161e0c4867c239e10952c620da72d1028b2122bec0a",
+    "compact_schema_sha256": "sha256:7275b6bbc70ed0a251fae5490ef5c2575f235ee0937166871573c48326813ce0",
+    "legacy_schema_sha256": "sha256:65299d1846633ee748c4bfa42fee573581dcaad75d7cab75eb6ddad72ba0defb",
+    "skill_root_sha256": "sha256:1dc1b99354980e5bcad5015915d207f245eef39569e9fc8af4bafe227eaf8c93",
+    "lease_skill_sha256": "sha256:22392df94e406d641b6be2a1da670f4f0a09b99d9071a2af304788c609282d08",
+    "governance_skill_sha256": "sha256:63e647288a3b2a3cc24791574a3f0a6839144ec0868ca1430af11afc0d0b90d3",
+    "readme_sha256": "sha256:15bce7ed78761f93d550e5c12c0d0c3cc190cd6d74ab9b3ca3189966e0530745",
+    "experimental_fixture_sha256": "sha256:f427e927f7d77d4185ca9dc2f317d5fdc6d7b6e0b8d912cee7344a7831c2048d",
+    "fast_fixture_sha256": "sha256:ee35878afdb8b5cdd66862f5c0891f704ae5782a0c5d38cb4d766e0d3e3b1c6c"
+  },
+  "validation": {
+    "stable_fixture_count": 61,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 44,
+    "adversarial_cases": [
+      "missing executor allowlist",
+      "non-allowlisted executor",
+      "truthy non-boolean lease intent",
+      "unknown heuristic request field",
+      "same-request recovery",
+      "same-idempotency altered request",
+      "changed-idempotency replay",
+      "effective expiry while waiting for transaction commit",
+      "precommit crash rollback",
+      "twelve-way concurrent nonce-pair race",
+      "executor-binding mismatch",
+      "tampered durable receipt",
+      "non-literal agent state acknowledgement"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F122",
+    "name": "Lease-Bound Executor Outcome Contract",
+    "goal": "Bind one allowlisted executor adapter and its terminal outcome receipt to the exact F121 lease without turning lease acquisition or inspection into evidence that the action succeeded."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F121_cross_checkpoint_fingerprints_are_historical": true,
+    "F121_action_lease_module_unchanged": true,
+    "F122_executor_outcome_module_owned_by_f122": true,
+    "F123_executor_adapter_bridge_owned_by_f123": true,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "workflow-action-authorization-receipt-v1",
+  "checkpoint": "F116",
+  "base_checkpoint": "F115",
+  "stable_baseline": "F85",
+  "status": "WORKFLOW_ACTION_AUTHORIZATION_RECEIPT_ACTIVE",
+  "goal": "Bind one separately issued, signed, principal-bound authorization assertion to one revalidated F114 proposal without executing any lifecycle/runtime/patch/promotion/truth effect.",
+  "design": {
+    "authorization_source": "signed principal authority assertion + issuer-sealed F114 proposal + original bounded proposal request + current advisory envelope",
+    "literal_caller_authorization_required": true,
+    "separate_signed_principal_assertion_required": true,
+    "authorization_ttl_max_seconds": 900,
+    "authorization_nonce_required": true,
+    "truthy_substitute_rejected": true,
+    "single_proposal_scope": true,
+    "proposal_revalidated_before_grant": true,
+    "proposal_accountability_binding_required": true,
+    "proposal_issuer_provenance_required": true,
+    "capability_state_evidence_action_binding_required": true,
+    "query_keyword_embedding_trigger_forbidden": true,
+    "receipt_content_addressed": true,
+    "receipt_issuer_provenance_required": true,
+    "raw_prompt_stored": false,
+    "raw_source_stored": false,
+    "raw_evidence_stored": false,
+    "raw_proposal_request_stored": false
+  },
+  "authority": {
+    "authorization_receipt_creation": true,
+    "single_proposal_authorization_may_be_granted": true,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "instruction_budget": {
+    "root_skill_lines": 240,
+    "root_skill_bytes": 11650,
+    "workflow_skill_lines": 78,
+    "workflow_skill_bytes": 10416,
+    "max_lines_per_skill_file": 300,
+    "max_bytes_per_skill_file": 15360
+  },
+  "implementation": {
+    "action_authorization_loc": 246,
+    "action_authorization_sha256": "sha256:56618d1d4376333e719bcf796d39c74a37ff82ff17fdf57c8ae281c0db9584b7",
+    "action_proposal_sha256": "sha256:d270214cd2527a3b1ca3c3bc0a65e29d7040f23f9d8d81390e83d5f23e239925",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "skill_root_sha256": "sha256:c2967ac869e1133c7aac237603bb48730f8ccfcd53fc558b4b9df55e5d91a9a6",
+    "workflow_skill_sha256": "sha256:e00b96886b39aa18b6e23861bad212db1222c36da2e76a76732d4ed2f75dfed0",
+    "readme_sha256": "sha256:6c489e7e4580e0ce35084db3a2786c42ef4daf61d638c878054ff857f89840e4",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F116_is_current_development": true,
+    "authorization_is_bound_to_one_ready_proposal": true,
+    "authorization_is_not_execution": true,
+    "proposal_revalidation_required": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true,
+    "layered_skill_router_preserved": true
+  },
+  "next_target": {
+    "checkpoint": "F117",
+    "name": "Authorized Action Gate Contract",
+    "goal": "Verify an F116 authorization receipt as a bounded executable-intent gate while still keeping side-effect execution outside the verifier."
+  }
+}

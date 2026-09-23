@@ -1,0 +1,85 @@
+{
+  "schema_version": "workflow-relevance-decision-accountability-v1",
+  "checkpoint": "F111",
+  "base_checkpoint": "F110",
+  "stable_baseline": "F85",
+  "status": "WORKFLOW_RELEVANCE_ACCOUNTABILITY_ACTIVE_EXPLICIT_AUDIT_ONLY",
+  "goal": "Make F109 relevance decisions auditable through the existing content-addressed accountability ledger without adding automatic I/O, prompt bytes, execution authority, or release-gate cost.",
+  "design": {
+    "ledger_reused": "core.context_accountability",
+    "new_parallel_ledger_added": false,
+    "recording_is_explicit_on_demand": true,
+    "evaluate_relevance_request_remains_pure": true,
+    "build_workflow_context_remains_no_ledger_io": true,
+    "grant_and_denial_decisions_are_auditable": true,
+    "accountability_id_is_content_addressed": true,
+    "request_digest_binding_required": true,
+    "workflow_evidence_digest_binding_required": true,
+    "supplied_decision_must_recompute_exactly": true,
+    "ledger_tampering_fails_hash_validation": true,
+    "ledger_write_failure_does_not_change_relevance": true,
+    "raw_query_stored": false,
+    "raw_evidence_stored": false,
+    "raw_evidence_refs_stored": false,
+    "evidence_refs_represented_as_count_plus_digest": true,
+    "accountability_record_changes_prompt": false
+  },
+  "authority": {
+    "accountability_is_transition_authority": false,
+    "accountability_is_runtime_authority": false,
+    "accountability_is_external_patch_authority": false,
+    "accountability_is_stable_promotion_authority": false,
+    "accountability_is_truth_commit_authority": false,
+    "accountability_is_relevance_authority": false,
+    "relevance_decision_precedes_accountability_record": true
+  },
+  "implementation": {
+    "capability_relevance_loc": 275,
+    "capability_relevance_sha256": "sha256:7f3a2e5d47b5bd8502c428818daef54b6fe5c98ca29c147a274a329f4aeef002",
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "context_optimizer_changed_from_F110": false,
+    "kernel_changed_from_F110": false,
+    "simplification_analyzer_changed_from_F110": false,
+    "runtime_semantics_changed": false,
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "proof": {
+    "valid_grant_record_round_trip": "PASS",
+    "content_address_repeat_same_id": "PASS",
+    "raw_evidence_ref_omission": "PASS",
+    "denied_decision_recordable": "PASS",
+    "forged_decision_rejected": "PASS",
+    "tampered_ledger_rejected": "PASS",
+    "forced_ledger_write_failure_observable_without_relevance_change": "PASS"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F111_is_current_development": true,
+    "F108_context_semantics_unchanged": true,
+    "F109_relevance_semantics_unchanged": true,
+    "F110_fast_lane_preserved": true,
+    "rule3_remains_retired": true,
+    "runtime_ts_js_rule_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "fast_lane": "E31 + E32 + E29 + E30 + F15/F34/F35/F46/F64 PASS",
+    "fast_lane_internal_seconds_observed": 22.775,
+    "within_45_second_target": true,
+    "compileall": "PASS",
+    "kernel_smoke": "not required because context optimizer and kernel bytes are unchanged from F110/F108",
+    "full_release_suites": "preserved; not run for this explicit audit-layer extension"
+  },
+  "next_target": {
+    "checkpoint": "F112",
+    "name": "Workflow Delivery Accountability Link",
+    "goal": "Link an explicit F111 relevance accountability id to the actual F108 context delivery outcome (included, not relevant, invalid, or budget-omitted) without changing prompt content or granting authority."
+  }
+}

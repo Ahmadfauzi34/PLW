@@ -1,0 +1,72 @@
+{
+  "schema_version": "lifecycle-workflow-adapter-v1",
+  "checkpoint": "F107",
+  "base_checkpoint": "F106",
+  "stable_baseline": "F85",
+  "status": "COMPACT_ADVISORY_LIFECYCLE_ENVELOPE_ACTIVE",
+  "goal": "Expose F106 lifecycle decisions as compact coding-agent context without transition execution or repository mutation authority.",
+  "adapter": {
+    "module": "core/capability_workflow.py",
+    "schema_version": "capability-workflow-envelope-v1",
+    "policy": "capability_workflow_adapter_v1",
+    "authority": "advisory_workflow_only",
+    "transition_execution_authority": false,
+    "runtime_execution_authority": false,
+    "external_patch_authority": false,
+    "stable_promotion_authority": false,
+    "truth_commit_authority": false,
+    "unknown_state_fail_closed": true
+  },
+  "f105_replay": {
+    "economics_review_allowed_targets": [
+      "RETIRED"
+    ],
+    "acceptance_blockers": [
+      "proven_target_gain_loc>=effective_machine_cost_loc"
+    ],
+    "recommended_next_action": {
+      "kind": "PROPOSE_TRANSITION",
+      "target": "RETIRED"
+    },
+    "retired_is_terminal": true
+  },
+  "compactness": {
+    "canonical_envelope_bytes": {
+      "missing": 1035,
+      "dossier_ready": 708,
+      "economics_review": 764,
+      "retired": 650,
+      "invalid": 656
+    },
+    "goal": "keep lifecycle guidance small enough for agent reasoning context without duplicating raw evidence"
+  },
+  "implementation": {
+    "new_runtime_module_added": true,
+    "module_loc": 74,
+    "module_sha256": "sha256:7b50844051645b9048e06eda92fa2bc9d1efb26a0ba1dbdc2634cac390ed07bc",
+    "core_init_sha256": "sha256:063577daa75fbb7fc54f4f660ec4193c490ded90eb69a45e64563a10dc3bcf0d",
+    "simplification_analyzer_changed": false,
+    "simplification_analyzer_loc": 1448,
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "new_simplification_rule_added": false,
+    "experimental_fixture_check_sha256": "sha256:14cf485bff191d661bf590b36d5802b8bb705a6226c77372967fe2cdb583042d",
+    "readme_sha256": "sha256:f0d4a547c690969d24d7bcfdbb1644a6675380a14789259bbcc2f4311500b62e",
+    "skill_sha256": "sha256:50d8f4a73264976503d5f76a54202433e25ba05b77dea8ca8a3cfb9b2d701ca4"
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E28 PASS in bounded runs",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "stable_full_registry": "not rerun because F107 adds an isolated advisory adapter/public export and does not change simplification/stable semantics",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "compileall": "PASS",
+    "self_host_frontier": "31 remaining / 0 recommended",
+    "adapter_authority": "advisory_workflow_only; all execution/mutation authorizations false"
+  },
+  "next_target": {
+    "checkpoint": "F108",
+    "name": "Workflow Envelope Context-Pack Integration",
+    "goal": "Integrate the compact advisory envelope into an explicit context-pack path without adding mutation authority or globally bloating ordinary context."
+  }
+}

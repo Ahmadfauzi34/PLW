@@ -1,0 +1,85 @@
+{
+  "schema_version": "authorized-action-gate-contract-v1",
+  "checkpoint": "F117",
+  "base_checkpoint": "F116",
+  "stable_baseline": "F85",
+  "status": "AUTHORIZED_ACTION_GATE_CONTRACT_ACTIVE",
+  "goal": "Revalidate one F116 authorization receipt into a bounded executable-intent gate while keeping all side-effect execution outside the verifier.",
+  "design": {
+    "gate_source": "issuer-sealed F116 receipt + same bounded authorization/proposal requests + signed authority assertion + current advisory envelope",
+    "literal_gate_request_required": true,
+    "truthy_substitute_rejected": true,
+    "authorization_receipt_revalidated": true,
+    "authorization_assertion_revalidated": true,
+    "exact_nested_contracts": true,
+    "single_authorized_proposal_binding_required": true,
+    "capability_state_evidence_action_binding_required": true,
+    "unknown_fields_fail_closed": true,
+    "query_keyword_embedding_trigger_forbidden": true,
+    "gate_record_content_addressed": true,
+    "gate_record_issuer_provenance_required": true,
+    "raw_prompt_stored": false,
+    "raw_source_stored": false,
+    "raw_evidence_stored": false,
+    "raw_authorization_request_stored": false,
+    "raw_proposal_request_stored": false
+  },
+  "authority": {
+    "gate_evaluation": true,
+    "executor_handoff_eligibility_may_be_true": true,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "instruction_budget": {
+    "root_skill_lines": 240,
+    "root_skill_bytes": 11650,
+    "workflow_skill_lines": 78,
+    "workflow_skill_bytes": 10416,
+    "max_lines_per_skill_file": 300,
+    "max_bytes_per_skill_file": 15360
+  },
+  "implementation": {
+    "action_gate_loc": 233,
+    "action_gate_sha256": "sha256:07b4248fe65db536ec591bbb1d1a4d378fc3f2db0ebbe54d71c0769b20d1cbe8",
+    "action_authorization_sha256": "sha256:56618d1d4376333e719bcf796d39c74a37ff82ff17fdf57c8ae281c0db9584b7",
+    "action_proposal_sha256": "sha256:d270214cd2527a3b1ca3c3bc0a65e29d7040f23f9d8d81390e83d5f23e239925",
+    "context_optimizer_sha256": "sha256:b6a0cc25e1590c54a373c323cf3378faa37d338fbf5b20878475b7408504bc56",
+    "kernel_sha256": "sha256:1dbb7e9443e65a6514562fbf4a942345006c4a8ad60d748a86f5b17100428ea1",
+    "simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "simplification_analyzer_loc": 1448,
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "skill_root_sha256": "sha256:c2967ac869e1133c7aac237603bb48730f8ccfcd53fc558b4b9df55e5d91a9a6",
+    "workflow_skill_sha256": "sha256:e00b96886b39aa18b6e23861bad212db1222c36da2e76a76732d4ed2f75dfed0",
+    "readme_sha256": "sha256:6c489e7e4580e0ce35084db3a2786c42ef4daf61d638c878054ff857f89840e4",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F117_is_current_development": true,
+    "open_gate_requires_valid_F116_receipt": true,
+    "gate_is_not_execution": true,
+    "separate_executor_required": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true,
+    "layered_skill_router_preserved": true
+  },
+  "next_target": {
+    "checkpoint": "F118",
+    "name": "Authorized Action Executor Dry-Run Contract",
+    "goal": "Consume one verified F117 gate into a deterministic no-side-effect execution plan/dry-run before any real executor is introduced."
+  }
+}

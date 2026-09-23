@@ -1,0 +1,122 @@
+{
+  "schema_version": "authority-provenance-preflight-hardening-v1",
+  "checkpoint": "F119",
+  "base_checkpoint": "F118",
+  "stable_baseline": "F85",
+  "status": "AUTHORITY_PROVENANCE_PREFLIGHT_HARDENING_ACTIVE",
+  "goal": "Close self-minted ledger provenance, self-asserted authorization, loose nested schema, vacuous effects, malformed-input, unbound-plan, and stale-envelope gaps before any real executor exists.",
+  "threat_model": {
+    "generic_ledger_writer_is_trusted_authority": false,
+    "content_hash_proves_integrity_not_issuer_identity": true,
+    "production_provenance_key_must_be_supplied_by_protected_authority_service": true,
+    "local_mode_0600_store_key_is_reference_machine_fallback_only": true,
+    "malicious_code_with_authority_key_access_is_outside_this_process_boundary": true
+  },
+  "design": {
+    "record_provenance": "domain-separated HMAC-SHA256 issuer seal",
+    "canonical_recorders_sealed": [
+      "F111 relevance",
+      "F112 delivery",
+      "F114 proposal",
+      "F116 authorization",
+      "F117 gate",
+      "F118 dry-run",
+      "F119 preflight"
+    ],
+    "generic_unsigned_F111_F112_rejected": true,
+    "exact_top_level_and_nested_contracts": true,
+    "missing_effect_map_rejected": true,
+    "unknown_nested_authority_rejected": true,
+    "reserved_decision_id_metadata_rejected": true,
+    "loaded_decision_id_must_match_content_path": true,
+    "authorization_source": "separate signed principal-bound assertion",
+    "authorization_ttl_max_seconds": 900,
+    "authorization_nonce_required": true,
+    "plan_digest_binds_full_gate_authorization_proposal_and_evidence_provenance": true,
+    "preflight_source": "signed current-envelope assertion from trusted workflow-state provider",
+    "preflight_freshness_ttl_max_seconds": 30,
+    "malformed_input_returns_rejected_proof_state": true,
+    "atomic_executor_lease_introduced": false,
+    "canonical_skill_entrypoint": "SKILL.md",
+    "on_demand_module_directory": "skills",
+    "descriptive_module_names": true,
+    "bidirectional_module_navigation": true,
+    "conditional_cross_module_transitions": true,
+    "legacy_global_chapter_numbering_removed": true,
+    "markdown_link_graph_validated": true
+  },
+  "authority": {
+    "provenance_seal_verification": true,
+    "explicit_authority_assertion_verification": true,
+    "freshness_preflight_evaluation": true,
+    "transition_execution": false,
+    "runtime_execution": false,
+    "external_patch": false,
+    "stable_promotion": false,
+    "truth_commit": false
+  },
+  "implementation": {
+    "accountability_provenance_sha256": "sha256:48d4f1379c86ea88af71d401651d70bc59a284645d71d875f2bede6a4db03141",
+    "capability_contracts_sha256": "sha256:d226af18269b4ca9aa7551d06ac62bbdd5d35269ec98e616352b96825f1aa2e5",
+    "workflow_adapter_sha256": "sha256:5e8dac389983ac317bf422297a3e2f488ac3137e0de827f6fe1adf0b5e4274f6",
+    "action_authority_sha256": "sha256:069b694b9a75fffa3ba0833810d9782037637fe69587d108b27355120828dfa9",
+    "action_preflight_sha256": "sha256:f4a5dfeabeb152f093cb92a40b8068c63f647fa8c8f7b2b917c7c6c6c3e0973a",
+    "context_accountability_sha256": "sha256:e93b2b40a791154aea31fc8669bfccb1a7e8c56d905c0fb8403c6da6b151a463",
+    "capability_relevance_sha256": "sha256:7f3a2e5d47b5bd8502c428818daef54b6fe5c98ca29c147a274a329f4aeef002",
+    "capability_delivery_sha256": "sha256:fe065ce0fc90b01001a3cc92f57c862eb746d9aafd28183f7a60eb8ed143f3c9",
+    "chain_query_sha256": "sha256:f6d35c7ce5dc2edf68aab941490c5b9ab3142d0c306cc695a2d007f6065bb01c",
+    "action_proposal_sha256": "sha256:d270214cd2527a3b1ca3c3bc0a65e29d7040f23f9d8d81390e83d5f23e239925",
+    "action_authorization_sha256": "sha256:56618d1d4376333e719bcf796d39c74a37ff82ff17fdf57c8ae281c0db9584b7",
+    "action_gate_sha256": "sha256:07b4248fe65db536ec591bbb1d1a4d378fc3f2db0ebbe54d71c0769b20d1cbe8",
+    "action_dry_run_sha256": "sha256:17b70b8f73ceff2adcb5a02da7c8fcccba2d6e07cbab9d9bed6f24b8bffe09bf",
+    "core_init_sha256": "sha256:95f5b6eb574bd0df61c2a40f78f0b0b4ef469eb05ab4cf4daafe41670dc68b66",
+    "skill_root_sha256": "sha256:c2967ac869e1133c7aac237603bb48730f8ccfcd53fc558b4b9df55e5d91a9a6",
+    "readme_sha256": "sha256:6c489e7e4580e0ce35084db3a2786c42ef4daf61d638c878054ff857f89840e4",
+    "workflow_module_sha256_at_f119": "sha256:e00b96886b39aa18b6e23861bad212db1222c36da2e76a76732d4ed2f75dfed0",
+    "experimental_fixture_check_sha256": "sha256:3233ffb175132f4269bc11ce96e6f9088baaeb6b6aa7ccac0d8837427b780f0d",
+    "fixture_fast_sha256": "sha256:7e5ed11a3d14273558b993822a7fbf56619c6c1cd1f770fdba6aa643e2ee714c"
+  },
+  "frontier": {
+    "simplification_analyzer_loc": 1448,
+    "runtime_ts_js_rules": 2,
+    "rule3": "RETIRED",
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation": {
+    "stable_fixture_count": 60,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 41,
+    "adversarial_cases_added": [
+      "unsigned self-consistent F111/F112 forgery",
+      "missing authorization effects",
+      "missing gate effects",
+      "unknown nested true authority",
+      "unknown workflow-envelope authority extension",
+      "non-JSON malformed request",
+      "expired principal authorization",
+      "expired current-envelope freshness",
+      "plan provenance collision",
+      "internal decision-id/path substitution"
+    ]
+  },
+  "invariants": {
+    "F85_is_current_stable": true,
+    "F119_is_current_development": true,
+    "content_addressing_and_issuer_authenticity_are_distinct": true,
+    "authorization_is_not_execution": true,
+    "preflight_is_not_execution": true,
+    "future_executor_requires_atomic_lease_and_nonce_consumption": true,
+    "skill_module_routing_is_machine_validated": true,
+    "no_transition_execution": true,
+    "no_runtime_execution": true,
+    "no_external_patch": true,
+    "no_stable_promotion": true,
+    "no_truth_commit": true
+  },
+  "next_target": {
+    "checkpoint": "F120",
+    "name": "Tool.py External Corpus Audit Contract",
+    "goal": "Interpose the user-authorized public corpus audit, harden portable target/loop boundaries from observed counterexamples, and preserve the atomic executor lease as F121."
+  }
+}
