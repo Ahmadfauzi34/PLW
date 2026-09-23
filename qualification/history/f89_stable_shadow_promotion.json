@@ -1,0 +1,91 @@
+{
+  "schema_version": "stable-shadow-selective-promotion-v1",
+  "checkpoint": "F89",
+  "status": "STABLE_SHADOW_PROMOTED_AND_VALIDATED",
+  "parent": {
+    "checkpoint": "F88_rule_engine_compression",
+    "manifest_sha256": "sha256:45a784d52198de437cc881ce36dd34e11fd6d2a104528bd8f8efc643b8124ace"
+  },
+  "stable_base": "F85_selective_stable_promotion",
+  "architecture_base": "F86_stable_rebase_experimental_reattach",
+  "goal": "adjudicate all four F88 stable-lane shadow candidates through one selective-promotion patch group without allowing overlay-direct stable mutation",
+  "promotion_group": {
+    "candidates_before": 4,
+    "terminal_temporary_before": 3,
+    "exact_duplicate_before": 1,
+    "strategy": "reuse canonical stable strip_js_comments and inline one terminal string scrub return",
+    "files": {
+      "codebase/performance_analyzers.py": {
+        "before_loc": 525,
+        "after_loc": 520,
+        "loc_reduction": 5
+      },
+      "codebase/topology_analyzers.py": {
+        "before_loc": 779,
+        "after_loc": 775,
+        "loc_reduction": 4
+      }
+    },
+    "total_loc_reduction": 9,
+    "behavior_differential_sha256": "sha256:3e161c8200f9fc842cdfe880c2e6cc8ee3b6ee616285172a0d4050cb02687c46",
+    "behavior_differential_result": "BYTE_IDENTICAL",
+    "canonical_owner": "language_semantics.strip_js_comments",
+    "private_name_contract_preserved_by_alias": true
+  },
+  "frontier_after": {
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "recommended_local_candidates": 0,
+    "remaining_candidate_count": 32,
+    "stable_lane_shadow_candidates": 0,
+    "remaining_debt_by_recommendation": {
+      "defer_cross_domain_until_neutral_owner_proven": 12,
+      "defer_payload_no_positive_patch_margin": 1,
+      "defer_public_api_wrapper": 3,
+      "defer_sequence_high_proof_surface": 9,
+      "defer_sequence_no_positive_net_gain": 6,
+      "defer_until_narrower_candidates_exhausted": 1
+    }
+  },
+  "files": {
+    "codebase/performance_analyzers.py": "sha256:6b0c1fef268556df9f1a6e2f74b19265c4abe597b0840b06de170b79c238b52b",
+    "codebase/topology_analyzers.py": "sha256:97ceb283cd42b7b6628c87dadbe937b1f623e7b968a6e4a5b4b57a1884fe3b9b",
+    "language_semantics.py": "sha256:050ba8127218c15e98ffa744f411df324f8563151cd980753e1112a8e5b001d5",
+    "core/simplification_analyzer.py": "sha256:80517f826501f6230dfd46c4f3302527b3beae8b99d3657db379d98287b32400",
+    "experimental_fixture_check.py": "sha256:1f17051e6d6c7d83624081bd5d52cb9b053d0b36749ba72bb2bbfee945b98bbd"
+  },
+  "invariants": {
+    "overlay_direct_stable_mutation_forbidden": true,
+    "promotion_requires_explicit_checkpoint": true,
+    "stable_default_TS_JS_contract_preserved": true,
+    "experimental_python_remains_opt_in": true,
+    "canonical_shared_helper_must_be_stdlib_only": true,
+    "candidate_elimination_is_not_behavioral_equivalence": true
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay_lane": "10/10 PASS",
+    "stable_full_registry": {
+      "minimal_fixture_count": 61,
+      "F01_F64": "PASS"
+    },
+    "integration_smoke": {
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS"
+    },
+    "compileall": "PASS",
+    "behavior_differential": "BYTE_IDENTICAL"
+  },
+  "next_target": {
+    "checkpoint": "F90_architectural_debt_adjudication",
+    "goal": "classify the remaining 32 non-local-safe debts into keep/defer/neutral-owner/API-proof actions without opening a new detector frontier",
+    "entry_debt": {
+      "defer_cross_domain_until_neutral_owner_proven": 12,
+      "defer_payload_no_positive_patch_margin": 1,
+      "defer_public_api_wrapper": 3,
+      "defer_sequence_high_proof_surface": 9,
+      "defer_sequence_no_positive_net_gain": 6,
+      "defer_until_narrower_candidates_exhausted": 1
+    },
+    "done_when": "every remaining debt class has an explicit architectural disposition and recommended_local_candidates stays zero unless a new proof transition is justified"
+  }
+}
