@@ -1,0 +1,141 @@
+{
+  "schema_version": "angular-candidate-proof-frontend-reuse-v1",
+  "checkpoint": "F97",
+  "base_checkpoint": "F96",
+  "stable_baseline": "F85",
+  "status": "ANGULAR_CANDIDATE_PROVEN_FRONTEND_REUSED",
+  "goal": "Validate the real getScannerScript simplification in a higher-fidelity Angular sandbox and prove that a second TS/JS rule reuses the F96 lexical substrate without adding another scanner/lexer.",
+  "angular_candidate_proof": {
+    "repository": "Ahmadfauzi34/Tool.py",
+    "branch": "main",
+    "github_server_blob_sha": "9564e2a6a99c54a07feb647cc9d00caf96f06925",
+    "expanded_source_fidelity": "EXACT_GITHUB_SERVER_LINES_1_75_PLUS_F96_FULL_SMALL_SERVICE_FILES",
+    "expanded_server_line_range": [
+      1,
+      75
+    ],
+    "probe_files": 4,
+    "probe_loc_before_patch": 158,
+    "probe_loc_after_patch": 157,
+    "candidate_before_patch": {
+      "count": 1,
+      "file": "src/server.ts",
+      "symbol": "getScannerScript",
+      "kind": "js_try_catch_identical_terminal_return",
+      "candidate_id": "sha256:9efccfa79488dfbba44fafe93a02cf56f3ebc57e4d60e63a464e0da84da34e59",
+      "risk": "low",
+      "estimated_gain_loc": 1
+    },
+    "sandbox_patch": {
+      "applied_to_external_repository": false,
+      "applied_only_to_f97_sandbox": true,
+      "transform": "preserve await access() inside try/catch; remove duplicate literal returns; place one identical literal return after catch",
+      "actual_gain_loc": 1,
+      "candidate_after_patch_count": 0
+    },
+    "behavioral_differential": {
+      "runtime": "Node v22.16.0 --experimental-strip-types",
+      "cases": [
+        "access_resolves",
+        "access_rejects",
+        "access_sync_throws"
+      ],
+      "return_value_identical": "PASS",
+      "access_call_count_identical": "PASS",
+      "access_path_identical": "PASS",
+      "all_cases": "PASS"
+    }
+  },
+  "frontend_reuse": {
+    "frontend_identity": "python_ast+js_lexical_v1",
+    "ts_js_rule_count_before": 1,
+    "ts_js_rule_count_after": 2,
+    "rule1": "js_try_catch_identical_terminal_return",
+    "rule2": "js_terminal_literal_temporary",
+    "rule2_scope": "adjacent const binding of a conservative non-throwing literal immediately returned at the end of the same block",
+    "shared_primitives_reused": [
+      "shared_graph.file_map",
+      "_mask_js_noncode",
+      "_js_nonthrowing_literal",
+      "_enclosing_js_function_name"
+    ],
+    "new_independent_filesystem_scan": false,
+    "new_lexer_or_scanner_file": false,
+    "new_masking_engine": false,
+    "rule2_positive_cases": 2,
+    "rule2_negative_cases": 6,
+    "expanded_angular_rule2_false_positives": 0
+  },
+  "economics": {
+    "F95_analyzer_loc": 1185,
+    "F96_analyzer_loc": 1439,
+    "F96_initial_frontend_delta_loc": 254,
+    "F97_analyzer_loc": 1525,
+    "F97_incremental_rule2_and_integration_delta_loc": 86,
+    "rule2_detector_body_loc": 66,
+    "marginal_to_initial_frontend_cost_ratio": 0.3386,
+    "total_analyzer_delta_vs_F95": 340,
+    "rules_supported": 2,
+    "average_analyzer_delta_per_rule_vs_F95": 170.0,
+    "realized_external_repository_gain_loc": 0,
+    "validated_sandbox_target_gain_loc": 1,
+    "status": "REUSE_PROVEN_BUT_NOT_AMORTIZED",
+    "interpretation": "The +254 LOC F96 investment now has concrete reuse evidence because rule2 costs materially less and shares the same lexical substrate. Raw LOC economics are still not positive: only a 1-LOC external sandbox gain is validated and the real repository remains unmodified."
+  },
+  "self_host_state": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "js_try_catch_candidates_in_PLW": 0,
+    "js_rule2_candidates_in_PLW": 0,
+    "frontier": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "source_snapshots": {
+    "experiments/f97_angular_full_sources/src/server.ts.txt": "sha256:c35fec475c7e74fce77cf08460ba4350ba0fb0723dbf198c365da62acb2f0194",
+    "experiments/f97_angular_patched_sources/src/server.ts.txt": "sha256:0dc355eae5798d58e4ea12710b7c6c0877fcec21da4afda4d1693b327dfffa0b",
+    "experiments/f97_angular_full_sources/src/services/cache.service.ts.txt": "sha256:b66a3c5cce902bfc1c429ede4b59b76ca4772b9b4f00faee031ed46de2f6b022",
+    "experiments/f97_angular_full_sources/src/services/data.processor.ts.txt": "sha256:d4239f78d8f14bae78ad3d472265298540b0f5354cf5749b3ee39e6284ef1e6e",
+    "experiments/f97_angular_full_sources/src/services/user.service.ts.txt": "sha256:f6dc3602504c8a972753be4d8bbb17603711fea42860bec47396509728077884"
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:7963077feffde3d6ca10cd2e6f10d8a22a0550a51d029a4d93320c05bfa53eda",
+    "experimental_fixture_check.py": "sha256:e38aa32c22dd2ff496f9186cd4690a7c13e6842ec150c380ffe9fd9112c802d2",
+    "plw_cli.py": "sha256:67a0e8c1f958931b4aacb775dd665168b52043ffafe7c97515128c89db711425"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F97_is_current_development": true,
+    "external_repository_not_mutated": true,
+    "canonical_shared_graph_remains_inventory_authority": true,
+    "single_shared_graph_snapshot_per_analysis": true,
+    "rule2_reuses_F96_lexical_substrate": true,
+    "no_second_lexer_or_scanner": true,
+    "second_rule_does_not_make_frontend_exhaustive": true,
+    "candidate_requires_behavioral_proof_before_external_patch": true,
+    "economics_reuse_signal_is_not_break_even_claim": true
+  },
+  "next_target": {
+    "checkpoint": "F98",
+    "name": "Rule Reuse Yield Probe",
+    "goal": "Use the two-rule shared TS/JS frontend on a broader real Angular/TS corpus and measure candidate yield/false-positive pressure before adding a third rule or applying an external repository patch."
+  },
+  "validation": {
+    "experimental_overlay": "E01-E18 PASS (executed in bounded batches because wrapper timeout can cut long combined runs)",
+    "stable_minimal_fixtures": "F01-F64 PASS",
+    "stable_minimal_fixture_count": 61,
+    "F37_memory_runtime_integrity": "PASS (25.92s isolated)",
+    "kernel_wiring_smoke": "PASS",
+    "kernel_cli_contract": "PASS",
+    "compileall": "PASS",
+    "expanded_angular_probe": "4 files / 158 LOC / exactly 1 getScannerScript candidate",
+    "sandbox_patch": "157 LOC / candidate disappears / actual -1 LOC",
+    "node_behavioral_differential": "resolve PASS; reject PASS; sync-throw PASS; access call count/path preserved",
+    "rule2_positive_cases": "2/2 PASS",
+    "rule2_negative_cases": "6/6 PASS",
+    "rule2_false_positive_on_expanded_angular_probe": 0,
+    "self_host_frontier": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 31
+    }
+  }
+}
