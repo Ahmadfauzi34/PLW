@@ -379,11 +379,27 @@
       "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
     },
     {
-      "candidate_id": "sha256:8bded363d29a1d2ce5b6aff06a2f411f7114f8e1f8269f5a763bc9e1c6ff5e2",
+      "candidate_id": "sha256:8bbded363d29a1d2ce5b6aff06a2f411f7114f8e1f8269f5a763bc9e1c6ff5e2",
       "kind": "repeated_direct_statement_sequence",
       "names": [
         "cmd_context",
         "cmd_transitions"
+      ],
+      "files": [
+        "plw_cli.py"
+      ],
+      "recommendation": "defer_sequence_high_proof_surface",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_PROOF_SURFACE_REQUIRES_DOMAIN_SPECIFIC_REVIEW",
+      "neutral_owner": null,
+      "reopen_condition": "provide bounded behavioral differential and reduce or explicitly accept the affected proof surface"
+    },
+    {
+      "candidate_id": "sha256:76fc68bc512834ee6251a17ae0841a5e77c66e8bb876ba9e10ca974a0af7568f",
+      "kind": "repeated_direct_statement_sequence",
+      "names": [
+        "cmd_check",
+        "cmd_steer"
       ],
       "files": [
         "plw_cli.py"
