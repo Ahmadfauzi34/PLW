@@ -1,0 +1,92 @@
+name: Bug report
+description: Report a reproducible problem in PLW or the standalone binary
+title: "[bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a PLW bug. Keep the report bounded and reproducible.
+
+        Security-sensitive reports do not belong in this form. Follow `SECURITY.md` and avoid posting exploit details or private repository contents publicly.
+
+  - type: input
+    id: version
+    attributes:
+      label: PLW version
+      description: Prefer the version embedded in the standalone binary, for example from `plw doctor <target> --json`.
+      placeholder: "0.2.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - doctor / portable-agent orientation
+        - capability / skill discovery
+        - topology / impact
+        - simplification
+        - UI static analysis
+        - Chromium / runtime reproduction
+        - release / checksum / installation
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: command
+    attributes:
+      label: Exact command
+      placeholder: "plw agent orient /path/to/repo --task \"...\" --json"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest shareable target/fixture and deterministic steps. Do not include secrets or private source that cannot be disclosed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: Include bounded JSON output or log excerpts when useful.
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      placeholder: "Linux x86_64, Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser executable/version if applicable
+      description: Required only for Chromium/CDP or browser-backed failures.
+      placeholder: "chromium 140.x"
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Reproduction checks
+      options:
+        - label: I reproduced this with the published standalone binary, or explained why I could not.
+        - label: I checked whether PLW created or modified files inside the target repository and reported the result.
+        - label: I understand that a candidate, topology result, or reproduced scenario is bounded evidence rather than automatic proof of a patch/root cause.
+    validations:
+      required: true

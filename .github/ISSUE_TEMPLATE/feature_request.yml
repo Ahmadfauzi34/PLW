@@ -1,0 +1,72 @@
+name: Feature request
+description: Propose a new PLW capability, evidence surface, or usability improvement
+title: "[feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        PLW features should start from a target-codebase evidence need, not from adding commands for their own sake.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Target problem or evidence gap
+      description: What can an agent/user not determine safely with the current PLW surfaces?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current PLW behavior
+      description: Which existing capability/command gets closest, and what remains missing or ambiguous?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the evidence/result you want PLW to expose. A command name is optional.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: authority
+    attributes:
+      label: Highest authority this feature should require
+      description: Choose the narrowest boundary that fits the request.
+      options:
+        - read-only structural observation
+        - local runtime execution
+        - temporary/disposable mutation for validation
+        - source mutation proposal only
+        - external repository mutation
+        - stable promotion / release authority
+        - unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: proof
+    attributes:
+      label: Validation / proof expectations
+      description: What positive, negative, failure-injection, target-native, or runtime evidence would make this feature trustworthy?
+    validations:
+      required: true
+
+  - type: textarea
+    id: unsupported
+    attributes:
+      label: Known non-goals or unsupported cases
+      description: State what this feature should explicitly not claim or attempt.
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary acknowledgement
+      options:
+        - label: This proposal does not assume that a candidate equals a valid patch.
+        - label: This proposal keeps observation/evidence separate from execution or mutation authority unless explicitly justified.
+    validations:
+      required: true
