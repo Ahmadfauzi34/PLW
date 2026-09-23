@@ -126,7 +126,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_1_semantic_affordance_skill_handoff.json",
       "source_sha256": "sha256:efec597c6859f81d04038abdb1df7412dd2788342a7c25130e6613ec202d9568",
       "goal": "Make PLW reasoning-native to an unfamiliar model by exposing predictive semantics and deterministic skill handoff before specialized tool use.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_1_semantic_affordance_skill_handoff.json",
+      "repository_git_blob_sha1": "0c90357c93cc382fc19163d82bc145d24c98f514",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F138.2",
@@ -134,7 +137,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_2_target_codebase_topology_bootstrap.json",
       "source_sha256": "sha256:ffb4e1b0828a779e88f2f7086fd282641d6f44cb7252c9143a92fb8f48a1aa7b",
       "goal": "Make first-contact reasoning target-codebase-first by establishing a bounded file-to-import-to-file topology before PLW capability selection.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_2_target_codebase_topology_bootstrap.json",
+      "repository_git_blob_sha1": "4c61c1c3046ea55933c87ab3c2156deff56a190d",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F138.3",
@@ -142,7 +148,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_3_target_resolution_structural_relevance.json",
       "source_sha256": "sha256:8f34a345757d8b6a3b7da403b7b332ab166ea74bc0d69a135ec4ff9e6a7aeb83",
       "goal": "Ground a user task to bounded target-codebase graph nodes before specialized PLW capability selection.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_3_target_resolution_structural_relevance.json",
+      "repository_git_blob_sha1": "8bf78da4e043e35fe106532545737f2c5e208a55",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F138.4",
@@ -150,7 +159,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_4_evidence_need_derivation.json",
       "source_sha256": "sha256:0a1ac51b3522268ca73cb5a7b29cc486e0c358c409ffafcb5d55553794a85986",
       "goal": "Derive target-grounded known/unknown/evidence requirements before any specialized PLW capability is selected.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_4_evidence_need_derivation.json",
+      "repository_git_blob_sha1": "f475c2062125885c9f3a1f789e3f8cba6bc7b6a0",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F138.5",
@@ -158,7 +170,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_5_evidence_driven_capability_selection.json",
       "source_sha256": "sha256:3c2a8217751eed0bd8175945ef019fcf5a6653932958a02c5462788bfadf058a",
       "goal": "Project candidate PLW information sources from machine-readable evidence classes without task-keyword routing or execution authority.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_5_evidence_driven_capability_selection.json",
+      "repository_git_blob_sha1": "992654d98d1180acc07ef53c0dadd4c969e5f8e9",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F138",
@@ -166,7 +181,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f138_validation_result_evidence_acceptance.json",
       "source_sha256": "sha256:27002e95ad65f25fe1abb9ded632fe18f9c770aa55b0793de178240e857d4889",
       "goal": "Accept, reject, or preserve as unresolved one exact canonical validation.result payload against a verified F137 runtime observation and exact F132 request lineage without re-running the validator.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f138_validation_result_evidence_acceptance.json",
+      "repository_git_blob_sha1": "48c37b0787174a239a26b2d6f7224d63a8ff5019",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F139.1",
@@ -174,7 +192,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f139_1_agent_tool_communication_contract.json",
       "source_sha256": "sha256:e9053b92c919e7d22f07e6dc17d25114f3ca9d29c508e37602f943d6e05c1f52",
       "goal": "Make work output decision-first and unambiguous for an agent unfamiliar with PLW without changing execution/evidence/truth authority.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f139_1_agent_tool_communication_contract.json",
+      "repository_git_blob_sha1": "f6eaaf18e91fb24e2408a6a511674278430aaad2",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F139",
@@ -182,7 +203,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f139_execution_backed_scenario_evidence_binding.json",
       "source_sha256": "sha256:e639c9905eea096c7b8364ef7f05ba7300214e61bb05db42a3d239ae659e2aa5",
       "goal": "Bind one exact F138-accepted validation.result into the exact F128 selected-scenario evidence space using F137/F138 execution provenance without rerunning validators or promoting evidence into proof completion.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f139_execution_backed_scenario_evidence_binding.json",
+      "repository_git_blob_sha1": "9a9979b460333df42aece70ac61c70af12987811",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F140",
@@ -190,7 +214,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f140_execution_backed_proof_obligation_rederivation.json",
       "source_sha256": "sha256:d749edc3297cdb212a35e721573f4355c818a61217ca32c05dc9af7ede9bd91c",
       "goal": "Freshly re-derive proof-obligation coverage from verified F139 execution-backed scenario evidence without assuming F123-only provenance or promoting coverage into postcondition truth.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f140_execution_backed_proof_obligation_rederivation.json",
+      "repository_git_blob_sha1": "6deda6daa8218884486fe33e3d5617775ed809cf",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F141",
@@ -198,7 +225,10 @@
       "source_path": "tools/ai_studio_tool/experiments/f141_postcondition_proof_assembly.json",
       "source_sha256": "sha256:1dccbad1f7e073987b5eedc1ec250401ccdeac74f4e3a58a371b43da1880bd9e",
       "goal": "Freshly verify F139 execution-backed evidence and F140 coverage, then evaluate explicit scenario/check expectations under an exact change identity and candidate revision without promoting the result into source-mutation attestation, stable state, or truth.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f141_postcondition_proof_assembly.json",
+      "repository_git_blob_sha1": "a9084b19c8ac54da1f6e39483476daa319020558",
+      "retained_bytes_match_source_sha256": true
     },
     {
       "checkpoint": "F142",
@@ -206,12 +236,21 @@
       "source_path": "tools/ai_studio_tool/experiments/f142_full_stack_validated_state.json",
       "source_sha256": "sha256:fb15b34ab9d750d3ca1430630c487c5b7b879cd091f894c5a03dc618bdd9d513",
       "goal": "Compose separately verified topology, geometry, correspondence, behavior, and F141 postcondition authorities into one bounded full-stack state without graph merging, evidence voting, source-mutation attestation, stable promotion, or truth commit.",
-      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f142_full_stack_validated_state.json",
+      "repository_git_blob_sha1": "b061c63abc64fc8489d6eb30c3fc2417e8c38898",
+      "retained_bytes_match_source_sha256": true
     }
   ],
   "next_groups": [
     "F106-F123 agent/capability/authority lineage",
     "F124-F127 geometry/correspondence lineage",
     "F85-F105 simplification economics/history if still decision-relevant"
-  ]
+  ],
+  "promotion_summary": {
+    "F128_F142_exact_records_retained": 21,
+    "F128_F142_pending_exact_records": 0,
+    "source_archive_required_for_normal_current_work": false,
+    "source_archive_role_after_promotion": "historical reconstruction / independent byte verification only"
+  }
 }
