@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 from pathlib import Path
 from typing import Any, Dict, Mapping
 
@@ -64,6 +65,46 @@ def _require_outside_target(root: Path, path: Path, label: str) -> None:
     raise IssuanceBridgeError(f"{label} must be outside target root")
 
 
+def _dispose(root: Path) -> bool:
+    if root.exists():
+        shutil.rmtree(root)
+    return not root.exists()
+
+
+def _rejection(
+    *,
+    status: str,
+    reason: str,
+    root: Path,
+    integration_status: Any = None,
+    validation_receipt_digest: str | None = None,
+) -> Dict[str, Any]:
+    disposed = _dispose(root)
+    result: Dict[str, Any] = {
+        "schema_version": ISSUANCE_BRIDGE_SCHEMA,
+        "status": status if disposed else "MUTATION_BOUNDARY_CONTAINMENT_FAILED",
+        "integration_status": integration_status,
+        "reason": reason,
+        "postconditions": {
+            "validated": False,
+            "evidence_acceptance_granted": False,
+        },
+        "containment": {
+            "worktree_disposed": disposed,
+            "target_exists_after": root.exists(),
+        },
+        "authority": {
+            "postcondition_receipt_issuance_only": True,
+            "evidence_acceptance_authority_granted": False,
+            "truth_commit": False,
+        },
+        "next_gate": None,
+    }
+    if validation_receipt_digest is not None:
+        result["validation_receipt_digest"] = validation_receipt_digest
+    return result
+
+
 def issue_bounded_capability_postconditions(
     *,
     root: Path,
@@ -80,12 +121,19 @@ def issue_bounded_capability_postconditions(
     timeout_seconds: int,
 ) -> Dict[str, Any]:
     root = root.resolve()
-    for path, label in (
-        (primitive_materialization_path, "primitive materialization"),
-        (validation_receipt_path, "validation receipt"),
-        (issuance_ledger_path, "issuance ledger"),
-    ):
-        _require_outside_target(root, path, label)
+    try:
+        for path, label in (
+            (primitive_materialization_path, "primitive materialization"),
+            (validation_receipt_path, "validation receipt"),
+            (issuance_ledger_path, "issuance ledger"),
+        ):
+            _require_outside_target(root, path, label)
+    except IssuanceBridgeError as exc:
+        return _rejection(
+            status="BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
+            reason=str(exc),
+            root=root,
+        )
 
     integration = validate_bounded_capability_postconditions(
         root=root,
@@ -129,6 +177,15 @@ def issue_bounded_capability_postconditions(
             receipt_digest=validation_digest,
         )
     except (ValidationError, json.JSONDecodeError) as exc:
+        containment = integration.get("containment", {}) or {}
+        if containment.get("worktree_disposed") is not True:
+            return _rejection(
+                status="BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
+                reason=str(exc),
+                root=root,
+                integration_status=integration.get("status"),
+                validation_receipt_digest=validation_digest,
+            )
         return {
             "schema_version": ISSUANCE_BRIDGE_SCHEMA,
             "status": "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
@@ -139,7 +196,7 @@ def issue_bounded_capability_postconditions(
                 "validated": False,
                 "evidence_acceptance_granted": False,
             },
-            "containment": integration.get("containment", {}),
+            "containment": containment,
             "authority": {
                 "postcondition_receipt_issuance_only": True,
                 "evidence_acceptance_authority_granted": False,
@@ -225,7 +282,16 @@ def main() -> int:
 
     root = Path(args.target_root).resolve()
     output = Path(args.output).resolve()
-    _require_outside_target(root, output, "issuance bridge output")
+    try:
+        _require_outside_target(root, output, "issuance bridge output")
+    except IssuanceBridgeError as exc:
+        result = _rejection(
+            status="BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
+            reason=str(exc),
+            root=root,
+        )
+        print(json.dumps(result, sort_keys=True))
+        return 2
 
     result = issue_bounded_capability_postconditions(
         root=root,
