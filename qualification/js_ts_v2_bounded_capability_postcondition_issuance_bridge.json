@@ -1,0 +1,64 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-postcondition-issuance-bridge-contract-v1",
+  "status": "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_READY",
+  "goal": "Materialize and seal the exact lower-level POSTCONDITIONS_VALIDATED receipt produced by the READY bounded-capability postcondition integration so the existing experiment-evidence acceptor can consume it without rerunning validation or reopening the disposed worktree.",
+  "prerequisites": {
+    "bounded_capability_status": "BOUNDED_MUTATION_CAPABILITY_READY",
+    "capability_postcondition_integration_status": "BOUNDED_CAPABILITY_POSTCONDITION_INTEGRATION_READY",
+    "postcondition_validation_reference_status": "POSTCONDITION_VALIDATION_REFERENCE_REVIEW_PASSED",
+    "evidence_acceptance_reference_schema": "plw-js-ts-v2-experiment-evidence-acceptance-reference-v1"
+  },
+  "composition": [
+    "BOUNDED_MUTATION_CAPABILITY_APPLIED",
+    "BOUNDED_MUTATION_CAPABILITY_POSTCONDITIONS_VALIDATED",
+    "materialize exact nested validation receipt bytes outside target",
+    "seal exact receipt digest in existing postcondition issuance hash chain",
+    "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED"
+  ],
+  "invariants": {
+    "validation_is_not_rerun_during_later_evidence_acceptance": true,
+    "disposed_worktree_is_not_reopened": true,
+    "issuance_seals_exact_materialized_validation_bytes": true,
+    "exact_issuance_replay_does_not_append": true,
+    "broken_existing_issuance_chain_fails_closed": true,
+    "failed_postcondition_receipt_may_be_sealed_but_is_not_accepted": true,
+    "invalid_output_or_issuance_path_after_effectful_apply_discards_worktree": true
+  },
+  "authority": {
+    "postcondition_receipt_issuance_only": true,
+    "public_product_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "evidence_acceptance_authority_granted": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "interactive_validation": {
+    "required": true,
+    "completed": true,
+    "audit_record": "qualification/interactive_js_ts_v2_bounded_capability_postcondition_issuance_audit.json",
+    "audited_source_head": "be243d87b023586dba38505ff4b4427d0291200f",
+    "workflow_run": 35911149108,
+    "artifact_id": 10773286429,
+    "artifact_sha256": "sha256:48cc54b4bfc5001208e24d92254fa40e4e2406e1bcba7956d6e0b5ee1a184a85",
+    "direct_report_sha256": "sha256:20b42301467afbfcce7be3c54824b82a03e8623f0e5875d353bbf28c18fac301",
+    "case_count": 6,
+    "passed_case_count": 6,
+    "minimum_cases": [
+      "positive JS exact receipt issuance",
+      "inverse TS exact receipt issuance",
+      "exact issuance replay recovers without append",
+      "capability receipt tamper produces no issuance",
+      "broken issuance chain rejects after disposal",
+      "postwrite validation failure is sealed but not accepted",
+      "invalid issuance output path after effectful apply rejects and disposes"
+    ]
+  },
+  "ready_meaning": "The exact lower-level postcondition receipt produced by the bounded capability chain can be materialized and bound to the existing issuance hash chain without reopening the disposed worktree or granting experiment-evidence acceptance.",
+  "next_gate_on_success": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+}
