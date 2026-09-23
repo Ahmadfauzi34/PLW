@@ -10,27 +10,186 @@
   "rule": "Historical evidence never overrides newer main state. Promotion does not grant runtime, mutation, postcondition, evidence-acceptance, stable-promotion, or truth authority.",
   "priority": "F128-F142 first because current agent/proof surfaces depend on this lineage.",
   "records": [
-    {"checkpoint":"F128","historical_status":"SCENARIO_SET_TARGETED_VALIDATION_PLANNING_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f128_scenario_set_targeted_validation_planning.json","source_sha256":"sha256:c4f63bc273f31a1c4e1d0dc61e862496974c104e407e0fbe4bc1f41e10c80b49","goal":"Turn F127 bounded impact evidence into a deterministic, recoverable set of known validation scenarios without inventing missing scenarios or executing validation.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F129","historical_status":"SCENARIO_BOUND_VALIDATION_EVIDENCE_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f129_scenario_bound_validation_evidence_contract.json","source_sha256":"sha256:73e23325e637a6011f6c453ab2242967edaffb59396742ce116d7200f7fa1438","goal":"Bind bounded external validator evidence to exact F128 selected scenario identities while preserving missing, unplanned, indeterminate, and conflicting evidence without executing validators or minting postcondition truth.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F130","historical_status":"VALIDATION_PROOF_OBLIGATION_COVERAGE_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f130_validation_evidence_coverage_proof_obligation_projection.json","source_sha256":"sha256:db9b26e998b98717e9ca09339363f170078b04a11301dd87297a02eb09dc161c","goal":"Project F129 scenario-bound evidence onto exact caller-declared proof obligations and explicit evidence gaps without promoting coverage or validator outcomes into postcondition or truth claims.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F131","historical_status":"VALIDATION_PROOF_INTEGRITY_WITNESS_HARDENED","source_path":"tools/ai_studio_tool/experiments/f131_validation_proof_integrity_witness_hardening.json","source_sha256":"sha256:f07da3232406fcece1e87fdc8dcf8e700dd14e912aef957ac668b73263010c77","goal":"Harden F129/F130 against stale binding digests, receipt replay, split-observation proof composition, incomplete coverage digests, status-insensitive recovery, and shell-active installation paths.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F132","historical_status":"VALIDATION_EXECUTION_REQUEST_HANDOFF_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f132_validation_execution_request_handoff.json","source_sha256":"sha256:be96e48aea5f9fb4f104eb670234096d725cb9d332e69d1cea7074fff98ec51e","goal":"Translate semantically re-derived unresolved F131 proof obligations into bounded exact-scenario validator work requests while preserving request, authorization, lease, dispatch, execution, returned-evidence, postcondition, and truth boundaries.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F133","historical_status":"AUTHORIZED_VALIDATION_REQUEST_BINDING_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f133_authorized_validation_request_binding.json","source_sha256":"sha256:7b974b33651a1b38419d320dfefb874184709fbc87d5b435719426f827e9ebc4","goal":"Bind one exact semantically verified F132 validation request to one short-lived principal grant without creating lease, attempt, dispatch, runtime, postcondition, or truth authority.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F134","historical_status":"LEASE_BOUND_VALIDATION_EXECUTION_AUTHORIZATION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f134_lease_bound_validation_execution_authorization.json","source_sha256":"sha256:356f29fdb008faa803f7644014ae32b1bca8683b58d211f98df5be8cd8ec48d9","goal":"Atomically consume one exact semantically verified F133 authorization binding into one short-lived single-use validation execution lease without registering an attempt, preparing dispatch, executing a validator/runtime, accepting evidence, proving a postcondition, or committing truth.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F135","historical_status":"LEASE_BOUND_VALIDATION_ATTEMPT_REGISTRATION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f135_lease_bound_validation_attempt_registration.json","source_sha256":"sha256:0dcdbfa67d86ab4681631d15e76a2dee8e9b7f71602f99395f3d4e708c3467f3","goal":"Register or recover exactly one durable validation attempt against an exact F134 lease before any dispatch.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F136","historical_status":"VALIDATION_DISPATCH_INTENT_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f136_validation_dispatch_intent.json","source_sha256":"sha256:ed9b2ed2cce02d22bd823ed0eda4d58b4eacad7ca4ee4db7e3fa13841cc1c6ef","goal":"Bind one durable pre-runtime dispatch intent to one exact F135 attempt without claiming runtime dispatch or extending F134 authorization.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F137","historical_status":"VALIDATION_RUNTIME_DISPATCH_RECONCILIATION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f137_validation_runtime_dispatch_reconciliation.json","source_sha256":"sha256:ff643a43e39049261c074f9a11a354ccae15ed90d92485bf6bc0ebc938aa888f","goal":"Cross one exact F136 dispatch intent into a durable runtime handoff and reconcile ambiguous host delivery without blind retry or premature evidence acceptance.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138.1","historical_status":"SEMANTIC_AFFORDANCE_SKILL_HANDOFF_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_1_semantic_affordance_skill_handoff.json","source_sha256":"sha256:efec597c6859f81d04038abdb1df7412dd2788342a7c25130e6613ec202d9568","goal":"Make PLW reasoning-native to an unfamiliar model by exposing predictive semantics and deterministic skill handoff before specialized tool use.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138.2","historical_status":"TARGET_CODEBASE_TOPOLOGY_BOOTSTRAP_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_2_target_codebase_topology_bootstrap.json","source_sha256":"sha256:ffb4e1b0828a779e88f2f7086fd282641d6f44cb7252c9143a92fb8f48a1aa7b","goal":"Make first-contact reasoning target-codebase-first by establishing a bounded file-to-import-to-file topology before PLW capability selection.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138.3","historical_status":"TARGET_RESOLUTION_STRUCTURAL_RELEVANCE_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_3_target_resolution_structural_relevance.json","source_sha256":"sha256:8f34a345757d8b6a3b7da403b7b332ab166ea74bc0d69a135ec4ff9e6a7aeb83","goal":"Ground a user task to bounded target-codebase graph nodes before specialized PLW capability selection.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138.4","historical_status":"EVIDENCE_NEED_DERIVATION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_4_evidence_need_derivation.json","source_sha256":"sha256:0a1ac51b3522268ca73cb5a7b29cc486e0c358c409ffafcb5d55553794a85986","goal":"Derive target-grounded known/unknown/evidence requirements before any specialized PLW capability is selected.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138.5","historical_status":"EVIDENCE_DRIVEN_CAPABILITY_SELECTION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_5_evidence_driven_capability_selection.json","source_sha256":"sha256:3c2a8217751eed0bd8175945ef019fcf5a6653932958a02c5462788bfadf058a","goal":"Project candidate PLW information sources from machine-readable evidence classes without task-keyword routing or execution authority.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F138","historical_status":"VALIDATION_RESULT_EVIDENCE_ACCEPTANCE_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f138_validation_result_evidence_acceptance.json","source_sha256":"sha256:27002e95ad65f25fe1abb9ded632fe18f9c770aa55b0793de178240e857d4889","goal":"Accept, reject, or preserve as unresolved one exact canonical validation.result payload against a verified F137 runtime observation and exact F132 request lineage without re-running the validator.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F139.1","historical_status":"AGENT_TOOL_COMMUNICATION_CONTRACT_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f139_1_agent_tool_communication_contract.json","source_sha256":"sha256:e9053b92c919e7d22f07e6dc17d25114f3ca9d29c508e37602f943d6e05c1f52","goal":"Make work output decision-first and unambiguous for an agent unfamiliar with PLW without changing execution/evidence/truth authority.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F139","historical_status":"EXECUTION_BACKED_SCENARIO_EVIDENCE_BINDING_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f139_execution_backed_scenario_evidence_binding.json","source_sha256":"sha256:e639c9905eea096c7b8364ef7f05ba7300214e61bb05db42a3d239ae659e2aa5","goal":"Bind one exact F138-accepted validation.result into the exact F128 selected-scenario evidence space using F137/F138 execution provenance without rerunning validators or promoting evidence into proof completion.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F140","historical_status":"EXECUTION_BACKED_PROOF_OBLIGATION_REDERIVATION_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f140_execution_backed_proof_obligation_rederivation.json","source_sha256":"sha256:d749edc3297cdb212a35e721573f4355c818a61217ca32c05dc9af7ede9bd91c","goal":"Freshly re-derive proof-obligation coverage from verified F139 execution-backed scenario evidence without assuming F123-only provenance or promoting coverage into postcondition truth.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F141","historical_status":"POSTCONDITION_PROOF_ASSEMBLY_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f141_postcondition_proof_assembly.json","source_sha256":"sha256:1dccbad1f7e073987b5eedc1ec250401ccdeac74f4e3a58a371b43da1880bd9e","goal":"Freshly verify F139 execution-backed evidence and F140 coverage, then evaluate explicit scenario/check expectations under an exact change identity and candidate revision without promoting the result into source-mutation attestation, stable state, or truth.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"},
-    {"checkpoint":"F142","historical_status":"FULL_STACK_VALIDATED_STATE_ACTIVE","source_path":"tools/ai_studio_tool/experiments/f142_full_stack_validated_state.json","source_sha256":"sha256:fb15b34ab9d750d3ca1430630c487c5b7b879cd091f894c5a03dc618bdd9d513","goal":"Compose separately verified topology, geometry, correspondence, behavior, and F141 postcondition authorities into one bounded full-stack state without graph merging, evidence voting, source-mutation attestation, stable promotion, or truth commit.","promotion_state":"PENDING_EXACT_RECORD_PROMOTION"}
+    {
+      "checkpoint": "F128",
+      "historical_status": "SCENARIO_SET_TARGETED_VALIDATION_PLANNING_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f128_scenario_set_targeted_validation_planning.json",
+      "source_sha256": "sha256:c4f63bc273f31a1c4e1d0dc61e862496974c104e407e0fbe4bc1f41e10c80b49",
+      "goal": "Turn F127 bounded impact evidence into a deterministic, recoverable set of known validation scenarios without inventing missing scenarios or executing validation.",
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f128_scenario_set_targeted_validation_planning.json",
+      "repository_git_blob_sha1": "79a50678743acd309068a75b9b6cc143f8edf6b7",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F129",
+      "historical_status": "SCENARIO_BOUND_VALIDATION_EVIDENCE_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f129_scenario_bound_validation_evidence_contract.json",
+      "source_sha256": "sha256:73e23325e637a6011f6c453ab2242967edaffb59396742ce116d7200f7fa1438",
+      "goal": "Bind bounded external validator evidence to exact F128 selected scenario identities while preserving missing, unplanned, indeterminate, and conflicting evidence without executing validators or minting postcondition truth.",
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f129_scenario_bound_validation_evidence_contract.json",
+      "repository_git_blob_sha1": "fa6928f715a1f19f518a8524c47de28a32085889",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F130",
+      "historical_status": "VALIDATION_PROOF_OBLIGATION_COVERAGE_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f130_validation_evidence_coverage_proof_obligation_projection.json",
+      "source_sha256": "sha256:db9b26e998b98717e9ca09339363f170078b04a11301dd87297a02eb09dc161c",
+      "goal": "Project F129 scenario-bound evidence onto exact caller-declared proof obligations and explicit evidence gaps without promoting coverage or validator outcomes into postcondition or truth claims.",
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f130_validation_evidence_coverage_proof_obligation_projection.json",
+      "repository_git_blob_sha1": "257154ba8b0c140fd592bf26c647e43aa6d9b7f8",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F131",
+      "historical_status": "VALIDATION_PROOF_INTEGRITY_WITNESS_HARDENED",
+      "source_path": "tools/ai_studio_tool/experiments/f131_validation_proof_integrity_witness_hardening.json",
+      "source_sha256": "sha256:f07da3232406fcece1e87fdc8dcf8e700dd14e912aef957ac668b73263010c77",
+      "goal": "Harden F129/F130 against stale binding digests, receipt replay, split-observation proof composition, incomplete coverage digests, status-insensitive recovery, and shell-active installation paths.",
+      "promotion_state": "EXACT_RECORD_RETAINED",
+      "repository_path": "qualification/history/f131_validation_proof_integrity_witness_hardening.json",
+      "repository_git_blob_sha1": "0a87954ea91b64da8ca0ea3f46c8645dfadaadc7",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F132",
+      "historical_status": "VALIDATION_EXECUTION_REQUEST_HANDOFF_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f132_validation_execution_request_handoff.json",
+      "source_sha256": "sha256:be96e48aea5f9fb4f104eb670234096d725cb9d332e69d1cea7074fff98ec51e",
+      "goal": "Translate semantically re-derived unresolved F131 proof obligations into bounded exact-scenario validator work requests while preserving request, authorization, lease, dispatch, execution, returned-evidence, postcondition, and truth boundaries.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F133",
+      "historical_status": "AUTHORIZED_VALIDATION_REQUEST_BINDING_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f133_authorized_validation_request_binding.json",
+      "source_sha256": "sha256:7b974b33651a1b38419d320dfefb874184709fbc87d5b435719426f827e9ebc4",
+      "goal": "Bind one exact semantically verified F132 validation request to one short-lived principal grant without creating lease, attempt, dispatch, runtime, postcondition, or truth authority.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F134",
+      "historical_status": "LEASE_BOUND_VALIDATION_EXECUTION_AUTHORIZATION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f134_lease_bound_validation_execution_authorization.json",
+      "source_sha256": "sha256:356f29fdb008faa803f7644014ae32b1bca8683b58d211f98df5be8cd8ec48d9",
+      "goal": "Atomically consume one exact semantically verified F133 authorization binding into one short-lived single-use validation execution lease without registering an attempt, preparing dispatch, executing a validator/runtime, accepting evidence, proving a postcondition, or committing truth.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F135",
+      "historical_status": "LEASE_BOUND_VALIDATION_ATTEMPT_REGISTRATION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f135_lease_bound_validation_attempt_registration.json",
+      "source_sha256": "sha256:0dcdbfa67d86ab4681631d15e76a2dee8e9b7f71602f99395f3d4e708c3467f3",
+      "goal": "Register or recover exactly one durable validation attempt against an exact F134 lease before any dispatch.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F136",
+      "historical_status": "VALIDATION_DISPATCH_INTENT_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f136_validation_dispatch_intent.json",
+      "source_sha256": "sha256:ed9b2ed2cce02d22bd823ed0eda4d58b4eacad7ca4ee4db7e3fa13841cc1c6ef",
+      "goal": "Bind one durable pre-runtime dispatch intent to one exact F135 attempt without claiming runtime dispatch or extending F134 authorization.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F137",
+      "historical_status": "VALIDATION_RUNTIME_DISPATCH_RECONCILIATION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f137_validation_runtime_dispatch_reconciliation.json",
+      "source_sha256": "sha256:ff643a43e39049261c074f9a11a354ccae15ed90d92485bf6bc0ebc938aa888f",
+      "goal": "Cross one exact F136 dispatch intent into a durable runtime handoff and reconcile ambiguous host delivery without blind retry or premature evidence acceptance.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138.1",
+      "historical_status": "SEMANTIC_AFFORDANCE_SKILL_HANDOFF_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_1_semantic_affordance_skill_handoff.json",
+      "source_sha256": "sha256:efec597c6859f81d04038abdb1df7412dd2788342a7c25130e6613ec202d9568",
+      "goal": "Make PLW reasoning-native to an unfamiliar model by exposing predictive semantics and deterministic skill handoff before specialized tool use.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138.2",
+      "historical_status": "TARGET_CODEBASE_TOPOLOGY_BOOTSTRAP_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_2_target_codebase_topology_bootstrap.json",
+      "source_sha256": "sha256:ffb4e1b0828a779e88f2f7086fd282641d6f44cb7252c9143a92fb8f48a1aa7b",
+      "goal": "Make first-contact reasoning target-codebase-first by establishing a bounded file-to-import-to-file topology before PLW capability selection.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138.3",
+      "historical_status": "TARGET_RESOLUTION_STRUCTURAL_RELEVANCE_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_3_target_resolution_structural_relevance.json",
+      "source_sha256": "sha256:8f34a345757d8b6a3b7da403b7b332ab166ea74bc0d69a135ec4ff9e6a7aeb83",
+      "goal": "Ground a user task to bounded target-codebase graph nodes before specialized PLW capability selection.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138.4",
+      "historical_status": "EVIDENCE_NEED_DERIVATION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_4_evidence_need_derivation.json",
+      "source_sha256": "sha256:0a1ac51b3522268ca73cb5a7b29cc486e0c358c409ffafcb5d55553794a85986",
+      "goal": "Derive target-grounded known/unknown/evidence requirements before any specialized PLW capability is selected.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138.5",
+      "historical_status": "EVIDENCE_DRIVEN_CAPABILITY_SELECTION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_5_evidence_driven_capability_selection.json",
+      "source_sha256": "sha256:3c2a8217751eed0bd8175945ef019fcf5a6653932958a02c5462788bfadf058a",
+      "goal": "Project candidate PLW information sources from machine-readable evidence classes without task-keyword routing or execution authority.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F138",
+      "historical_status": "VALIDATION_RESULT_EVIDENCE_ACCEPTANCE_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f138_validation_result_evidence_acceptance.json",
+      "source_sha256": "sha256:27002e95ad65f25fe1abb9ded632fe18f9c770aa55b0793de178240e857d4889",
+      "goal": "Accept, reject, or preserve as unresolved one exact canonical validation.result payload against a verified F137 runtime observation and exact F132 request lineage without re-running the validator.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F139.1",
+      "historical_status": "AGENT_TOOL_COMMUNICATION_CONTRACT_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f139_1_agent_tool_communication_contract.json",
+      "source_sha256": "sha256:e9053b92c919e7d22f07e6dc17d25114f3ca9d29c508e37602f943d6e05c1f52",
+      "goal": "Make work output decision-first and unambiguous for an agent unfamiliar with PLW without changing execution/evidence/truth authority.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F139",
+      "historical_status": "EXECUTION_BACKED_SCENARIO_EVIDENCE_BINDING_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f139_execution_backed_scenario_evidence_binding.json",
+      "source_sha256": "sha256:e639c9905eea096c7b8364ef7f05ba7300214e61bb05db42a3d239ae659e2aa5",
+      "goal": "Bind one exact F138-accepted validation.result into the exact F128 selected-scenario evidence space using F137/F138 execution provenance without rerunning validators or promoting evidence into proof completion.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F140",
+      "historical_status": "EXECUTION_BACKED_PROOF_OBLIGATION_REDERIVATION_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f140_execution_backed_proof_obligation_rederivation.json",
+      "source_sha256": "sha256:d749edc3297cdb212a35e721573f4355c818a61217ca32c05dc9af7ede9bd91c",
+      "goal": "Freshly re-derive proof-obligation coverage from verified F139 execution-backed scenario evidence without assuming F123-only provenance or promoting coverage into postcondition truth.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F141",
+      "historical_status": "POSTCONDITION_PROOF_ASSEMBLY_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f141_postcondition_proof_assembly.json",
+      "source_sha256": "sha256:1dccbad1f7e073987b5eedc1ec250401ccdeac74f4e3a58a371b43da1880bd9e",
+      "goal": "Freshly verify F139 execution-backed evidence and F140 coverage, then evaluate explicit scenario/check expectations under an exact change identity and candidate revision without promoting the result into source-mutation attestation, stable state, or truth.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    },
+    {
+      "checkpoint": "F142",
+      "historical_status": "FULL_STACK_VALIDATED_STATE_ACTIVE",
+      "source_path": "tools/ai_studio_tool/experiments/f142_full_stack_validated_state.json",
+      "source_sha256": "sha256:fb15b34ab9d750d3ca1430630c487c5b7b879cd091f894c5a03dc618bdd9d513",
+      "goal": "Compose separately verified topology, geometry, correspondence, behavior, and F141 postcondition authorities into one bounded full-stack state without graph merging, evidence voting, source-mutation attestation, stable promotion, or truth commit.",
+      "promotion_state": "PENDING_EXACT_RECORD_PROMOTION"
+    }
   ],
   "next_groups": [
     "F106-F123 agent/capability/authority lineage",
