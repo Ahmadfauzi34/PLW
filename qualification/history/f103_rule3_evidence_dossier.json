@@ -1,0 +1,216 @@
+{
+  "schema_version": "rule3-evidence-dossier-v1",
+  "checkpoint": "F103",
+  "base_checkpoint": "F102",
+  "stable_baseline": "F85",
+  "status": "RULE3_SHADOW_PROTOTYPE_GATE_OPEN_ACCEPTANCE_ECONOMICS_UNPROVEN",
+  "proposal": {
+    "id": "js_terminal_const_expression_passthrough",
+    "name": "Terminal const expression passthrough inline",
+    "observed_before_implementation": true,
+    "rewrite_shape": "const x = <safe-expression>; return x;  ->  return <safe-expression>;",
+    "selection_rule_fixed_before_occurrence_count": true,
+    "selection_rule": {
+      "language_extensions": [
+        ".ts",
+        ".tsx",
+        ".js",
+        ".jsx"
+      ],
+      "const_single_identifier_binding": true,
+      "explicit_type_annotation_allowed": false,
+      "assignment_and_return_must_be_adjacent_except_whitespace": true,
+      "returned_identifier_must_equal_binding": true,
+      "same_lexical_block_required": true,
+      "terminal_return_required": true,
+      "intervening_comment_allowed": false,
+      "initializer_forbidden_forms": [
+        "arrow_function",
+        "function_expression",
+        "class_expression",
+        "object_literal",
+        "array_literal",
+        "destructuring",
+        "multiple_declarators"
+      ],
+      "initializer_allowed_observed_classes": [
+        "arithmetic_expression",
+        "template_literal",
+        "member_call_expression",
+        "typed_function_call_expression"
+      ],
+      "reason_for_forbidden_forms": "avoid changing inferred function/class names, TypeScript contextual typing, or comment ownership while the rule remains lexical-only"
+    },
+    "frontend_reuse": {
+      "shared_graph_file_map": true,
+      "single_mask_js_noncode": true,
+      "enclosing_function_labeling": true,
+      "source_span_and_line_mapping": true,
+      "new_lexer_or_scanner_required": false,
+      "second_source_mask_pass_required": false,
+      "new_runtime_module_required": false
+    }
+  },
+  "evidence": {
+    "repositories": [
+      {
+        "repository": "bitwarden/clients",
+        "commit": "5e4e12ad994f10716a0a0998a4e87489e38f446f",
+        "occurrences": [
+          {
+            "path": "libs/common/src/platform/services/fido2/ecdsa-utils.ts",
+            "symbol": "getParamSize",
+            "binding": "result",
+            "initializer_class": "arithmetic_expression",
+            "verified_properties": [
+              "single const binding",
+              "no explicit type annotation",
+              "whitespace-only adjacency",
+              "same identifier returned",
+              "terminal return"
+            ],
+            "estimated_target_gain_loc": 1,
+            "source_url": "https://github.com/bitwarden/clients/blob/5e4e12ad994f10716a0a0998a4e87489e38f446f/libs/common/src/platform/services/fido2/ecdsa-utils.ts"
+          },
+          {
+            "path": "libs/tools/generator/core/src/engine/username-randomizer.ts",
+            "symbol": "UsernameRandomizer.randomWords",
+            "binding": "result",
+            "initializer_class": "member_call_expression",
+            "verified_properties": [
+              "single const binding",
+              "no explicit type annotation",
+              "whitespace-only adjacency",
+              "same identifier returned",
+              "terminal return"
+            ],
+            "estimated_target_gain_loc": 1,
+            "source_url": "https://github.com/bitwarden/clients/blob/5e4e12ad994f10716a0a0998a4e87489e38f446f/libs/tools/generator/core/src/engine/username-randomizer.ts"
+          }
+        ]
+      },
+      {
+        "repository": "angular/angular",
+        "commit": "8576f161ae45f810a49be6b2c4c666ccf5f5d3c4",
+        "occurrences": [
+          {
+            "path": "packages/compiler/src/render3/view/i18n/icu_serializer.ts",
+            "symbol": "IcuSerializerVisitor.visitIcu",
+            "binding": "result",
+            "initializer_class": "template_literal",
+            "verified_properties": [
+              "single const binding",
+              "no explicit type annotation",
+              "whitespace-only adjacency",
+              "same identifier returned",
+              "terminal return"
+            ],
+            "estimated_target_gain_loc": 1,
+            "source_url": "https://github.com/angular/angular/blob/8576f161ae45f810a49be6b2c4c666ccf5f5d3c4/packages/compiler/src/render3/view/i18n/icu_serializer.ts"
+          },
+          {
+            "path": "packages/core/src/render3/after_render/manager.ts",
+            "symbol": "AfterRenderImpl.execute inner maybeTrace callback",
+            "binding": "value",
+            "initializer_class": "typed_function_call_expression",
+            "verified_properties": [
+              "single const binding",
+              "no explicit type annotation",
+              "whitespace-only adjacency",
+              "same identifier returned",
+              "terminal return in callback block"
+            ],
+            "estimated_target_gain_loc": 1,
+            "source_url": "https://github.com/angular/angular/blob/8576f161ae45f810a49be6b2c4c666ccf5f5d3c4/packages/core/src/render3/after_render/manager.ts"
+          }
+        ]
+      }
+    ],
+    "qualifying_independent_repositories": 2,
+    "verified_occurrences_total": 4,
+    "verified_occurrences_per_repository": {
+      "bitwarden/clients": 2,
+      "angular/angular": 2
+    },
+    "estimated_total_target_gain_loc": 4,
+    "authority": "PINNED_GITHUB_SOURCE_MANUAL_LEXICAL_DOSSIER_NOT_RULE3_RUNTIME_DETECTION",
+    "negative_discovery_history": [
+      "terminal const passthrough in F98 local corpus: 0",
+      "terminal const passthrough in F99 local corpus: 0",
+      "boolean guard fold in F98/F99: 0"
+    ],
+    "note": "GitHub evidence was inspected before any rule3 implementation. Search hits were not counted until full-file verification confirmed adjacency and lexical constraints."
+  },
+  "cost_estimate": {
+    "basis": "static patch-plan against existing F101/F102 rule2 integration points; no runtime implementation performed",
+    "detector_function_loc_upper_bound": 34,
+    "integration_and_metrics_loc_upper_bound": 7,
+    "recommendation_and_witness_reporting_loc_upper_bound": 8,
+    "schema_invariant_loc_upper_bound": 5,
+    "marginal_rule3_runtime_loc_upper_bound": 54,
+    "F101_compression_credit_loc": 77,
+    "within_reopen_budget": true,
+    "estimate_is_not_actual_cost": true
+  },
+  "f102_shadow_prototype_gate_evaluation": {
+    "proposal_dossier_exists": true,
+    "proposal_pattern_observed_before_implementation": true,
+    "qualifying_independent_repositories": 2,
+    "verified_rule3_occurrences": 4,
+    "verified_occurrences_per_repository_min_met": true,
+    "selection_rule_fixed_before_occurrence_count": true,
+    "all_occurrences_expressible_with_existing_F101_frontend_primitives": true,
+    "new_lexer_or_scanner_required": false,
+    "second_source_mask_pass_required": false,
+    "marginal_rule3_runtime_loc_upper_bound": 54,
+    "marginal_rule3_implementation_loc_max_allowed": 77,
+    "cost_estimate_available": true,
+    "gate_open": true,
+    "decision": "ALLOW_RULE3_SHADOW_PROTOTYPE_ONLY"
+  },
+  "post_prototype_acceptance_economics": {
+    "status": "UNPROVEN_AND_CURRENTLY_UNAMORTIZED_BY_OBSERVED_OCCURRENCES",
+    "observed_potential_target_gain_loc": 4,
+    "actual_rule3_machine_cost_loc": "UNKNOWN_UNTIL_PROTOTYPE",
+    "required_equation": "proven_rule3_target_gain_loc >= max(0, marginal_rule3_implementation_loc - additional_frontend_compression_loc)",
+    "interpretation": "The dossier is sufficient to justify measuring a shadow prototype, not sufficient to accept it. With only 4 LOC observed gain, a prototype costing more than 4 effective LOC would still fail acceptance economics unless it discovers additional validated yield or compresses the frontend further."
+  },
+  "implementation_state": {
+    "core_simplification_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "expected_F101_F102_analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "analyzer_changed_by_F103": false,
+    "analyzer_loc": 1448,
+    "ts_js_rule_count": 2,
+    "rule3_implemented": false,
+    "external_repo_mutated": false
+  },
+  "self_host_frontier": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED"
+  },
+  "invariants": {
+    "F85_remains_current_stable": true,
+    "F103_is_current_development": true,
+    "prototype_gate_open_does_not_equal_rule3_acceptance": true,
+    "prototype_gate_open_does_not_authorize_external_patch": true,
+    "prototype_gate_open_does_not_authorize_stable_promotion": true,
+    "analyzer_must_remain_F101_identical_in_F103": true,
+    "rule3_must_not_exist_in_F103_runtime": true
+  },
+  "next_target": {
+    "checkpoint": "F104",
+    "name": "Rule3 Shadow Prototype & Actual Cost Proof",
+    "goal": "Implement the proposal only in the experimental overlay using one shared mask, measure actual marginal LOC and rediscovery of all four dossier occurrences, then apply the separate F102 acceptance economics gate."
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E24 PASS in bounded runs",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "kernel_wiring_smoke": "PASS isolated",
+    "kernel_cli_contract": "PASS isolated",
+    "compileall": "PASS",
+    "analyzer_sha256": "sha256:b93f401beeb499989dd7a48a5d224f1f849984a129d0552d6a42233d5ea3a6fe",
+    "self_host_frontier": "31 remaining / 0 recommended"
+  }
+}
