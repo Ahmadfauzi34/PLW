@@ -1,0 +1,117 @@
+{
+  "schema_version": "f138-1-semantic-affordance-skill-handoff-v1",
+  "checkpoint": "F138.1",
+  "base_checkpoint": "F138",
+  "stable_baseline": "F85",
+  "status": "SEMANTIC_AFFORDANCE_SKILL_HANDOFF_ACTIVE",
+  "goal": "Make PLW reasoning-native to an unfamiliar model by exposing predictive semantics and deterministic skill handoff before specialized tool use.",
+  "problem_statement": {
+    "model_may_not_have_been_trained_on_PLW": true,
+    "opaque_local_names_can_have_low_semantic_prior": true,
+    "markdown_links_can_be_skipped_before_need_is_understood": true,
+    "first_tool_call_should_not_be_required_to_learn_why_a_tool_matters": true
+  },
+  "contract": {
+    "default_bootstrap": "plw work",
+    "work_returns_semantic_orientation": true,
+    "work_returns_skill_handoff": true,
+    "required_read_is_exact_path": true,
+    "required_read_is_execution_authority": false,
+    "semantic_introspection_is_read_only": true,
+    "semantic_similarity_transfers_authority": false,
+    "predicted_outcome_family_is_observed_result": false,
+    "public_command_semantic_coverage_required": true
+  },
+  "semantic_contract_fields": [
+    "canonical_concepts",
+    "nearest_known_abstractions",
+    "different_from",
+    "epistemic_gap",
+    "information_gain",
+    "possible_outcomes",
+    "does_not_prove",
+    "read_before_use"
+  ],
+  "tool_surface": {
+    "default_path": "plw work <task> ...",
+    "introspection": [
+      "plw semantic describe <command> --json",
+      "plw semantic route <task> --json"
+    ],
+    "state_change": false,
+    "runtime_execution": false,
+    "source_mutation": false,
+    "truth_commit": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 42,
+    "semantic_contracts": 42,
+    "operational_skill_modules": 27,
+    "experimental_fixture_count": 62,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E62",
+    "unknown_agent_default_work_probe": true,
+    "semantic_registry_covers_all_public_PLW_commands": true,
+    "required_skill_handoff_probe": true,
+    "read_only_introspection_probe": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/semantic_affordance.py": "sha256:8eec22c0f64caa33a31f1c9d06d7f97d1d473cec9b0373afbad06a9b2b5fe15c",
+    "hott_kernel.py": "sha256:9cc7d73030ca0073e349c0dd1324caaaef80351d11c8e4431ae3046ad6ba8dea",
+    "plw_cli.py": "sha256:3553eadbde1e96bfd97e0e2a2a86365faac9c27a88a8d88b7e6e510c5e90d40a",
+    "agent_tool.py": "sha256:b2f9d0d815926be426f88c0d790e558dce7f6665df7348fe3763d3cef0be8c4c",
+    "skills/semantic-affordance-workflow.md": "sha256:c911ad799ef996e48da4c83c4d1bdb7c1994ada9bfd9a4db2904b3208aca1da7",
+    "skills/adaptive-agent-workflow.md": "sha256:5e296e2eaeba5b394ff8f51c7dc56d70f8edcbc4bb6b4373f34b4f8212eb3b52",
+    "skills/validation-result-evidence-acceptance-workflow.md": "sha256:48b8bce75b4f21fc94937b373b47f7f8920493929d083279e855309dbd037962",
+    "SKILL.md": "sha256:49de756cdea3b500a1db74c048458ebaaf344c3d44e1dc61344bd00b937c0c1b",
+    "README.md": "sha256:3633546fa19a86f5a9868d2273f3b8a99ba5f201097b59f6049d74a685c95688",
+    "tools_schema_compact.json": "sha256:2609c024b36b4c1702eb2d6c62322349d6e4a779e3531d72625539591be05669",
+    "tools_schema.json": "sha256:b3c55121b14c2b10f67069ee2256d406239010ae59607138e0238a0303280d12",
+    "experimental_fixture_check.py": "sha256:d9e8a8bc3e8e9c89121a83f103e7e4beaeb067f4e8e0c57b32569de0ab561381",
+    "fixture_fast.py": "sha256:94a6404ffd37688e5e2d472b1ffb905d6d6ed6de4dbc99317c1411de6cfa9acc"
+  },
+  "next_target": {
+    "checkpoint": "F139",
+    "name": "Execution-Backed Scenario Evidence Binding",
+    "goal": "Bind accepted F138 evidence back into the existing F129-style scenario evidence model using additive F137/F138 provenance."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F138_1_checkpoint_contract_retained": true,
+    "F138_1_cross_checkpoint_fingerprints_are_historical": true,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}
