@@ -1,0 +1,87 @@
+{
+  "schema_version": "plw-js-ts-v2-bounded-capability-postcondition-issuance-interactive-audit-v1",
+  "status": "INTERACTIVE_BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_AUDIT_PASSED",
+  "audit_authority": "DIRECT_EXECUTION_OUTSIDE_CI",
+  "source": {
+    "pr": 42,
+    "head_sha": "be243d87b023586dba38505ff4b4427d0291200f",
+    "workflow_run": 35911149108,
+    "artifact_id": 10773286429,
+    "artifact_sha256": "sha256:48cc54b4bfc5001208e24d92254fa40e4e2406e1bcba7956d6e0b5ee1a184a85",
+    "bundle_head_sha_matches_pr_head": true,
+    "bundle_sha256_manifest_verified": true
+  },
+  "environment": {
+    "python": "3.13.5",
+    "git": "2.47.3",
+    "platform": "Linux x86_64"
+  },
+  "execution": {
+    "command": "python scripts/check_js_ts_boolean_guard_bounded_capability_postcondition_issuance.py --output direct_regression.json --summary direct_summary.md",
+    "direct_report_sha256": "sha256:20b42301467afbfcce7be3c54824b82a03e8623f0e5875d353bbf28c18fac301",
+    "direct_summary_sha256": "sha256:2edfb6e2e34086dbba12700add4fbe8d76322d49ddb68c710155e0757b65b13d",
+    "case_count": 6,
+    "passed_case_count": 6,
+    "failed_case_count": 0
+  },
+  "cases": [
+    {
+      "name": "positive_js_exact_receipt_issuance",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED",
+      "issuance_replay": "POSTCONDITION_VALIDATION_RECEIPT_ISSUANCE_RECOVERED",
+      "issuance_records_after_replay": 1,
+      "worktree_disposed": true
+    },
+    {
+      "name": "inverse_ts_exact_receipt_issuance",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_RECEIPT_ISSUED",
+      "issuance_replay": "POSTCONDITION_VALIDATION_RECEIPT_ISSUANCE_RECOVERED",
+      "issuance_records_after_replay": 1,
+      "worktree_disposed": true
+    },
+    {
+      "name": "capability_receipt_tamper_no_issuance",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_NOT_ISSUED",
+      "worktree_disposed": true
+    },
+    {
+      "name": "broken_existing_issuance_chain_rejected",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
+      "reason": "issuance ledger record digest mismatch"
+    },
+    {
+      "name": "postwrite_failure_receipt_sealed_without_acceptance",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_FAILURE_RECEIPT_ISSUED",
+      "validation_status": "MUTATION_FAILED_WORKTREE_DISCARDED",
+      "evidence_acceptance_granted": false
+    },
+    {
+      "name": "issuance_path_inside_target_rejected_and_disposed",
+      "result": "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED",
+      "reason": "validation receipt must be outside target root",
+      "worktree_disposed": true
+    }
+  ],
+  "source_digests": {
+    "issuance_bridge": "sha256:2fa77b622f195a55de9f229b9eb42fef63763938312b4c30100f71df6f08ecc7",
+    "issuance_checker": "sha256:afb24897e5c32fb9849f86e9334c1bc32fea4514630b25696552c5b73d5058c7",
+    "capability_postcondition_integration": "sha256:0103d46eccf6931db29449016d0f8f434d0cbafde9076a52ebd1528ec624e66c",
+    "postcondition_validator": "sha256:c2d44feff1f1792f597492e3a79bbd69f7f6f5115ab793bd0d7e4f6ca5b9cc50"
+  },
+  "authority": {
+    "bounded_capability_postcondition_issuance_ready": true,
+    "postcondition_receipt_issuance_only": true,
+    "experiment_evidence_acceptance_authority_granted": false,
+    "public_product_surface_exposed": false,
+    "automatic_patch_authority_granted": false,
+    "generic_mutation_authority_granted": false,
+    "primary_worktree_mutation_authorized": false,
+    "commit_creation_authorized": false,
+    "push_authorized": false,
+    "pull_request_creation_authorized": false,
+    "upstream_mutation_authorized": false,
+    "global_behavioral_equivalence_proven": false,
+    "truth_commit": false
+  },
+  "next_gate": "TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE"
+}
