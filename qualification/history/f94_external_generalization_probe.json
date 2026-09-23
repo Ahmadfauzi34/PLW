@@ -1,0 +1,98 @@
+{
+  "schema_version": "external-generalization-probe-v1",
+  "checkpoint": "F94",
+  "base_checkpoint": "F93",
+  "status": "EXTERNAL_RECOGNITION_GENERALIZES_HOLD_MAINTAINED",
+  "target_selection": {
+    "first_requested_target": "Ahmadfauzi34/Tool.py Angular dojo",
+    "angular_probe_disposition": "NOT_USED_FOR_SIMPLIFICATION_ECONOMICS_LANGUAGE_UNSUPPORTED",
+    "reason": "current simplification analyzer is Python-AST-only; zero Angular candidates would be non-evidence rather than a clean result",
+    "external_python_target": "Ahmadfauzi34/Mutant-lab-agent"
+  },
+  "external_target": {
+    "repository": "Ahmadfauzi34/Mutant-lab-agent",
+    "branch": "main",
+    "commit_sha": "1aa019f48e016ecf9a9906afc760da09f8994854",
+    "source_fidelity": "AST_RELEVANT_TRANSCRIPTION_NOT_BYTE_IDENTITY",
+    "corpus_scope": "representative 3-file Python slice selected without adding detector capability",
+    "repository_files": {
+      "agen_lab/planning.py": "b671fd8f73427a6d516368f6878e024f8a773947",
+      "agen_lab/spatial_replan_ranking.py": "1f4312e4a66f8b3d9d4995bbe19cfc5b988ce920",
+      "agen_lab/spatial_replanning.py": "e9f1b7145ab241266eae728bf92244b62786c4d7"
+    },
+    "repro_sources": {
+      "experiments/f94_external_probe_sources/agen_lab/planning.py.txt": "sha256:e15edb36a98136ca16fd9a7b4c444c1d25240f7d381413ba5c61474871be455e",
+      "experiments/f94_external_probe_sources/agen_lab/spatial_replan_ranking.py.txt": "sha256:86c0f0a01c10d71cb566621c1d8c1783aea8f7afe94296bcdfe9401f8731a426",
+      "experiments/f94_external_probe_sources/agen_lab/spatial_replanning.py.txt": "sha256:84c303b3615ff7e7bba21c97722f02e2aecdc2c641b9c41072969de87411e089"
+    }
+  },
+  "probe_result": {
+    "python_files": 3,
+    "source_loc": 948,
+    "ast_nodes": 3654,
+    "functions": 52,
+    "classes": 21,
+    "candidate_count": 1,
+    "recommended_local_candidates": 0,
+    "frontier_status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "candidate": {
+      "kind": "exact_function_body_duplication",
+      "names": [
+        "is_evidence",
+        "is_experience",
+        "is_joint_success_probability",
+        "was_executed"
+      ],
+      "files": [
+        "agen_lab/spatial_replan_ranking.py",
+        "agen_lab/spatial_replanning.py"
+      ],
+      "estimated_removable_duplicate_loc": 12,
+      "risk_units": 21.6,
+      "risk_level": "high",
+      "recommendation": "defer_until_narrower_candidates_exhausted",
+      "execution_lane": "target",
+      "disposition": "DEFER",
+      "owner_decision": "HIGH_RISK_GENERAL_DEBT_NEEDS_MANUAL_ARCHITECTURE_PROOF"
+    }
+  },
+  "economics_update": {
+    "external_recognition_reuse": "OBSERVED",
+    "external_realized_simplification_gain_loc": 0,
+    "evidence_strength": "RECOGNITION_REUSE_ONLY_NOT_REALIZED_GAIN",
+    "F93_hold_reopened": false,
+    "new_detector_capability": "STOP",
+    "interpretation": "existing detector generalized enough to recognize bounded structural debt externally, but produced no mechanically recommended local-safe patch on this representative slice"
+  },
+  "invariants": {
+    "external_repository_mutated": false,
+    "new_detector_added": false,
+    "current_analyzer_modified_by_F94": false,
+    "unsupported_language_zero_is_not_clean_evidence": true,
+    "recognition_is_not_realized_simplification_gain": true
+  },
+  "files": {
+    "core/simplification_analyzer.py": "sha256:442cf476a4a19e583b04c8cd81fc75bfcb5e9cb92dbe8800ba5e1a1b9092b9ec",
+    "experiments/f93_post_promotion_stop_decision.json": "sha256:fba6fcce164c0d22797d56e8653b5a22476524491520130c49d3a7f223f6af87",
+    "experimental_fixture_check.py": "sha256:ca8592316e03366b36d2a4720665d41078d57725b6c7166b3ac963fbb37326d5"
+  },
+  "validation": {
+    "external_probe_fixture": "E15 PASS",
+    "historical_overlay_E11_E15": "PASS",
+    "self_host_frontier_after_fixture": {
+      "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+      "recommended_local_candidates": 0,
+      "remaining_candidate_count": 31
+    },
+    "stable_critical": {
+      "F15": "PASS",
+      "F35": "PASS",
+      "F46": "PASS",
+      "F64": "PASS",
+      "kernel_wiring_smoke": "PASS",
+      "kernel_cli_contract": "PASS",
+      "compileall": "PASS"
+    },
+    "full_stable_lane_rerun": "NOT_REQUIRED_NO_STABLE_IMPLEMENTATION_CHANGE"
+  }
+}
