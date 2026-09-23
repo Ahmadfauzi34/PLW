@@ -1,0 +1,221 @@
+{
+  "schema_version": "f124-angular-semantic-ownership-v1",
+  "checkpoint": "F124",
+  "base_checkpoint": "F123",
+  "stable_baseline": "F85",
+  "status": "ANGULAR_SEMANTIC_OWNERSHIP_ANCHORS_ACTIVE",
+  "goal": "Create source-grounded Angular component/selector/template/style/input/output/lifecycle/binding ownership anchors over one canonical SharedGraph snapshot before any GeometrySnapshot or UI-to-code correspondence authority exists.",
+  "product_boundary": {
+    "downloadable_zip_is_product": true,
+    "shared_graph_remains_topology_authority": true,
+    "angular_ownership_is_separate_sidecar": true,
+    "html_css_added_as_shared_graph_vertices": false,
+    "second_filesystem_scan_added": false,
+    "declared_resource_reads_are_targeted_only": true
+  },
+  "baseline_proof_state": {
+    "F123_closed": true,
+    "shared_graph_schema_unchanged": "3.0.0-kernel",
+    "angular_component_classification_preexisted_as_heuristic": true,
+    "selector_template_binding_ownership_previously_proven": false,
+    "geometry_snapshot_previously_present": false,
+    "ui_code_correspondence_previously_present": false
+  },
+  "valid_transitions": {
+    "component_anchor": {
+      "from": "CANONICAL_SOURCE_SNAPSHOT",
+      "to": "ANGULAR_COMPONENT_STRUCTURAL_ANCHOR",
+      "preconditions": [
+        "Component symbol is imported from @angular/core, including static alias",
+        "matching @Component decorator has a statically delimited object literal",
+        "decorator structurally binds to the following class"
+      ]
+    },
+    "resource_ownership": {
+      "from": "ANGULAR_COMPONENT_STRUCTURAL_ANCHOR",
+      "to": "DECLARED_TEMPLATE_OR_STYLE_OWNER",
+      "preconditions": [
+        "templateUrl/styleUrl/styleUrls value is a static literal",
+        "resource path is resolved relative to component source"
+      ],
+      "note": "Ownership remains STRUCTURAL even when resource content is unavailable."
+    },
+    "resource_content": {
+      "from": "DECLARED_TEMPLATE_OR_STYLE_OWNER",
+      "to": "EXACT_RESOURCE_DIGEST",
+      "preconditions": [
+        "resource read enabled",
+        "resolved real path remains inside scan root",
+        "resource is <= 1 MiB and valid UTF-8"
+      ]
+    },
+    "binding_owner": {
+      "from": "EXACT_STATIC_TEMPLATE_BYTES",
+      "to": "TEMPLATE_BINDING_TO_CLASS_MEMBER_WITNESS",
+      "preconditions": [
+        "binding expression is statically observed",
+        "referenced identifier matches a structurally parsed class member"
+      ]
+    }
+  },
+  "proof_classes": {
+    "EXACT": "Exact source/resource bytes or direct import identity observed and content-addressed.",
+    "STRUCTURAL": "Ownership follows from parsed Angular import/decorator/class/metadata/member structure.",
+    "UNRESOLVED": "Dynamic expression, unavailable resource, ambiguous selector, or unsupported static form is preserved without guessing.",
+    "INFERRED_emitted": false,
+    "inferred_may_authorize_mutation": false
+  },
+  "resource_contract": {
+    "filesystem_directory_scan_for_html_css": false,
+    "only_declared_resource_paths_may_be_read": true,
+    "outside_scan_root_read_allowed": false,
+    "symlink_escape_allowed": false,
+    "max_resource_bytes": 1048576,
+    "raw_resource_text_returned": false,
+    "resource_sha256_returned_when_exact": true,
+    "resource_digest_is_runtime_freshness": false
+  },
+  "angular_surface": {
+    "component_import_alias_supported": true,
+    "selector": true,
+    "template_inline": true,
+    "templateUrl": true,
+    "styles_inline": true,
+    "styleUrl": true,
+    "styleUrls": true,
+    "component_imports": true,
+    "legacy_Input_Output": true,
+    "signal_input_output_model": true,
+    "lifecycle_interfaces_and_methods": true,
+    "HostBinding_HostListener": true,
+    "component_host_metadata": true,
+    "template_event_property_two_way_interpolation_witnesses": true,
+    "duplicate_selector_ambiguity_preserved": true
+  },
+  "authority": {
+    "runtime_observed": false,
+    "browser_invoked": false,
+    "geometry_observed": false,
+    "source_mutated": false,
+    "repository_mutated": false,
+    "workflow_authority_granted": false,
+    "stable_promotion_performed": false,
+    "truth_committed": false
+  },
+  "tool_surface": {
+    "command": "plw angular-anchors",
+    "read_only": true,
+    "filters": [
+      "--file",
+      "--selector"
+    ],
+    "resource_read_opt_out": "--no-resources",
+    "cache_mode_supported": true,
+    "agent_tool_advanced_surface": true,
+    "state_change_acknowledgement_required": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 27,
+    "operational_skill_modules": 13,
+    "shared_graph_schema_changed": false,
+    "angular_sidecar_uses_shared_graph_file_map": true,
+    "static_anchor_is_rendered_dom_proof": false,
+    "static_anchor_is_geometry_proof": false,
+    "binding_witness_is_behavior_proof": false,
+    "resource_digest_is_runtime_freshness_proof": false,
+    "ambiguity_fails_closed": true,
+    "raw_declared_resources_retained_in_output": false
+  },
+  "implementation": {
+    "angular_semantics_sha256": "sha256:66cbe077dea1f9cb24c47188f8b82dec0f29647124566981f9219150e806a765",
+    "codebase_init_sha256": "sha256:561c5fb9a54ece1d2d232ef139c864588010e488fa21b0a803c37449b48ea8df",
+    "angular_skill_sha256": "sha256:603edda015f8fd0832154ade535d7543e6783a3cc717bb1ec75e00f580b30afc",
+    "agent_tool_sha256": "sha256:f0fb32546f4ce9fc8887100ea9cb9b1b267356724d7457825092b42c77adecd5",
+    "plw_cli_sha256": "sha256:799ed9319e78419a47d9f285424809ef20ed9fff7f160bbd0ab95a85847e4bf7",
+    "compact_schema_sha256": "sha256:a3e968e81f9770b48497a5c9c7756d157345525d238821fdc683001f299fbc60",
+    "legacy_schema_sha256": "sha256:96ad95a694df641aef07dbca0387b5647fe022d779d76e95551d92e1bbee5797",
+    "skill_root_sha256": "sha256:19f454c43258e042de7e32f12ff61718d8b04884ed2198f816cb7c92602d4870",
+    "readme_sha256": "sha256:2ef5d82b56c694e5f61a9a48615a6bb000f998b5bce4061e6bee8810af7f0205",
+    "experimental_fixture_sha256": "sha256:8d79fe9169a5331f19d4fa47853354d8c517ba95e9f261546938199e56db9a14",
+    "fast_fixture_sha256": "sha256:5e7c2bc100b4d0da6f424ef0dc58918146b13fa67f58813ae1e531f8daf67af4",
+    "stable_fixture_sha256": "sha256:83892b1f41b340868ca810e5081aff43857129808a6b12868b06dc9290c7f534"
+  },
+  "validation": {
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "experimental_fixture_count": 47,
+    "adversarial_cases": [
+      "non-Angular fake @Component decorator",
+      "aliased @angular/core Component import",
+      "duplicate selector ambiguity",
+      "dynamic selector",
+      "dynamic template path",
+      "dynamic signal input alias",
+      "outside-root declared resource traversal",
+      "raw template non-retention",
+      "resource-read opt-out",
+      "relative file narrowing",
+      "selector narrowing preserves duplicates",
+      "read-only CLI invocation",
+      "read-only JSON agent-tool invocation"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F125",
+    "name": "GeometrySnapshot and UI-Code Correspondence Contract",
+    "goal": "Introduce scenario-identified rendered geometry plus evidence-classed UI-to-code correspondence that consumes F124 structural anchors without merging topology and geometry authorities."
+  },
+  "historical_integrity": {
+    "checkpoint_contract_is_historical": true,
+    "cross_checkpoint_implementation_fingerprints_are_historical": true,
+    "current_source_equality_required_for_cross_checkpoint_files": false,
+    "historical_source_reconstruction_claimed": false
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F124_checkpoint_owned_contract_retained": true,
+    "F134_validation_execution_lease_is_current_package": false,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

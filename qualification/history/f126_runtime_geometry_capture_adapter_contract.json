@@ -1,0 +1,159 @@
+{
+  "checkpoint": "F126",
+  "base_checkpoint": "F125",
+  "stable_baseline": "F85",
+  "status": "RUNTIME_GEOMETRY_CAPTURE_ADAPTER_CONTRACT_ACTIVE",
+  "objective": "Bind F123 adapter observation provenance to F125 GeometrySnapshot content without adding a browser executor, merging authorities, or claiming capture correctness.",
+  "baseline_proof_state": {
+    "F123_adapter_observation_provenance_present": true,
+    "F124_static_angular_ownership_present": true,
+    "F125_geometry_correspondence_present": true,
+    "runtime_capture_binding_present": false,
+    "concrete_browser_adapter_bundled": false
+  },
+  "capture_contract": {
+    "observation_kind": "runtime.geometry.capture",
+    "observation_schema": "runtime-geometry-capture-observation-v1",
+    "capture_contract_version": "runtime-geometry-capture-adapter-v1",
+    "terminal_status_required_for_EXACT": "SUCCEEDED",
+    "dispatch_state_required_for_EXACT": "ACKNOWLEDGED",
+    "F122_terminal_required_for_EXACT": "SUCCEEDED",
+    "raw_dom_or_screenshot_stored_by_f126": false,
+    "concrete_browser_or_runtime_bundled": false
+  },
+  "digest_cycle_boundary": {
+    "capture_payload_digest_neutralizes": [
+      "capture.adapter_observation_id"
+    ],
+    "reason": "the current F123 observation id is created only after the observation payload is recorded",
+    "all_scenario_static_capture_metadata_and_geometry_nodes_remain_bound": true,
+    "conflicting_embedded_observation_id_fails_closed": true
+  },
+  "proof_classes": {
+    "EXACT": "Verified F123 observation receipt reports the canonical F126 capture payload for this normalized F125 state and both adapter/F122 terminal states are SUCCEEDED.",
+    "UNRESOLVED": "Dispatch/observation unavailable, nonterminal/failed/indeterminate, wrong observation kind, digest mismatch, or conflicting embedded observation-id claim.",
+    "STRUCTURAL_emitted": false,
+    "INFERRED_emitted": false
+  },
+  "tool_surface": {
+    "command": "plw runtime-ui-reference <lease-id> <snapshot.json> [root] --store-dir DIR --json",
+    "read_only": true,
+    "single_call_composes_F123_F124_F125_F126": true,
+    "state_change_acknowledgement_required": false,
+    "runtime_execution_performed_by_query": false
+  },
+  "proof_boundary": {
+    "verified_adapter_receipt_is_truthful_pixels": false,
+    "adapter_success_is_geometry_correctness": false,
+    "capture_binding_is_behavior_proof": false,
+    "capture_binding_is_postcondition_proof": false,
+    "capture_binding_authorizes_redispatch": false,
+    "capture_binding_is_mutation_authority": false,
+    "capture_binding_is_truth_commit": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 29,
+    "operational_skill_modules": 15,
+    "experimental_fixture_count": 49,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "shared_graph_schema_changed": false,
+    "F125_geometry_schema_changed": false,
+    "runtime_capture_binding_is_separate_authority": true,
+    "source_mutated": false,
+    "runtime_executed_by_reference_query": false,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "implementation": {
+    "runtime_geometry_capture_sha256": "sha256:3db280865c5ca7eb2284ac635b8249b3d31f80e6bfc934f47b69480dafd0bdfb",
+    "fullstack_init_sha256": "sha256:a792c2ebb32b6f40ebbb6b18fc03771333e93750d34f8882719c025910bfe3ea",
+    "geometry_correspondence_sha256": "sha256:89d41c416e119f59f4756370246a55232bcf8dddfac2aed49c2ce8892f8e8667",
+    "runtime_geometry_skill_sha256": "sha256:4f793d0a992063e0161fafaf911ee22fdc28fa123dbcdf1fd8d8eb6fe7218e37",
+    "geometry_skill_sha256": "sha256:e2fcb24eab0ec87ee5d60f639826c737b60c3dd20c94cae9c18d0d52eed73425",
+    "agent_tool_sha256": "sha256:f0fb32546f4ce9fc8887100ea9cb9b1b267356724d7457825092b42c77adecd5",
+    "plw_cli_sha256": "sha256:799ed9319e78419a47d9f285424809ef20ed9fff7f160bbd0ab95a85847e4bf7",
+    "compact_schema_sha256": "sha256:a3e968e81f9770b48497a5c9c7756d157345525d238821fdc683001f299fbc60",
+    "legacy_schema_sha256": "sha256:96ad95a694df641aef07dbca0387b5647fe022d779d76e95551d92e1bbee5797",
+    "skill_root_sha256": "sha256:19f454c43258e042de7e32f12ff61718d8b04884ed2198f816cb7c92602d4870",
+    "readme_sha256": "sha256:2ef5d82b56c694e5f61a9a48615a6bb000f998b5bce4061e6bee8810af7f0205",
+    "experimental_fixture_sha256": "sha256:8d79fe9169a5331f19d4fa47853354d8c517ba95e9f261546938199e56db9a14",
+    "fast_fixture_sha256": "sha256:5e7c2bc100b4d0da6f424ef0dc58918146b13fa67f58813ae1e531f8daf67af4",
+    "stable_fixture_sha256": "sha256:83892b1f41b340868ca810e5081aff43857129808a6b12868b06dc9290c7f534"
+  },
+  "validation": {
+    "experimental_fixture_count": 49,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "adversarial_cases": [
+      "missing F123 dispatch store",
+      "missing adapter observation",
+      "wrong observation kind",
+      "nonterminal capture observation",
+      "FAILED or INDETERMINATE terminal capture",
+      "snapshot geometry tamper after observation",
+      "matching post-record embedded observation id",
+      "conflicting embedded observation id",
+      "read-only CLI invocation",
+      "read-only agent-tool invocation"
+    ],
+    "external_network_required": false
+  },
+  "next_target": {
+    "checkpoint": "F127",
+    "name": "Targeted Geometric Constraint and Impact Projection",
+    "goal": "Add overlap/containment/spacing constraint evidence and project proven UI surfaces back through F125/F124 to topological impact targets without brute-force whole-UI validation."
+  },
+  "historical_integrity": {
+    "checkpoint_contract_is_historical": true,
+    "cross_checkpoint_implementation_fingerprints_are_historical": true,
+    "current_source_equality_required_for_cross_checkpoint_files": false,
+    "historical_source_reconstruction_claimed": false
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F126_checkpoint_owned_contract_retained": true,
+    "F134_validation_execution_lease_is_current_package": false,
+    "F135_validation_attempt_is_current_package": false,
+    "validation_attempt_owned_by_f135": true,
+    "external_corpus_modified_by_F135": false,
+    "F136_validation_dispatch_is_current_package": false,
+    "F137_validation_runtime_is_current_package": false,
+    "validation_dispatch_owned_by_f136": true,
+    "validation_runtime_owned_by_f137": true,
+    "external_corpus_modified_by_F137": false,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

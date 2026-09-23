@@ -1,0 +1,53 @@
+{
+  "schema_version": "plw-historical-evidence-promotion-group-v1",
+  "group": "F124-F127",
+  "current_repository_role": "canonical current state",
+  "historical_archive_role": "supporting lineage only",
+  "source_archive": {
+    "name": "ai_studio_tool_js_ts_simplification_v2_development_full.zip",
+    "sha256": "sha256:9d9ee884c2bffc9ea3ac582c3a806610b2ca27f804fb00b4d082c71eb380d276",
+    "size_bytes": 2970045
+  },
+  "rule": "Historical evidence never overrides newer main state. Promotion does not grant runtime, mutation, postcondition, evidence-acceptance, stable-promotion, or truth authority.",
+  "records": [
+    {
+      "checkpoint": "F124",
+      "source_path": "tools/ai_studio_tool/experiments/f124_angular_semantic_ownership_anchors.json",
+      "source_sha256": "sha256:a9ee22a2f8f96b5813d864236192b1bc1608da669e1d7b3788d9aeb27c0258e1",
+      "repository_path": "qualification/history/f124_angular_semantic_ownership_anchors.json",
+      "repository_git_blob_sha1": "e16ed2af31ea3f58052d9dfafb8758eb1fa20924",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F125",
+      "source_path": "tools/ai_studio_tool/experiments/f125_geometry_ui_code_correspondence.json",
+      "source_sha256": "sha256:9578b9599104b3ac1dc6c890c6556522352587c71888efce27d2610fc7dfb76a",
+      "repository_path": "qualification/history/f125_geometry_ui_code_correspondence.json",
+      "repository_git_blob_sha1": "64481d508f035596ab9f7b59c56e42115cceeab1",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F126",
+      "source_path": "tools/ai_studio_tool/experiments/f126_runtime_geometry_capture_adapter_contract.json",
+      "source_sha256": "sha256:9c0c04da06d2ddce5939b5d88fc99489657e58aafb8f0ef46c418d135a6b0207",
+      "repository_path": "qualification/history/f126_runtime_geometry_capture_adapter_contract.json",
+      "repository_git_blob_sha1": "54078044f9d82c5f9c81cf9d3ec53974cdfae6ef",
+      "retained_bytes_match_source_sha256": true
+    },
+    {
+      "checkpoint": "F127",
+      "source_path": "tools/ai_studio_tool/experiments/f127_targeted_geometric_constraint_impact_projection.json",
+      "source_sha256": "sha256:e6a6c3784d7b4c1c2b2f24694c883c421d898f5d8538cb3807ff3da15ed46515",
+      "repository_path": "qualification/history/f127_targeted_geometric_constraint_impact_projection.json",
+      "repository_git_blob_sha1": "90af03d67fb42528224010f3d12d79c8aa94655a",
+      "retained_bytes_match_source_sha256": true
+    }
+  ],
+  "summary": {
+    "exact_records_retained": 4,
+    "pending_exact_records": 0,
+    "authorities_merged": false,
+    "source_archive_required_for_normal_current_work_on_this_group": false
+  },
+  "next_group": "F85-F105 simplification economics/history where still decision-relevant"
+}
