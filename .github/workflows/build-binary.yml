@@ -71,6 +71,7 @@ jobs:
         run: bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
 
       - name: Upload binary artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: plw-linux-x86_64
