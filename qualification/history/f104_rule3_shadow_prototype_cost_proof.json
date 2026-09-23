@@ -1,0 +1,121 @@
+{
+  "schema_version": "rule3-shadow-prototype-cost-proof-v1",
+  "checkpoint": "F104",
+  "base_checkpoint": "F103",
+  "stable_baseline": "F85",
+  "status": "SHADOW_PROTOTYPE_IMPLEMENTED_WITHIN_BUDGET_BUT_ACCEPTANCE_ECONOMICS_FAILS",
+  "proposal_id": "js_terminal_const_expression_passthrough",
+  "implementation": {
+    "F103_analyzer_loc": 1448,
+    "F104_analyzer_loc": 1521,
+    "actual_marginal_rule3_loc": 73,
+    "F102_prototype_budget_loc": 77,
+    "within_prototype_budget": true,
+    "core_simplification_analyzer_sha256": "sha256:fad66c18675a99ff1a91b32ef03ceecf64ceb001573659c3b890efc8caccea43",
+    "schema_version": "self-simplification-v14-js-shadow-rule3",
+    "accepted_existing_rules": 2,
+    "shadow_rule3_count": 1,
+    "new_lexer_or_scanner": false,
+    "second_source_mask_pass": false,
+    "new_runtime_module": false
+  },
+  "probe_authority": {
+    "mode": "LOCAL_ANALYZER_EXECUTION_ON_PINNED_SOURCE_EXCERPTS",
+    "full_external_blob_replay": false,
+    "source_excerpts_verified_against_F103_pinned_GitHub_dossier": true,
+    "snapshot_extension": ".ts.txt",
+    "reason": "preserve reproducible local runtime proof without contaminating self-host source inventory"
+  },
+  "rediscovery": {
+    "expected_occurrences": 4,
+    "local_shadow_candidates": 4,
+    "all_four_rediscovered": true,
+    "candidate_rows": [
+      {
+        "file": "angular/packages/compiler/src/render3/view/i18n/icu_serializer.ts",
+        "name": "<local-try-catch>",
+        "candidate_id": "sha256:146d738436d251f0969be4b6c40bf12baf20b2c1145106e905b0105508d63409",
+        "binding": "result",
+        "recommendation": "shadow_rule3_requires_acceptance_economics_and_target_proof",
+        "risk": "low"
+      },
+      {
+        "file": "bitwarden/libs/common/src/platform/services/fido2/ecdsa-utils.ts",
+        "name": "getParamSize",
+        "candidate_id": "sha256:2b57085251c407155e89272fec6d153b1d6603eefe00ba1ff00fd077bfcb4916",
+        "binding": "result",
+        "recommendation": "shadow_rule3_requires_acceptance_economics_and_target_proof",
+        "risk": "low"
+      },
+      {
+        "file": "angular/packages/core/src/render3/after_render/manager.ts",
+        "name": "<local-try-catch>",
+        "candidate_id": "sha256:8d3a542fa1ae36ba44b467f90569ce5ccd6bded2145f279e643120b3e9b35e6d",
+        "binding": "value",
+        "recommendation": "shadow_rule3_requires_acceptance_economics_and_target_proof",
+        "risk": "low"
+      },
+      {
+        "file": "bitwarden/libs/tools/generator/core/src/engine/username-randomizer.ts",
+        "name": "<local-try-catch>",
+        "candidate_id": "sha256:d033c730551fa07d1a3b43667052dc934ba450f9a814c0ab8eee8b4acb31db0f",
+        "binding": "result",
+        "recommendation": "shadow_rule3_requires_acceptance_economics_and_target_proof",
+        "risk": "low"
+      }
+    ]
+  },
+  "compatibility": {
+    "F98_rule1_rule2_projection_identical_to_F103": true,
+    "F99_rule1_rule2_projection_identical_to_F103": true,
+    "F98_rule3_candidates": 0,
+    "F99_rule3_candidates": 0,
+    "single_mask_per_file_required": true,
+    "F98_expected_mask_calls": 20,
+    "F99_expected_mask_calls": 12,
+    "F104_probe_expected_mask_calls": 4,
+    "F104_probe_observed_mask_calls": 4,
+    "F98_observed_mask_calls": 20,
+    "F99_observed_mask_calls": 12
+  },
+  "acceptance_economics": {
+    "observed_proven_target_gain_loc": 4,
+    "actual_marginal_rule3_machine_cost_loc": 73,
+    "additional_frontend_compression_loc": 0,
+    "effective_rule3_machine_cost_loc": 73,
+    "required_equation": "proven_rule3_target_gain_loc >= max(0, marginal_rule3_implementation_loc - additional_frontend_compression_loc)",
+    "equation_passes": false,
+    "decision": "REJECT_RULE3_ACCEPTANCE_KEEP_SHADOW_ONLY"
+  },
+  "external_mutation": {
+    "authorized": false,
+    "performed": false
+  },
+  "stable_promotion": {
+    "authorized": false,
+    "performed": false
+  },
+  "self_host_frontier": {
+    "remaining_candidate_count": 31,
+    "recommended_local_candidates": 0,
+    "status": "LOCAL_SIMPLIFICATION_FRONTIER_REACHED",
+    "rule3_self_host_candidates": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "experimental_overlay": "E01-E25 PASS in bounded runs",
+    "stable_critical": "F15/F35/F46/F64 PASS",
+    "kernel_wiring_smoke": "PASS isolated",
+    "kernel_cli_contract": "PASS isolated",
+    "compileall": "PASS",
+    "analyzer_sha256": "sha256:fad66c18675a99ff1a91b32ef03ceecf64ceb001573659c3b890efc8caccea43",
+    "analyzer_loc": 1521,
+    "self_host_frontier": "31 remaining / 0 recommended",
+    "historical_fixture_note": "E22-E24 validate their checkpoint snapshots without pinning the current future analyzer bytes."
+  },
+  "next_target": {
+    "checkpoint": "F105",
+    "name": "Rule3 Economics Recovery or Shadow Retirement Gate",
+    "goal": "Do not widen rule3. Either find enough additional preselected real-corpus yield to amortize the measured shadow cost, compress the implementation materially without changing witness behavior, or retire the shadow prototype."
+  }
+}
