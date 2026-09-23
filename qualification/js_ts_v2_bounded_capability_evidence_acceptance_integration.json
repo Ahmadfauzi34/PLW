@@ -1,6 +1,6 @@
 {
   "schema_version": "plw-js-ts-v2-bounded-capability-evidence-acceptance-integration-v1",
-  "status": "IMPLEMENTED_PENDING_INTERACTIVE_VALIDATION",
+  "status": "BOUNDED_CAPABILITY_EVIDENCE_ACCEPTANCE_INTEGRATION_READY",
   "goal": "Prove that evidence emitted by the READY bounded boolean-guard capability, after existing postcondition validation and exact receipt issuance, is consumable by the already-qualified TEMP_WORKTREE_EXPERIMENT_EVIDENCE_ACCEPTANCE_REFERENCE without creating a second acceptor or widening authority.",
   "composition": [
     "BOUNDED_MUTATION_CAPABILITY_APPLIED",
@@ -32,7 +32,15 @@
   },
   "interactive_validation": {
     "required": true,
-    "completed": false,
+    "completed": true,
+    "audit_record": "qualification/interactive_js_ts_v2_bounded_capability_evidence_acceptance_audit.json",
+    "audited_source_head": "46f3d9e1e74a2303e4b9d8258b25df971b59b801",
+    "workflow_run": 35912070931,
+    "artifact_id": 10773363061,
+    "artifact_sha256": "sha256:46be96d6d476da3b4e0c63bb1f071f20f6d3777ba76d2f450b1c4a146b543324",
+    "direct_report_sha256": "sha256:d83bc799c5287374820ac567912dc00fbf79f20afbbb9bbb257fa2214a24f3c8",
+    "case_count": 6,
+    "passed_case_count": 6,
     "minimum_cases": [
       "positive JS capability evidence accepted then replay recovered without append",
       "inverse TS capability evidence accepted then replay recovered without append",
