@@ -17,14 +17,38 @@
     "selection_rule": "all direct non-spec .ts files in apps/browser/src/autofill/background; no recursion",
     "selection_rule_fixed_before_candidate_measurement": true,
     "selected_files": {
-      "apps/browser/src/autofill/background/auto-submit-login.background.ts": {"blob_sha":"07f0b98318a21f9f450e48f8550f08b759b92aaa","bytes":23559},
-      "apps/browser/src/autofill/background/autofill-orchestrator.ts": {"blob_sha":"d58b98de6ecac71e283ea3b1e226414bcd129d83","bytes":10385},
-      "apps/browser/src/autofill/background/context-menus.background.ts": {"blob_sha":"3b106aafece706df4d0e77ab32a27350468c221c","bytes":2047},
-      "apps/browser/src/autofill/background/notification.background.ts": {"blob_sha":"fd2711e82c7295a73620fde8059fb6a5a121df26","bytes":71953},
-      "apps/browser/src/autofill/background/overlay-notifications.background.ts": {"blob_sha":"dea6dc5c44ce9ce719279215668b62e00ad193a1","bytes":23946},
-      "apps/browser/src/autofill/background/overlay.background.ts": {"blob_sha":"70c87e0fe461a640b14f91c2242d639170ad1554","bytes":130211},
-      "apps/browser/src/autofill/background/tabs.background.ts": {"blob_sha":"b76997c0ae92b6a5b9bd814d595a0edb7d11542e","bytes":3386},
-      "apps/browser/src/autofill/background/web-request.background.ts": {"blob_sha":"de66309b6f76e224c5cbdbf0ba5e865ba47dc4ad","bytes":4249}
+      "apps/browser/src/autofill/background/auto-submit-login.background.ts": {
+        "blob_sha": "07f0b98318a21f9f450e48f8550f08b759b92aaa",
+        "bytes": 23559
+      },
+      "apps/browser/src/autofill/background/autofill-orchestrator.ts": {
+        "blob_sha": "d58b98de6ecac71e283ea3b1e226414bcd129d83",
+        "bytes": 10385
+      },
+      "apps/browser/src/autofill/background/context-menus.background.ts": {
+        "blob_sha": "3b106aafece706df4d0e77ab32a27350468c221c",
+        "bytes": 2047
+      },
+      "apps/browser/src/autofill/background/notification.background.ts": {
+        "blob_sha": "fd2711e82c7295a73620fde8059fb6a5a121df26",
+        "bytes": 71953
+      },
+      "apps/browser/src/autofill/background/overlay-notifications.background.ts": {
+        "blob_sha": "dea6dc5c44ce9ce719279215668b62e00ad193a1",
+        "bytes": 23946
+      },
+      "apps/browser/src/autofill/background/overlay.background.ts": {
+        "blob_sha": "70c87e0fe461a640b14f91c2242d639170ad1554",
+        "bytes": 130211
+      },
+      "apps/browser/src/autofill/background/tabs.background.ts": {
+        "blob_sha": "b76997c0ae92b6a5b9bd814d595a0edb7d11542e",
+        "bytes": 3386
+      },
+      "apps/browser/src/autofill/background/web-request.background.ts": {
+        "blob_sha": "de66309b6f76e224c5cbdbf0ba5e865ba47dc4ad",
+        "bytes": 4249
+      }
     },
     "selected_file_count": 8,
     "selected_source_bytes": 269736,
