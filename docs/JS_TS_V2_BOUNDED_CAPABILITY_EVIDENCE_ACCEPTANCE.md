@@ -91,3 +91,49 @@ That next checkpoint must independently decide what accepted evidence is suffici
 ## Promotion rule
 
 CI/regression is a reproducibility guard only. Promotion requires direct execution of the exact source bundle packaged from the PR head, verification of bundle `HEAD_SHA.txt` and `SHA256SUMS.txt`, and retained audit evidence identifying the exact audited source bytes.
+
+## Interactive audit result
+
+The exact PR #43 source bundle was downloaded and executed outside CI:
+
+```text
+source head       46f3d9e1e74a2303e4b9d8258b25df971b59b801
+workflow run      35912070931
+artifact id       10773363061
+artifact sha256   46be96d6d476da3b4e0c63bb1f071f20f6d3777ba76d2f450b1c4a146b543324
+bundle HEAD_SHA   exact match
+SHA256SUMS        all bundled sources PASS
+direct execution  6 / 6 PASS
+```
+
+Direct report SHA-256:
+
+```text
+d83bc799c5287374820ac567912dc00fbf79f20afbbb9bbb257fa2214a24f3c8
+```
+
+Observed boundaries:
+
+```text
+positive JS acceptance                 ACCEPTED; replay RECOVERED; 1 record
+inverse TS acceptance                  ACCEPTED; replay RECOVERED; 1 record
+validation receipt tamper              rejected; 0 acceptance records
+primitive receipt tamper               rejected; 0 acceptance records
+failed postconditions                  failure receipt sealed; acceptance rejected
+broken acceptance hash chain           rejected
+worktree before acceptance             disposed on all audited paths
+retained/global evidence ledger        unchanged
+truth commit                           false
+```
+
+The retained audit record is:
+
+`qualification/interactive_js_ts_v2_bounded_capability_evidence_acceptance_audit.json`
+
+The gate is therefore:
+
+```text
+BOUNDED_CAPABILITY_EVIDENCE_ACCEPTANCE_INTEGRATION_READY
+```
+
+READY means composition of the existing boundaries is proven for the audited bounded scope. It does not create retained experiment evidence and does not pre-authorize synthesis review, promotion, upstream mutation, equivalence, or truth.
