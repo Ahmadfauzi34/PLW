@@ -17,7 +17,6 @@ from check_js_ts_boolean_guard_bounded_capability import (
     write_json,
 )
 from issue_js_ts_boolean_guard_bounded_capability_postconditions import (
-    IssuanceBridgeError,
     issue_bounded_capability_postconditions,
 )
 from validate_js_ts_boolean_guard_temp_worktree_postconditions import (
@@ -267,8 +266,8 @@ def _postwrite_failure_is_issued_but_not_accepted() -> Dict[str, Any]:
         }
 
 
-def _inside_target_output_rejected_before_effect() -> Dict[str, Any]:
-    name = "issuance_path_inside_target_rejected_before_effect"
+def _inside_target_output_rejected_and_disposed() -> Dict[str, Any]:
+    name = "issuance_path_inside_target_rejected_and_disposed"
     with tempfile.TemporaryDirectory(prefix=f"plw_issue_{name}_") as temp:
         fixture = build_fixture(
             Path(temp),
@@ -278,42 +277,42 @@ def _inside_target_output_rejected_before_effect() -> Dict[str, Any]:
             semicolon=True,
         )
         capability_path = _apply_capability(fixture)
-        # Restore to pre-capability state is impossible because authorization is consumed;
-        # instead use a fresh fixture and a fabricated capability receipt is not valid.
-        # This case therefore tests the bridge path boundary after effectful apply and
-        # requires rejection before any postcondition validation/sealing.
         target = fixture["target"]
-        try:
-            issue_bounded_capability_postconditions(
-                root=target,
-                disposable_parent=fixture["base"],
-                capability_contract_path=fixture["contract_path"],
-                capability_receipt_path=capability_path,
-                plan_path=fixture["plan_path"],
-                preflight_path=fixture["preflight_path"],
-                authorization_path=fixture["authorization_path"],
-                validation_spec_path=fixture["spec_path"],
-                primitive_materialization_path=fixture["evidence"] / "primitive.json",
-                validation_receipt_path=target / "forbidden-validation.json",
-                issuance_ledger_path=fixture["evidence"] / "issuance.jsonl",
-                timeout_seconds=30,
-            )
-            rejected = False
-            error = None
-        except IssuanceBridgeError as exc:
-            rejected = True
-            error = str(exc)
+        result = issue_bounded_capability_postconditions(
+            root=target,
+            disposable_parent=fixture["base"],
+            capability_contract_path=fixture["contract_path"],
+            capability_receipt_path=capability_path,
+            plan_path=fixture["plan_path"],
+            preflight_path=fixture["preflight_path"],
+            authorization_path=fixture["authorization_path"],
+            validation_spec_path=fixture["spec_path"],
+            primitive_materialization_path=fixture["evidence"] / "primitive.json",
+            validation_receipt_path=target / "forbidden-validation.json",
+            issuance_ledger_path=fixture["evidence"] / "issuance.jsonl",
+            timeout_seconds=30,
+        )
         ok = (
-            rejected
-            and target.exists()
+            result.get("status")
+            == "BOUNDED_CAPABILITY_POSTCONDITION_ISSUANCE_REJECTED"
+            and (result.get("containment", {}) or {}).get("worktree_disposed")
+            is True
+            and not target.exists()
             and not (fixture["evidence"] / "issuance.jsonl").exists()
+            and (result.get("postconditions", {}) or {}).get(
+                "evidence_acceptance_granted"
+            )
+            is False
         )
         return {
             "case": name,
-            "expected": "REJECT_PATH_BOUNDARY",
+            "expected": "REJECT_PATH_AND_DISPOSE",
             "ok": ok,
-            "error": error,
-            "target_still_exists": target.exists(),
+            "status": result.get("status"),
+            "reason": result.get("reason"),
+            "worktree_disposed": (result.get("containment", {}) or {}).get(
+                "worktree_disposed"
+            ),
         }
 
 
@@ -343,7 +342,7 @@ def main() -> int:
         _capability_tamper_rejected(),
         _broken_issuance_chain_rejected(),
         _postwrite_failure_is_issued_but_not_accepted(),
-        _inside_target_output_rejected_before_effect(),
+        _inside_target_output_rejected_and_disposed(),
     ]
     failed = [case["case"] for case in cases if not case["ok"]]
     report = {
