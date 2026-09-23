@@ -1,0 +1,110 @@
+{
+  "schema_version": "f137-validation-runtime-dispatch-reconciliation-v1",
+  "checkpoint": "F137",
+  "base_checkpoint": "F136",
+  "stable_baseline": "F85",
+  "status": "VALIDATION_RUNTIME_DISPATCH_RECONCILIATION_ACTIVE",
+  "goal": "Cross one exact F136 dispatch intent into a durable runtime handoff and reconcile ambiguous host delivery without blind retry or premature evidence acceptance.",
+  "contract": {
+    "one_runtime_handoff_per_dispatch_intent": true,
+    "recovered_handoff_blind_retry_allowed": false,
+    "adapter_dispatch_requires_literal_allow_external_execution": true,
+    "cli_loads_arbitrary_adapter": false,
+    "runtime_observations_append_only": true,
+    "nonterminal_states": [
+      "PENDING",
+      "NOT_FOUND",
+      "UNKNOWN"
+    ],
+    "terminal_reconciliation_state": "RESOLVED",
+    "terminal_statuses": [
+      "SUCCEEDED",
+      "FAILED",
+      "INDETERMINATE"
+    ],
+    "runtime_terminal_is_evidence_acceptance": false,
+    "runtime_terminal_is_postcondition_proof": false,
+    "runtime_terminal_is_truth": false,
+    "raw_observation_retained": false
+  },
+  "durable_store": {
+    "feature": {
+      "runtime_dispatch": 1
+    },
+    "handoff_table": "validation_runtime_dispatches_v1",
+    "observation_table": "validation_runtime_observations_v1",
+    "one_terminal_observation_per_handoff": true
+  },
+  "final_proof_state": {
+    "public_plw_commands": 40,
+    "operational_skill_modules": 25,
+    "experimental_fixture_count": 60,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "reference_tests": 15,
+    "reference_traces": 125,
+    "reference_transitions": 375,
+    "fixture": "E60"
+  },
+  "implementation": {
+    "fullstack/validation_runtime.py": "sha256:11ce413f6f1063c1287167fa2bcb861cdc037c57ec2fc198a2b89f7621235cbe",
+    "fullstack/validation_dispatch.py": "sha256:add9fbde3d5081bb31f71fcdc7a4662dd9411b32fdfd33c382d377d7572fc83a",
+    "fullstack/__init__.py": "sha256:b8aecb4e0376943102216522700760e8f4fe72f84da23591c2d67f6ccbd20f8c",
+    "validation_runtime_reference_check.py": "sha256:ab93bdb32b421734c7ce757155e064052ec98d0ec4cfddf55e312229a62af5ad",
+    "skills/validation-runtime-dispatch-workflow.md": "sha256:648859d3e6ddf130baa676e4535b55355c8aa045806c10b1f02b89154bb00fd4",
+    "SKILL.md": "sha256:e405c2bee960987f0f41a5fc2a460797a333ed17ec17ab86e115f7d55c14a177",
+    "README.md": "sha256:cd3de3883225ba7c33694029aadaa25374eade84cefb74e5bb335556fb171c58",
+    "plw_cli.py": "sha256:75583044c5db2a1edd4fdade61b38aa8e2fa78e5e544bdf4a93d11a5635f0b65",
+    "agent_tool.py": "sha256:f724aad05d445a60877eddd96ca5fd56da63ab588f65399e364b198d68c3be7b",
+    "tools_schema_compact.json": "sha256:b2cc16b8e65175df828d73be82c858a1c6cafab0d73d374581c02200fb786506",
+    "tools_schema.json": "sha256:3ec19d4dd9c89f6c8a3304bbac5b54bcce72f1a3144bf84e6e3df3d3ba60be72",
+    "experimental_fixture_check.py": "sha256:186dfb2e57487c3904b90c2dd0143ad2d609bcb5855da599181dea975f9c5604",
+    "fixture_fast.py": "sha256:ca632aeebfada65c5392430f3187e26b87b778925833bc7ca1923318d4d37a77"
+  },
+  "next_target": {
+    "checkpoint": "F138",
+    "name": "Validation Result Evidence Acceptance",
+    "goal": "Accept, reject, or keep unresolved one resolved F137 runtime result against exact scenario/request/evidence provenance without re-running the validator."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "cross_checkpoint_fingerprints_are_historical": true,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "F137_checkpoint_contract_retained": true,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

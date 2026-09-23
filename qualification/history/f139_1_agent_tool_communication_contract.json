@@ -1,0 +1,81 @@
+{
+  "schema_version": "f139-1-agent-tool-communication-contract-v1",
+  "checkpoint": "F139.1",
+  "base_checkpoint": "F139",
+  "stable_baseline": "F85",
+  "status": "AGENT_TOOL_COMMUNICATION_CONTRACT_ACTIVE",
+  "goal": "Make work output decision-first and unambiguous for an agent unfamiliar with PLW without changing execution/evidence/truth authority.",
+  "contract": {
+    "public_command_added": false,
+    "agent_decision_frame_first_class": true,
+    "legacy_work_status_is_reference_pack_only": true,
+    "action_readiness_explicit": true,
+    "task_postcondition_status_explicit": true,
+    "read_skill_only_vs_call_capability_explicit": true,
+    "inline_critical_skill_contract": true,
+    "completed_stage_repeat_guard": true,
+    "compact_capability_score_hidden": true,
+    "capability_ranking_is_action_recommendation": false,
+    "execution_authority_changed": false,
+    "truth_authority_changed": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 47,
+    "semantic_contracts": 47,
+    "operational_skill_modules": 33,
+    "experimental_fixture_count": 68,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E68",
+    "resolved_target_decision_frame_probe": true,
+    "ambiguous_target_fail_closed_probe": true,
+    "inline_skill_contract_probe": true,
+    "completed_stage_repeat_guard_probe": true,
+    "stale_semantic_gap_probe": true,
+    "compact_score_suppression_probe": true,
+    "legacy_work_status_scope_probe": true,
+    "agent_capability_discovery_probe": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/agent_communication.py": "sha256:b3189c00ddf916516aa56b1b3bd231272f0be423964c15b7a737b911a1cd4346",
+    "core/semantic_affordance.py": "sha256:a30dd5ceb919739550d92ab64142e86c30dab43b668d747c5d68947a3fec5952",
+    "hott_kernel.py": "sha256:5473821b46b9534551a36863776c9e0056bcebe3ade48a4711ba8972d72265cd",
+    "agent_tool.py": "sha256:26d6eb2130b74fbbe9701569ec174598630523fda68e190e5a377ddb9cf86ea7",
+    "skills/agent-tool-communication-workflow.md": "sha256:b280fdcf8ff07cf0cc14817a62d02b4d082e1e8b5298f998eb020f1334e83df3",
+    "skills/adaptive-agent-workflow.md": "sha256:f9b262eba5608a310a35d98eb9c2000fbb384fb525d43c38b2583cc111a67f37",
+    "SKILL.md": "sha256:8bd67620c76f8762560ed54b99ef9db42d65426f65e11ef9bcdf2ca2705b389c",
+    "README.md": "sha256:364260b741f3fb7b439759801d76bea1951e08f48dcf185107e5468ba6af34a9",
+    "tools_schema_compact.json": "sha256:3535ed21d6f7eac31fe516e6c60c89b0eae418b4ec157b55b3a201de8c86cc03",
+    "tools_schema.json": "sha256:a0b7c54fb966ae33899b674149a890870cfa61f77bb3286383858b09c2afeec9",
+    "experimental_fixture_check.py": "sha256:617ac4495efe046a7c4a47396d1ff4a8ff0506d7b06cf301dc164463d845b5d6",
+    "fixture_fast.py": "sha256:bc654c5ad635b7f9424feffa7c84cebc93566217a40930785d35513e41efded8"
+  },
+  "next_target": {
+    "checkpoint": "F140",
+    "name": "Execution-Backed Proof-Obligation Re-Derivation",
+    "goal": "Re-derive proof-obligation coverage from F139 execution-backed scenario evidence after the agent-tool communication boundary is explicit."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F139_1_checkpoint_contract_retained": true,
+    "F139_1_cross_checkpoint_fingerprints_are_historical": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

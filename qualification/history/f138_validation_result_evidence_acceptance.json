@@ -1,0 +1,151 @@
+{
+  "schema_version": "f138-validation-result-evidence-acceptance-v1",
+  "checkpoint": "F138",
+  "base_checkpoint": "F137",
+  "stable_baseline": "F85",
+  "status": "VALIDATION_RESULT_EVIDENCE_ACCEPTANCE_ACTIVE",
+  "goal": "Accept, reject, or preserve as unresolved one exact canonical validation.result payload against a verified F137 runtime observation and exact F132 request lineage without re-running the validator.",
+  "contract": {
+    "runtime_SUCCEEDED_is_validator_PASS": false,
+    "validator_FAIL_is_runtime_failure": false,
+    "runtime_FAILED_or_INDETERMINATE_is_validation_FAIL": false,
+    "accepted_evidence_is_postcondition_proof": false,
+    "accepted_evidence_is_truth": false,
+    "validator_reexecuted_by_F138": false,
+    "runtime_dispatched_by_F138": false,
+    "F137_observation_receipt_verified": true,
+    "F132_request_set_digest_bound": true,
+    "scenario_identity_bound": true,
+    "validator_identity_bound": true,
+    "validation_plan_identity_bound_through_F132": true,
+    "runtime_observation_digest_matches_exact_result": true,
+    "evidence_ids_match_F137_receipt": true,
+    "raw_validation_result_retained_in_store": false
+  },
+  "decisions": {
+    "eligible": "VALIDATION_RESULT_EVIDENCE_ELIGIBLE",
+    "accepted": "VALIDATION_RESULT_EVIDENCE_ACCEPTED",
+    "recovered": "VALIDATION_RESULT_EVIDENCE_ACCEPTED_RECOVERED",
+    "rejected": "VALIDATION_RESULT_EVIDENCE_REJECTED",
+    "unresolved": "VALIDATION_RESULT_EVIDENCE_UNRESOLVED"
+  },
+  "unresolved_runtime_states": [
+    "nonterminal F137 observation",
+    "F137 terminal FAILED",
+    "F137 terminal INDETERMINATE"
+  ],
+  "durable_store": {
+    "filename": "validation_execution_leases.sqlite3",
+    "base_user_version": 1,
+    "additive_table": "validation_result_evidence_acceptance_v1",
+    "feature_registry": "validation_execution_store_features",
+    "registered_feature": {
+      "evidence_acceptance": 1
+    },
+    "schema_migration_required": false,
+    "unique_runtime_observation": true,
+    "exact_replay_recovers_same_receipt": true,
+    "changed_content_same_observation_rejected": true
+  },
+  "tool_surface": {
+    "command": "plw validation-result",
+    "operations": [
+      "accept",
+      "status"
+    ],
+    "accept_requires_literal_state_change_acknowledgement": true,
+    "status_is_read_only": true,
+    "external_runtime_invoked": false
+  },
+  "validation_contract": {
+    "reference_tests": 21,
+    "reference_traces": 125,
+    "reference_transitions": 375,
+    "trace_length": 3,
+    "parallel_exact_acceptance_workers": 8,
+    "adversarial_cases": [
+      "runtime SUCCEEDED with validator FAIL remains acceptable evidence",
+      "runtime FAILED remains unresolved rather than validator FAIL",
+      "nonterminal runtime observation remains unresolved",
+      "observation kind substitution",
+      "validation-result digest substitution",
+      "request-set substitution",
+      "scenario substitution",
+      "validator substitution",
+      "validation-plan substitution",
+      "evidence-id substitution",
+      "precommit rollback",
+      "durable-row tamper",
+      "raw validator result non-retention",
+      "exact replay",
+      "parallel exact acceptance",
+      "truthy agent acknowledgement"
+    ],
+    "external_network_required": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 41,
+    "operational_skill_modules": 26,
+    "experimental_fixture_count": 61,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "implementation": {
+    "fullstack/validation_result_evidence.py": "sha256:0f3a1f3c685c9c77a0d57dfe1377be0ee4bef70e397e7484a8159aa490754a7e",
+    "fullstack/validation_runtime.py": "sha256:3ce6ef90b0f825aaed2b50a20a8fc811ade1d877cc0a87575a64cbfb03e71443",
+    "fullstack/__init__.py": "sha256:b84f3d8ef3142282350ebae5c05b2e6558b4afe8ec2ca2da8597a0b7e21cef45",
+    "validation_result_evidence_reference_check.py": "sha256:b80ef8f1bcd869a44174c6174cd02a900c49c351b71cd6e828c77f6cfb5cd75a",
+    "skills/validation-result-evidence-acceptance-workflow.md": "sha256:e88905e366ec5e6eb28aa5cdbd80aa11649997623b8fdf5cccf17062da72b89e",
+    "SKILL.md": "sha256:3d019498130b91f412bedc2a8a07de39193cea0e0f959b4c5d321e78d527fd10",
+    "README.md": "sha256:90c766b403c43b66e97cf6f12fd7071fc19ce8ed40288987f33c542b84ed30e5",
+    "plw_cli.py": "sha256:4cf763e0ceee8cf2bfa79ac95b3095623e5d7fd4f223d89a110f121e37464ed4",
+    "agent_tool.py": "sha256:3c41c5f53380a46af366391dcc3c2a782ab588b0cfab4edae7503d7bd3be6e28",
+    "tools_schema_compact.json": "sha256:18523219e67c7cb59f63bed280174bbd3cbe43108511adf1747c1313bb61a825",
+    "tools_schema.json": "sha256:8691b2ba1453ac6865438b77e87aa3a2961253f38b0b349b5e07a551a134ceed",
+    "experimental_fixture_check.py": "sha256:c046acfaa5e0d2cb81f4c621b16f68a0350497f87884e3580d3182e6a5d1be12",
+    "fixture_fast.py": "sha256:a4313c55b6ba50c0b5434773b9ee1bf707430613b733e7be2ae794c26b7b5aa7"
+  },
+  "next_target": {
+    "checkpoint": "F139",
+    "name": "Execution-Backed Scenario Evidence Binding",
+    "goal": "Bind exact F138 accepted result content back into the F129-style scenario evidence model using additive F137/F138 provenance without rewriting historical F123 provenance."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F138_validation_result_is_current_package": false,
+    "validation_result_evidence_owned_by_f138": true,
+    "external_corpus_modified_by_F138": false,
+    "F138_1_semantic_affordance_is_current_package": false,
+    "semantic_affordance_owned_by_f138_1": true,
+    "external_corpus_modified_by_F138_1": false,
+    "F138_2_target_topology_is_current_package": false,
+    "target_topology_owned_by_f138_2": true,
+    "external_corpus_modified_by_F138_2": false,
+    "F138_3_target_resolution_is_current_package": false,
+    "F138_4_evidence_needs_is_current_package": false,
+    "evidence_need_derivation_owned_by_f138_4": true,
+    "external_corpus_modified_by_F138_4": false,
+    "F138_5_capability_selection_is_current_package": false,
+    "capability_selection_owned_by_f138_5": true,
+    "external_corpus_modified_by_F138_5": false,
+    "F139_execution_backed_evidence_is_current_package": false,
+    "execution_backed_evidence_owned_by_f139": true,
+    "external_corpus_modified_by_F139": false,
+    "F139_1_agent_tool_communication_is_current_package": false,
+    "agent_tool_communication_owned_by_f139_1": true,
+    "F140_execution_backed_proof_is_current_package": false,
+    "execution_backed_proof_owned_by_f140": true,
+    "external_corpus_modified_by_F140": false,
+    "F141_postcondition_proof_is_current_package": false,
+    "postcondition_proof_owned_by_f141": true,
+    "external_corpus_modified_by_F141": false,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}

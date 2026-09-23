@@ -1,0 +1,77 @@
+{
+  "schema_version": "f138-5-evidence-driven-capability-selection-v1",
+  "checkpoint": "F138.5",
+  "base_checkpoint": "F138.4",
+  "stable_baseline": "F85",
+  "status": "EVIDENCE_DRIVEN_CAPABILITY_SELECTION_ACTIVE",
+  "goal": "Project candidate PLW information sources from machine-readable evidence classes without task-keyword routing or execution authority.",
+  "contract": {
+    "command": "plw capability-match <task> <root> --target <file> --json",
+    "selection_basis": "evidence_class + capability_contract",
+    "task_text_used_for_selection": false,
+    "outputs": [
+      "need_matches",
+      "candidate_capabilities",
+      "uncovered_needs"
+    ],
+    "stage": "CAPABILITY_CANDIDATES_PROJECTED",
+    "chooses_agent_action": false,
+    "executes_capability": false,
+    "runtime_execution": false,
+    "source_mutation": false,
+    "truth_commit": false,
+    "work_reuses_same_graph_snapshot": true
+  },
+  "coverage_roles": [
+    "PARTIAL_STATIC",
+    "PARTIAL_LOCAL",
+    "PREPARATORY",
+    "INFERENTIAL_ONLY",
+    "BINDS_EXTERNAL_OBSERVATION",
+    "ACCEPTS_EXISTING_RESULT"
+  ],
+  "final_proof_state": {
+    "public_plw_commands": 46,
+    "semantic_contracts": 46,
+    "operational_skill_modules": 31,
+    "experimental_fixture_count": 66,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E66",
+    "machine_readable_evidence_class_probe": true,
+    "task_text_not_selector_probe": true,
+    "partial_vs_direct_coverage_probe": true,
+    "uncovered_need_preservation_probe": true,
+    "work_graph_reuse_probe": true,
+    "cli_probe": true,
+    "agent_read_only_probe": true,
+    "semantic_registry_full_coverage": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/capability_selection.py": "sha256:fdaff3bdfc948ccca04ac02cf19b7a086e593f0a2ff92ddcaa3b327b08fe31ee",
+    "core/evidence_needs.py": "sha256:bd02f2569d7d63a74787a162badea79cbc1834afd4b1a7bda74c94106a8936df",
+    "core/semantic_affordance.py": "sha256:81442e487279c7bb55665fcf52b1c44e96e5205e25da7cb85ca6f007fcbca1ab",
+    "hott_kernel.py": "sha256:6464f70ac99807d853382ea05f3ce1fcaa1cc96442cf42f81b279abee18dd5c2",
+    "plw_cli.py": "sha256:f89b5c6618ccda44303e0d18f9c668bef4b0ccfdc39f8c475ce283c0702e14f3",
+    "agent_tool.py": "sha256:1220acd31860506ab3b66ce12821484ecdf17021940a0b8457f941c4bb90569d",
+    "skills/evidence-driven-capability-selection-workflow.md": "sha256:dc6e1d84d830857c77208b1d2bf29002744b8c19fa3b53fa07ef86a0e2df64bb",
+    "skills/evidence-need-derivation-workflow.md": "sha256:d471a3dfb17a6223078b09500b794e0cc997086d57428167bbfcfe476f898361",
+    "SKILL.md": "sha256:6ff2eef5bdecc5e1b7f904b7252b6154e0f4dfd3ff48d1a475f306a9810ca27a",
+    "README.md": "sha256:e1c2f23350a067d0b7d9c8f9f6758bea3375bf5d65691d113c54df4f236eaa7c",
+    "tools_schema_compact.json": "sha256:f44bd861da1f85c2a82261dfb7e9fd019e8a65dccf8de4c96f28ab9af0d89fd2",
+    "tools_schema.json": "sha256:a645ae6efb8f67d85944a4301a63fb58d419c91c5bf8452f0c6050dc3b656855",
+    "experimental_fixture_check.py": "sha256:b3af3e0165598a96b8c4710f6b0c5486bd21a110cc6440c2143eaa05d34d6b70",
+    "fixture_fast.py": "sha256:b41bd7a98cf3d44fc48d0b7c5d29a293e19323dc7446eea31ac920ba96c20f74"
+  },
+  "next_target": {
+    "checkpoint": "F139",
+    "name": "Execution-Backed Scenario Evidence Binding",
+    "goal": "Bridge accepted F138 runtime evidence back into scenario-bound validation provenance without merging evidence acceptance with proof completion."
+  }
+}

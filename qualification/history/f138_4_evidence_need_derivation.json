@@ -1,0 +1,84 @@
+{
+  "schema_version": "f138-4-evidence-need-derivation-v1",
+  "checkpoint": "F138.4",
+  "base_checkpoint": "F138.3",
+  "stable_baseline": "F85",
+  "status": "EVIDENCE_NEED_DERIVATION_ACTIVE",
+  "goal": "Derive target-grounded known/unknown/evidence requirements before any specialized PLW capability is selected.",
+  "problem_statement": {
+    "resolved_target_is_not_semantic_ownership": true,
+    "reachable_test_is_not_assertion_coverage": true,
+    "import_graph_is_not_runtime_behavior": true,
+    "task_wording_must_not_choose_tools": true,
+    "unresolved_target_blocks_derivation": true
+  },
+  "contract": {
+    "command": "plw evidence-needs <task> <root> --target <file> --json",
+    "requires_grounded_target": true,
+    "outputs": [
+      "known",
+      "unknown",
+      "evidence_needed"
+    ],
+    "blocked_stage": "EVIDENCE_NEED_BLOCKED_TARGET_UNRESOLVED",
+    "derived_stage": "EVIDENCE_NEEDS_DERIVED",
+    "selects_PLW_capability": false,
+    "runtime_execution": false,
+    "source_mutation": false,
+    "truth_commit": false,
+    "work_reuses_same_graph_snapshot": true
+  },
+  "evidence_need_classes": [
+    "semantic implementation scope evidence",
+    "behavioral regression observation",
+    "requested postcondition observation",
+    "state ownership / transaction / idempotency evidence",
+    "concurrency ordering evidence",
+    "external dependency contract evidence",
+    "dependency-resolution completeness evidence"
+  ],
+  "final_proof_state": {
+    "public_plw_commands": 45,
+    "semantic_contracts": 45,
+    "operational_skill_modules": 30,
+    "experimental_fixture_count": 65,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E65",
+    "grounded_target_probe": true,
+    "unresolved_target_fail_closed_probe": true,
+    "reachable_test_not_coverage_probe": true,
+    "external_contract_gap_probe": true,
+    "state_idempotency_gap_probe": true,
+    "work_handoff_stops_at_evidence_needs": true,
+    "work_graph_reuse_probe": true,
+    "cli_probe": true,
+    "agent_read_only_probe": true,
+    "semantic_registry_full_coverage": true,
+    "root_skill_budget_bytes": 15360,
+    "external_network_required": false
+  },
+  "implementation": {
+    "core/evidence_needs.py": "sha256:3db9f297e5042ed332b5efae5390ab0baf3206abf08682bf54ef40d3c3c25082",
+    "core/semantic_affordance.py": "sha256:124a0605af09ddce1c2201d273ff3945ddfa65f5b3ec504f146c7a35c704c83e",
+    "hott_kernel.py": "sha256:762ea54614d91c200ce7e049c78cbe98404202b94c14fbb2d04b5eb1934aa196",
+    "plw_cli.py": "sha256:fcf047d41c58a04e149d711983cb0c48b2338b1178ebb3a5475a5e5a5535b00e",
+    "agent_tool.py": "sha256:dc0a3266baa7a330e253c691679f75e2aa7a7a9ae82c1a2f367dc28ad6a1b7bc",
+    "skills/evidence-need-derivation-workflow.md": "sha256:d471a3dfb17a6223078b09500b794e0cc997086d57428167bbfcfe476f898361",
+    "SKILL.md": "sha256:c4189a9425aadca4a09a5eadbdf3e9c88ccb7ae353c3a07c950ad88dd770242f",
+    "README.md": "sha256:b4111441c32a30b2197a644720e236d8832452926ece00055e1f673dc695f113",
+    "tools_schema_compact.json": "sha256:5d8b55f48341941d1c7f0ca814c89fd8f3ecc48e76d13c1a566ac82b352db62e",
+    "tools_schema.json": "sha256:9408a015c1e9327460a38a688069e18cf4702b2feb0f2a272d277deb52e2ba1e",
+    "experimental_fixture_check.py": "sha256:64699f801fafa74e4191ccf73100f62bb2493744e1021e673b491c9e2236933c",
+    "fixture_fast.py": "sha256:da915994219c59c86284d9281ca1669aab4b3d018f2210dd3acc22c6cfbaaaf7"
+  },
+  "next_target": {
+    "checkpoint": "F138.5",
+    "name": "Evidence-Driven Capability Selection",
+    "goal": "Match explicit unsatisfied evidence needs to capability contracts by expected information gain without routing from task keywords."
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "f141-postcondition-proof-assembly-v1",
+  "checkpoint": "F141",
+  "base_checkpoint": "F140",
+  "stable_baseline": "F85",
+  "status": "POSTCONDITION_PROOF_ASSEMBLY_ACTIVE",
+  "goal": "Freshly verify F139 execution-backed evidence and F140 coverage, then evaluate explicit scenario/check expectations under an exact change identity and candidate revision without promoting the result into source-mutation attestation, stable state, or truth.",
+  "contract": {
+    "command": "plw postcondition-proof <f139-binding.json> <f140-coverage.json> <obligations.json> <postcondition-spec.json> --current-revision REV --json",
+    "public_command_added": true,
+    "proof_states": [
+      "PROVEN",
+      "DISPROVEN",
+      "UNRESOLVED",
+      "CONFLICTING",
+      "STALE"
+    ],
+    "F139_binding_freshly_verified": true,
+    "F140_coverage_freshly_verified": true,
+    "exact_change_identity_required": true,
+    "candidate_revision_required": true,
+    "current_revision_is_caller_assertion_not_attestation": true,
+    "every_obligation_scenario_requires_expected_outcome": true,
+    "every_CHECK_OBSERVED_requires_expected_check_outcome": true,
+    "overall_PASS_can_hide_failed_critical_check": false,
+    "source_mutation_attested": false,
+    "stable_promoted": false,
+    "truth_committed": false
+  },
+  "final_proof_state": {
+    "public_plw_commands": 48,
+    "semantic_contracts": 48,
+    "operational_skill_modules": 34,
+    "experimental_fixture_count": 70,
+    "stable_fixture_count": 62,
+    "portable_integration_smoke_count": 2,
+    "self_host_remaining_debt": 31,
+    "self_host_recommended_local": 0
+  },
+  "validation_contract": {
+    "fixture": "E70",
+    "reference_checker": "postcondition_proof_reference_check.py",
+    "reference_tests": 14,
+    "proven_probe": true,
+    "disproven_probe": true,
+    "stale_revision_probe": true,
+    "missing_critical_check_expectation_probe": true,
+    "overall_pass_critical_check_fail_probe": true,
+    "tampered_F139_probe": true,
+    "tampered_F140_probe": true,
+    "proof_digest_tamper_probe": true,
+    "cli_agent_read_only_probe": true,
+    "external_network_required": false
+  },
+  "implementation": {
+    "fullstack/postcondition_proof.py": "sha256:2858587a6f587e1cf652b72bc4175a3b1664f574aaaf8fe81fd6c254735b558e",
+    "fullstack/__init__.py": "sha256:c2266c988a5f3b7cce4d3fdea3ead9f5b91d5cb3934fb3c5b4f80718f3d19242",
+    "core/semantic_affordance.py": "sha256:782efa33e2a4879f81d193605eb1a8bdc07a66560ce1e4904b890862ade50c14",
+    "plw_cli.py": "sha256:fc9331373de1edba94704e29647548a045e2bc8b0bdab37b48659806f12aeb07",
+    "agent_tool.py": "sha256:898d2100319fbd2853f7b77414ae355b6cf80890ad2f3c660b870276702a3f32",
+    "skills/postcondition-proof-assembly-workflow.md": "sha256:32361f54a0cb88d66df82d4f57a140d7a0d6c4203f14847b1aa5926c57fc850e",
+    "SKILL.md": "sha256:7f27e653fbb7fdc53d7ddb18d9de1fab3eb57e61290f7facf9c0e40fe98aeb6a",
+    "README.md": "sha256:c13c6b2682973ed7e4a8fc563eee667f1712889d9aa5b8c5d363303a4698a0aa",
+    "tools_schema_compact.json": "sha256:d9f44894edc17138226210372ee51bd02f95495d9e0f72f9adb515cb875efa63",
+    "tools_schema.json": "sha256:41d0c544a8340105148da49bb8ab186353d78b024c5e022bbfd8b7b0deb14a4b",
+    "postcondition_proof_reference_check.py": "sha256:15d89bab0691aa70b7239fc9f8326d14864c5dad2b85fc3f3be5e883c27776e0",
+    "experimental_fixture_check.py": "sha256:682e7a237a3662c0e0d34740ecdbcf907d016c5518852818e2ef67b473cad760",
+    "fixture_fast.py": "sha256:802f55ab673f6374140f5b302aa4972bf801d76d7c604f3cb2ccc16396ab3d02"
+  },
+  "next_target": {
+    "checkpoint": "F142",
+    "name": "Full-Stack Validated State",
+    "goal": "Compose topology, geometry, correspondence, behavior, and F141 postcondition proof as separate authorities into an explicit validated/rejected/unresolved/conflicting/stale state without graph merging or truth commit."
+  },
+  "current_packaging_overlay": {
+    "checkpoint": "F142",
+    "public_plw_commands": 49,
+    "operational_skill_module_count": 35,
+    "experimental_fixture_count": 71,
+    "F141_checkpoint_contract_retained": true,
+    "F141_cross_checkpoint_fingerprints_are_historical": true,
+    "F142_full_stack_validated_state_is_current_package": true,
+    "full_stack_validated_state_owned_by_f142": true,
+    "external_corpus_modified_by_F142": false
+  }
+}
