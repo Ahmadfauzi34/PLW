@@ -1,0 +1,37 @@
+name: Export operation invocation source
+
+on:
+  push:
+    branches:
+      - operation-invocation-admission-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack verified runtime source
+        run: bash scripts/unpack_runtime_source.sh
+      - name: Verify admission reference
+        run: python scripts/check_operation_invocation_admission.py
+      - name: Export exact admission source
+        run: |
+          mkdir -p artifacts/operation-invocation/core artifacts/operation-invocation/skills artifacts/operation-invocation/scripts
+          cp plw_cli.py artifacts/operation-invocation/
+          cp core/operation_plan.py core/operation_invocation_admission.py core/single_use_authority.py core/semantic_affordance.py artifacts/operation-invocation/core/
+          cp skills/operation-invocation-admission-workflow.md artifacts/operation-invocation/skills/
+          cp scripts/check_operation_invocation_admission.py scripts/smoke_operation_invocation_admission.sh artifacts/operation-invocation/scripts/
+          (
+            cd artifacts/operation-invocation
+            find . -type f ! -name SHA256SUMS.txt -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+            sha256sum --check SHA256SUMS.txt
+          )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operation-invocation-current-source
+          path: artifacts/operation-invocation
+          if-no-files-found: error
