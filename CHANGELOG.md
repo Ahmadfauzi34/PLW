@@ -4,6 +4,8 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ## Unreleased
 
+## 0.2.3 — 2026-09-24
+
 ### Changed
 
 - declarative operation plans now compile positional argv after `--`, reject
@@ -13,7 +15,9 @@ This file records user-facing changes in published PLW releases. Development wor
   with an explicit completeness marker;
 - rootless source extraction no longer attempts to restore archive ownership;
 - release gating now requires Chromium/CDP reproduction and a pinned Vite
-  target-first agent workflow against the built artifact.
+  target-first agent workflow against the built artifact;
+- Linux x86_64 binary builds use a digest-pinned manylinux2014 container with
+  GLIBC 2.17; CI executes the same artifact on GLIBC 2.17 and 2.31 before release.
 - repository governance and support documentation are being formalized for the post-0.2.1 development line.
 - boolean-guard candidates now bind to one exact source site instead of a whole-function greedy witness;
 - duplicate legacy candidate IDs receive distinct candidate-instance bindings and remain ambiguous when task evidence cannot distinguish them.
@@ -31,6 +35,14 @@ This file records user-facing changes in published PLW releases. Development wor
 - fail-closed ambiguity, exact source-symbol/path rationale, and standalone regression coverage.
 - a public read-only `candidate` semantic capability and `skills/candidate-selection-provenance-workflow.md`, so agents can discover why/when candidate identity evidence may be useful without exposing the internal mutation capability.
 - generic `plw-operation-contract-v1` reference records for `candidate.select.v1` and `candidate.capability-match.v1`, recoverable through `plw capability describe candidate --json`; compact agent orientation advertises only contract availability/count to keep planning metadata bounded.
+
+### Release validation
+
+- standalone executable, operation-plan and dirty snapshot smoke tests;
+- ELF bootloader GLIBC ceiling plus actual topology execution on CentOS 7
+  (GLIBC 2.17) and Ubuntu 20.04 (GLIBC 2.31);
+- required Chrome/CDP UI test and pinned Vite agent workflow;
+- target cleanliness and artifact SHA-256 checks.
 
 ### Authority
 
