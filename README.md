@@ -19,11 +19,22 @@ chmod +x plw-linux-x86_64
 sudo install plw-linux-x86_64 /usr/local/bin/plw
 ```
 
-Then verify that the standalone executable is ready:
+Check the embedded version and the portable interface:
 
 ```bash
-plw doctor /path/to/project
+plw --version
+plw doctor /path/to/project --json
 ```
+
+In `doctor`, `ready` means the portable interface and target root are usable.
+Check `readiness.stable_target_topology_ready` separately: stable source topology
+currently covers `.ts`, `.tsx`, `.js`, and `.jsx`. `readiness.action_readiness`
+is `NOT_ASSESSED`; doctor does not authorize an action.
+
+For `plw work`, `work_status: "ready"` means only that its bounded reference
+pack is ready. Read `readiness.action` and `readiness.task_postcondition` before
+interpreting any task status. `plw version --json` returns the version without
+requiring a target repository.
 
 For an agent encountering an unfamiliar repository, the official first-contact entrypoint is:
 

@@ -18,6 +18,10 @@ and pins those exact bytes with `PATCH_SHA256`. The build verifies the digest,
 dry-runs the patch, then applies it after the earlier ordered overlays. This
 format makes the current invocation and snapshot changes directly reviewable.
 
+The `readiness_version_v1` overlay follows the same readable, digest-pinned
+patch format and separates reference-pack readiness from target topology and
+action readiness. It also adds direct embedded version discovery.
+
 Candidate-selection updates must also bind exact source sites to the full
 discovery candidate-set digest. Internal candidate-capability matching may
 return `CAPABILITY_MATCHED`; it must not expose the mutation capability through
