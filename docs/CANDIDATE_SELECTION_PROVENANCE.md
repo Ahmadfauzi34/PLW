@@ -50,6 +50,37 @@ candidate instance. A missing or conflicting explicit path remains
 `UNRESOLVED`; the symbol does not override it. Symbol and path matching are
 case-sensitive.
 
+## Agent handoff
+
+The portable-agent surface registers `candidate` as a **read-only semantic
+capability**. This public capability means candidate identity/provenance is an
+available information source; it is not the internal mutation capability.
+
+Evidence-driven capability selection may project `candidate` for the
+machine-readable `semantic_scope` evidence class with coverage
+`CONDITIONAL_DISCOVERY`. Task text is still excluded from capability routing.
+The projection tells the agent what information `plw candidate select` can add,
+what it does not prove, whether it changes state, and which exact embedded skill
+to read before deciding whether to call it.
+
+```text
+candidate projected
+!= candidate selected
+!= internal capability matched
+!= authorization
+!= execution
+!= mutation
+```
+
+The agent may therefore discover the candidate-selection surface during normal
+`plw agent orient` reasoning without PLW automatically running candidate
+selection or choosing an action for the agent. `AMBIGUOUS` and `UNRESOLVED`
+remain valid outcomes and must not be guessed away.
+
+The internal bounded mutation contract ID
+`js_boolean_guard.strict_equality_string.temp_worktree.v1` remains absent from
+public `plw capability list` / `plw capability describe` discovery.
+
 ## Internal capability match
 
 `plw candidate capability-match` performs discovery, selection, then candidate
