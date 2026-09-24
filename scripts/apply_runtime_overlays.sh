@@ -67,3 +67,8 @@ apply_b64_overlay "candidate_agent_handoff_v1"
 grep -Fq '"candidate": _contract(' core/semantic_affordance.py
 grep -Fq '"capability": "candidate", "coverage": "CONDITIONAL_DISCOVERY"' core/capability_selection.py
 grep -Fq 'plw candidate select' skills/candidate-selection-provenance-workflow.md
+
+apply_b64_overlay "candidate_affordance_projection_v1"
+grep -Fq '"information_role": row.get("role")' hott_kernel.py
+grep -Fq '"expected_information_gain": list(row.get("expected_information_gain", []) or [])[:2]' hott_kernel.py
+grep -Fq '"information_role": row.get("information_role")' core/agent_communication.py
