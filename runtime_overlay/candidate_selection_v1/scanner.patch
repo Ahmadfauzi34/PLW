@@ -1,0 +1,180 @@
+--- a/core/simplification_analyzer.py
++++ b/core/simplification_analyzer.py
+@@ -676,41 +676,148 @@
+     return candidates
+ 
+ 
++def _js_boolean_guard_condition_facts(raw_condition: str) -> Dict[str, Any]:
++    """Return bounded facts for the strict-equality boolean-guard capability lane."""
++    condition = raw_condition.strip()
++    strict = re.fullmatch(
++        r"(?P<left>[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*)"
++        r"\s*(?P<op>===)\s*(?P<right>'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\")",
++        condition,
++        flags=re.S,
++    )
++    if not strict:
++        return {
++            "condition_operator": None,
++            "left_operand_class": None,
++            "right_operand_class": None,
++            "strict_equality_string_literal": False,
++        }
++    return {
++        "condition_operator": strict.group("op"),
++        "left_operand_class": "IDENT_OR_MEMBER_CHAIN_NO_OPTIONAL_CHAINING",
++        "right_operand_class": "STRING_LITERAL",
++        "strict_equality_string_literal": True,
++    }
++
++
+ def _js_boolean_guard_return_candidates(*, sources: List[Tuple[str, str, str]]) -> List[Dict[str, Any]]:
++    """Find exact local if/boolean-return sites inside conservative JS/TS owners.
++
++    V2 originally required the entire function body to be exactly the guard pair.
++    That made owner matching overly broad in real corpora. This scanner binds one
++    local site span while preserving the enclosing function only as owner context.
++    """
+     candidates: List[Dict[str, Any]] = []
+     for fn in _js_function_records(sources=sources):
++        source = fn["source"]
++        masked = fn["masked"]
+         body_start, body_end = fn["body_open"] + 1, fn["body_close"]
+-        body = fn["masked"][body_start:body_end]
+-        pattern = re.compile(
+-            r"^\s*if\s*\((?P<cond>[\s\S]+)\)\s*\{\s*return\s+(?P<a>true|false)\s*;?\s*\}"
+-            r"\s*return\s+(?P<b>true|false)\s*;?\s*$"
+-        )
+-        match = pattern.fullmatch(body)
+-        if not match or match.group("a") == match.group("b"):
+-            continue
+-        condition = match.group("cond").strip()
+-        if not condition or re.search(r"\b(?:yield|await)\b", condition):
+-            continue
+-        candidates.append(_candidate(
+-            identity={"file": fn["file"], "kind": "js_boolean_guard_return", "function": fn["name"], "inverse": match.group("a") == "false"},
+-            kind="js_boolean_guard_return", files=[fn["file"]], names=[fn["name"]],
+-            members=[_member(fn["file"], fn["name"], fn["line_start"], fn["line_end"], private=fn["private"])],
+-            estimated_loc=2,
+-            witness={
+-                "type": "js_boolean_guard_return_v2", "same_function": True,
+-                "condition_evaluated_once_before_and_after": True, "true_false_terminals_opposite": True,
+-                "await_and_yield_condition_excluded": True, "inverse": match.group("a") == "false",
+-                "authority": "bounded_js_structural_boolean_return_witness_only",
+-            },
+-            proof_rule="collapse an if/boolean-return pair only to an equivalent single boolean return that evaluates the original condition exactly once",
+-            validation=[
+-                "preserve condition evaluation count and short-circuit semantics", "preserve explicit boolean return type",
+-                "run affected TS/JS tests and type-check",
+-            ],
+-        ))
++        sites: List[Dict[str, Any]] = []
++        cursor = body_start
++        while cursor < body_end:
++            match = re.search(r"\bif\s*\(", masked[cursor:body_end])
++            if not match:
++                break
++            if_start = cursor + match.start()
++            cursor = if_start + max(2, len(match.group(0)))
++            # Nested function text belongs to its innermost owner, not this owner.
++            if _enclosing_js_function_name(masked, if_start) != fn["name"]:
++                continue
++            cond_open = masked.find("(", if_start, cursor + 1)
++            cond_close = _matching_js_delimiter(masked, cond_open, "(", ")")
++            if cond_close < 0 or cond_close >= body_end:
++                continue
++            then_open = _skip_js_space(masked, cond_close + 1)
++            if then_open >= body_end or masked[then_open] != "{":
++                continue
++            then_close = _matching_js_brace(masked, then_open)
++            if then_close < 0 or then_close >= body_end:
++                continue
++            then_body = masked[then_open + 1:then_close].strip()
++            first = re.fullmatch(r"return\s+(?P<value>true|false)\s*;?", then_body)
++            if not first:
++                continue
++            tail_start = _skip_js_space(masked, then_close + 1)
++            second = re.match(r"return\s+(?P<value>true|false)\s*;?", masked[tail_start:body_end])
++            if not second or second.group("value") == first.group("value"):
++                continue
++            site_end = tail_start + second.end()
++            # The second return must end as a statement, not prefix an identifier.
++            if site_end < body_end and (masked[site_end].isalnum() or masked[site_end] in "_$"):
++                continue
++            raw_condition = source[cond_open + 1:cond_close].strip()
++            if not raw_condition or re.search(r"\b(?:yield|await)\b", masked[cond_open + 1:cond_close]):
++                continue
++            span_bytes = source[if_start:site_end]
++            line_start = source.count("\n", 0, if_start) + 1
++            line_end = source.count("\n", 0, max(if_start, site_end - 1)) + 1
++            inverse = first.group("value") == "false"
++            facts = _js_boolean_guard_condition_facts(raw_condition)
++            sites.append({
++                "if_start": if_start,
++                "site_end": site_end,
++                "line_start": line_start,
++                "line_end": line_end,
++                "condition": raw_condition,
++                "condition_digest": _sha(raw_condition),
++                "source_span_digest": _sha(span_bytes),
++                "inverse": inverse,
++                "facts": facts,
++            })
++        for site in sites:
++            legacy_identity = {
++                "file": fn["file"], "kind": "js_boolean_guard_return",
++                "function": fn["name"], "inverse": site["inverse"],
++            }
++            identity = dict(legacy_identity)
++            # Preserve historical candidate IDs when one valid site exists in the
++            # owner; multiple local sites receive an explicit disambiguator.
++            if len(sites) > 1:
++                identity["site"] = site["source_span_digest"]
++            candidate_id = _sha(json.dumps(identity, sort_keys=True))
++            instance_identity = {
++                "candidate_id": candidate_id,
++                "file": fn["file"],
++                "line_start": site["line_start"],
++                "line_end": site["line_end"],
++                "source_span_digest": site["source_span_digest"],
++            }
++            candidate = _candidate(
++                identity=identity,
++                kind="js_boolean_guard_return", files=[fn["file"]], names=[fn["name"]],
++                members=[_member(fn["file"], fn["name"], site["line_start"], site["line_end"], private=fn["private"])],
++                estimated_loc=2,
++                witness={
++                    "type": "js_boolean_guard_return_v3_exact_span",
++                    "same_function": True,
++                    "local_site_exact_span": True,
++                    "owner_line_start": fn["line_start"],
++                    "owner_line_end": fn["line_end"],
++                    "condition_evaluated_once_before_and_after": True,
++                    "true_false_terminals_opposite": True,
++                    "await_and_yield_condition_excluded": True,
++                    "inverse": site["inverse"],
++                    "polarity": "inverse" if site["inverse"] else "positive",
++                    "condition_digest": site["condition_digest"],
++                    "source_span_digest": site["source_span_digest"],
++                    **site["facts"],
++                    "authority": "bounded_js_structural_boolean_return_witness_only",
++                },
++                proof_rule="collapse one exact local if/boolean-return site only to an equivalent single boolean return that evaluates the original condition exactly once",
++                validation=[
++                    "preserve condition evaluation count and short-circuit semantics",
++                    "preserve explicit boolean return type",
++                    "run affected TS/JS tests and type-check",
++                ],
++            )
++            candidate["candidate_instance_id"] = _sha(json.dumps(instance_identity, sort_keys=True))
++            candidate["owner_context"] = {
++                "file": fn["file"], "name": fn["name"],
++                "line_start": fn["line_start"], "line_end": fn["line_end"],
++            }
++            candidates.append(candidate)
+     return candidates
+ 
+-
+ def _js_terminal_expression_temporary_candidates(*, sources: List[Tuple[str, str, str]]) -> List[Dict[str, Any]]:
+     """Broaden terminal-temporary detection beyond literals without inferred-name traps."""
+     candidates: List[Dict[str, Any]] = []
