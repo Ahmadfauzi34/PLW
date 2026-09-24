@@ -45,6 +45,9 @@ jobs:
       - name: Candidate operation contract reference
         run: python scripts/check_candidate_operation_contract.py
 
+      - name: Operation invocation admission reference
+        run: python scripts/check_operation_invocation_admission.py
+
       - name: Shared-graph signature determinism
         run: python scripts/check_shared_graph_signature_determinism.py
 
@@ -90,6 +93,9 @@ jobs:
 
       - name: Standalone operation plan preflight smoke
         run: bash scripts/smoke_operation_plan.sh artifacts/plw-linux-x86_64
+
+      - name: Standalone operation invocation admission smoke
+        run: bash scripts/smoke_operation_invocation_admission.sh artifacts/plw-linux-x86_64
 
       - name: Standalone JS/TS simplification smoke
         run: bash scripts/smoke_simplify_js_ts.sh artifacts/plw-linux-x86_64
@@ -161,7 +167,7 @@ jobs:
             release/plw-linux-x86_64.sha256 \
             --target "$GITHUB_SHA" \
             --title "PLW $RELEASE_TAG" \
-            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, operation-contract and operation-plan preflight smoke, JS/TS/TSX/JSX simplification smoke, UI/browser smoke, target-cleanliness checks, and SHA-256 verification."
+            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, operation-contract, operation-plan preflight, operation-invocation admission smoke, JS/TS/TSX/JSX simplification smoke, UI/browser smoke, target-cleanliness checks, and SHA-256 verification."
 
   release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
