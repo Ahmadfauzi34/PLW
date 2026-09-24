@@ -16,6 +16,7 @@ from typing import Any, Dict, Tuple
 
 RULE = "js_boolean_guard_return"
 WITNESS_TYPE = "js_boolean_guard_return_v2"
+SITE_WITNESS_TYPE = "js_boolean_guard_return_v3"
 
 IDENT = r"[A-Za-z_$][A-Za-z0-9_$]*(?:\??\.[A-Za-z_$][A-Za-z0-9_$]*)*"
 STRING = r"(?:'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\")"
@@ -79,7 +80,8 @@ def _validate_candidate(candidate: Dict[str, Any]) -> Tuple[Dict[str, Any], bool
         raise PlanningError("candidate member/file mismatch")
 
     witness = candidate.get("semantic_witness", {}) or {}
-    if witness.get("type") != WITNESS_TYPE:
+    witness_type = witness.get("type")
+    if witness_type not in {WITNESS_TYPE, SITE_WITNESS_TYPE}:
         raise PlanningError("unexpected semantic witness type")
     required_true = (
         "same_function",
@@ -92,6 +94,29 @@ def _validate_candidate(candidate: Dict[str, Any]) -> Tuple[Dict[str, Any], bool
             raise PlanningError(f"semantic witness {key} must be true")
     if not isinstance(witness.get("inverse"), bool):
         raise PlanningError("semantic witness inverse must be boolean")
+
+    if witness_type == SITE_WITNESS_TYPE:
+        site = witness.get("source_site", {}) or {}
+        facts = witness.get("condition_facts", {}) or {}
+        if (
+            not isinstance(site.get("char_start"), int)
+            or not isinstance(site.get("char_end"), int)
+            or site["char_start"] < 0
+            or site["char_end"] <= site["char_start"]
+            or site.get("line_start") != member.get("line_start")
+            or site.get("line_end") != member.get("line_end")
+            or not str(site.get("matched_source_sha256", "")).startswith("sha256:")
+        ):
+            raise PlanningError("invalid exact source-site witness")
+        if (
+            facts.get("operator") not in {"===", "!==", "==", "!="}
+            or facts.get("right_operand_kind") != "STRING_LITERAL"
+            or facts.get("transformation") not in {"positive", "inverse"}
+            or facts.get("transformation")
+            != ("inverse" if witness["inverse"] else "positive")
+            or not str(facts.get("source_condition_sha256", "")).startswith("sha256:")
+        ):
+            raise PlanningError("invalid exact source-condition witness")
 
     line_start = int(member.get("line_start", 0) or 0)
     line_end = int(member.get("line_end", 0) or 0)
@@ -131,6 +156,30 @@ def build_plan(target_root: Path, candidate: Dict[str, Any]) -> Dict[str, Any]:
         source = before_bytes.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise PlanningError("source must be valid UTF-8") from exc
+
+    witness = candidate.get("semantic_witness", {}) or {}
+    witness_type = witness.get("type")
+    site = witness.get("source_site", {}) or {}
+    if witness_type == SITE_WITNESS_TYPE:
+        site_start = int(site["char_start"])
+        site_end = int(site["char_end"])
+        if site_end > len(source):
+            raise PlanningError("source-site witness exceeds source length")
+        if digest(source[site_start:site_end].encode("utf-8")) != site.get(
+            "matched_source_sha256"
+        ):
+            raise PlanningError("source-site witness digest mismatch")
+        instance_payload = {
+            "candidate_id": candidate.get("candidate_id"),
+            "source_site_sha256": site.get("matched_source_sha256"),
+            "source_char_start": site_start,
+            "source_char_end": site_end,
+        }
+        expected_instance = digest(
+            json.dumps(instance_payload, sort_keys=True).encode("utf-8")
+        )
+        if candidate.get("candidate_instance_id") != expected_instance:
+            raise PlanningError("candidate instance id mismatch")
 
     segment, segment_offset = _segment_for_member(source, member)
     matches = list(TERMINAL_PAIR_RE.finditer(segment))
@@ -176,6 +225,17 @@ def build_plan(target_root: Path, candidate: Dict[str, Any]) -> Dict[str, Any]:
 
     absolute_start = segment_offset + match.start()
     absolute_end = segment_offset + match.end()
+    if witness_type == SITE_WITNESS_TYPE:
+        if (absolute_start, absolute_end) != (
+            int(site["char_start"]),
+            int(site["char_end"]),
+        ):
+            raise PlanningError("planner span does not match exact candidate source site")
+        facts = witness.get("condition_facts", {}) or {}
+        if digest(condition.encode("utf-8")) != facts.get(
+            "source_condition_sha256"
+        ):
+            raise PlanningError("planner condition does not match candidate witness")
     planned_source = source[:absolute_start] + replacement + source[absolute_end:]
     planned_bytes = planned_source.encode("utf-8")
 
@@ -194,16 +254,27 @@ def build_plan(target_root: Path, candidate: Dict[str, Any]) -> Dict[str, Any]:
     if after_read != before_bytes:
         raise PlanningError("target source changed during dry-run planning")
 
+    plan_candidate = {
+        "candidate_id": candidate.get("candidate_id"),
+        "kind": candidate.get("kind"),
+        "source_path": rel,
+        "member_line_start": int(member["line_start"]),
+        "member_line_end": int(member["line_end"]),
+    }
+    if witness_type == SITE_WITNESS_TYPE:
+        plan_candidate.update(
+            {
+                "candidate_instance_id": candidate.get("candidate_instance_id"),
+                "source_site_sha256": site.get("matched_source_sha256"),
+                "source_char_start": int(site["char_start"]),
+                "source_char_end": int(site["char_end"]),
+            }
+        )
+
     return {
         "schema_version": "plw-js-ts-v2-boolean-guard-dry-run-plan-v1",
         "status": "DRY_RUN_REWRITE_PLAN_READY",
-        "candidate": {
-            "candidate_id": candidate.get("candidate_id"),
-            "kind": candidate.get("kind"),
-            "source_path": rel,
-            "member_line_start": int(member["line_start"]),
-            "member_line_end": int(member["line_end"]),
-        },
+        "candidate": plan_candidate,
         "match": {
             "transformation": transformation,
             "condition": condition,

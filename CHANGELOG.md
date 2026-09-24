@@ -7,6 +7,21 @@ This file records user-facing changes in published PLW releases. Development wor
 ### Changed
 
 - repository governance and support documentation are being formalized for the post-0.2.1 development line.
+- boolean-guard candidates now bind to one exact source site instead of a whole-function greedy witness;
+- duplicate legacy candidate IDs receive distinct candidate-instance bindings and remain ambiguous when task evidence cannot distinguish them.
+- shared-graph semantic-usage ordering is canonical across Python hash seeds, keeping discovery snapshots reproducible across processes.
+- exact-site v3 candidate witnesses can feed the bounded rewrite planner while preserving candidate-instance and source-span bindings;
+- selection, discovery, and internal capability digests can be verified through single-use authorization and postcondition receipt issuance.
+
+### Added
+
+- `plw candidate select` with revision, shared-graph, candidate-set, and selection digests;
+- `plw candidate capability-match` for read-only internal contract matching after resolved selection;
+- fail-closed ambiguity, exact source-symbol/path rationale, and standalone regression coverage.
+
+### Authority
+
+Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The bounded mutation capability remains outside public capability discovery.
 
 ## 0.2.1 — 2026-09-23
 

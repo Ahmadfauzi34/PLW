@@ -13,6 +13,15 @@ An overlay must:
 5. apply only to a freshly unpacked verified capsule;
 6. be covered by standalone binary smoke tests.
 
+Candidate-selection updates must also bind exact source sites to the full
+discovery candidate-set digest. Internal candidate-capability matching may
+return `CAPABILITY_MATCHED`; it must not expose the mutation capability through
+the public capability registry or grant authorization, execution, mutation,
+correctness, or evidence-acceptance authority.
+
+Shared-graph semantic-usage lists are sorted before hashing so candidate
+discovery snapshots remain reproducible across separate Python processes.
+
 Overlays are a transport/build mechanism only. They are never required beside the released `plw` executable and are never copied into target repositories.
 
 The long-term repository cleanup is to normalize the runtime source into ordinary browsable Git files after the binary contract is stable.

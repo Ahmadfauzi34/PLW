@@ -15,6 +15,21 @@ mkdir -p "$TMP/run" "$TMP/home" "$TMP/state" "$TMP/cache" "$TMP/target/src"
 cp "$BIN" "$TMP/run/plw"
 printf 'export const value = 1;\n' > "$TMP/target/src/value.ts"
 printf 'import { value } from "./value";\nconsole.log(value);\n' > "$TMP/target/src/main.ts"
+cat > "$TMP/target/src/guards.js" <<'EOF'
+function isSCSSMapItemNode(node) {
+  if (node.type === 'map-item') {
+    return true;
+  }
+  return false;
+}
+
+function isRefIdentifier(id) {
+  if (id.name === 'arguments') {
+    return false;
+  }
+  return true;
+}
+EOF
 
 cd "$TMP/run"
 export HOME="$TMP/home"
@@ -26,6 +41,9 @@ export XDG_CACHE_HOME="$TMP/cache"
 ./plw skill list --json > "$TMP/skills.json"
 ./plw skill show topology --json > "$TMP/skill-topology.json"
 ./plw agent orient "$TMP/target" --task "understand how main uses value" --json > "$TMP/orient.json"
+./plw candidate select "Explain why isSCSSMapItemNode is a bounded boolean guard candidate" "$TMP/target" --json > "$TMP/selection.json"
+./plw candidate capability-match "Explain why isSCSSMapItemNode is a bounded boolean guard candidate" "$TMP/target" --json > "$TMP/candidate-route.json"
+./plw candidate capability-match "Select one boolean guard with opposite boolean returns" "$TMP/target" --json > "$TMP/ambiguous-route.json"
 
 python - "$TMP" "$ROOT/VERSION" <<'PY'
 import json
@@ -39,6 +57,9 @@ caps = json.loads((root / "capabilities.json").read_text())
 skills = json.loads((root / "skills.json").read_text())
 skill = json.loads((root / "skill-topology.json").read_text())
 orient = json.loads((root / "orient.json").read_text())
+selection = json.loads((root / "selection.json").read_text())
+candidate_route = json.loads((root / "candidate-route.json").read_text())
+ambiguous_route = json.loads((root / "ambiguous-route.json").read_text())
 target = root / "target"
 
 if doctor.get("ready") is not True:
@@ -57,14 +78,28 @@ if surface.get("entrypoint") != "plw agent orient":
 authority = surface.get("authority", {})
 if any(authority.get(key) for key in ("execute_runtime", "mutate_source", "mutate_external_repository", "commit_truth")):
     raise SystemExit("agent orient unexpectedly grants authority")
+if selection.get("candidate_selection", {}).get("resolution") != "RESOLVED":
+    raise SystemExit("exact symbol task did not resolve one candidate")
+if candidate_route.get("candidate_capability_match", {}).get("status") != "CAPABILITY_MATCHED":
+    raise SystemExit("exact selected candidate did not match its internal capability")
+route_authority = candidate_route["candidate_capability_match"].get("authority", {})
+if any(route_authority.get(key) for key in ("authorization", "execution", "mutation", "correctness", "evidence_acceptance")):
+    raise SystemExit("candidate capability match unexpectedly grants authority")
+if ambiguous_route.get("candidate_selection", {}).get("resolution") != "AMBIGUOUS":
+    raise SystemExit("underspecified candidate task did not remain ambiguous")
+if ambiguous_route.get("candidate_capability_match", {}).get("status") != "CAPABILITY_NOT_MATCHED":
+    raise SystemExit("ambiguous candidate selection reached internal capability match")
+if "js_boolean_guard.strict_equality_string.temp_worktree.v1" in json.dumps(caps):
+    raise SystemExit("internal mutation capability leaked into public capability discovery")
 
 actual = sorted(str(p.relative_to(target)) for p in target.rglob("*") if p.is_file())
-if actual != ["src/main.ts", "src/value.ts"]:
+if actual != ["src/guards.js", "src/main.ts", "src/value.ts"]:
     raise SystemExit(f"target repository polluted: {actual}")
 
 print(
-    "PORTABLE_AGENT_BINARY_SMOKE: PASS "
+    "PORTABLE_AGENT_SMOKE: PASS "
     f"version={version} capabilities={caps['capability_count']} "
-    f"skills={skills['embedded_count']}/{skills['skill_count']}"
+    f"skills={skills['embedded_count']}/{skills['skill_count']} "
+    "candidate_selection=RESOLVED/AMBIGUOUS capability_match=read-only"
 )
 PY

@@ -48,7 +48,14 @@ Direct expert commands remain available:
 plw topology /path/to/project --json
 plw impact src/example.ts /path/to/project --json
 plw simplify /path/to/project --json
+plw candidate select "task with a candidate symbol or structural constraints" /path/to/project --json
+plw candidate capability-match "task with a candidate symbol or structural constraints" /path/to/project --json
 ```
+
+Candidate selection and internal candidate-capability matching are read-only
+provenance surfaces. They do not grant authorization or execution authority,
+and the bounded mutation capability remains outside public capability discovery.
+See [docs/CANDIDATE_SELECTION_PROVENANCE.md](docs/CANDIDATE_SELECTION_PROVENANCE.md).
 
 Portable-agent commands are discovery/orientation surfaces only. They do not grant runtime execution, source mutation, external-repository mutation, or truth authority.
 

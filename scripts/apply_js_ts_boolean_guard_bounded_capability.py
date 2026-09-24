@@ -286,6 +286,165 @@ def _assert_capability_authorization(
         raise CapabilityError("authorization capability contract digest mismatch")
 
 
+def _verify_candidate_provenance(
+    *,
+    root: Path,
+    provenance_path: Path,
+    plan: Mapping[str, Any],
+    authorization: Mapping[str, Any],
+) -> Dict[str, Any]:
+    from core.candidate_provenance import run_candidate_provenance
+
+    supplied = _load(provenance_path)
+    selection = supplied.get("candidate_selection", {}) or {}
+    route = supplied.get("candidate_capability_match", {}) or {}
+    snapshot = supplied.get("discovery_snapshot", {}) or {}
+    task = selection.get("task")
+    if not isinstance(task, str) or not task.strip():
+        raise CapabilityError("candidate provenance task is missing")
+
+    try:
+        current = run_candidate_provenance(
+            str(root), task, include_capability_match=True
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        raise CapabilityError(f"candidate provenance revalidation failed: {exc}") from exc
+    if _canonical_digest(current) != _canonical_digest(supplied):
+        raise CapabilityError("candidate provenance does not match current target discovery")
+    if selection.get("resolution") != "RESOLVED":
+        raise CapabilityError("candidate selection is not resolved")
+    if route.get("status") != "CAPABILITY_MATCHED":
+        raise CapabilityError("selected candidate has no exact internal capability match")
+    if route.get("matched_capability_id") != CAPABILITY_ID:
+        raise CapabilityError("candidate route selected a different capability")
+
+    selected_id = selection.get("selected_candidate_id")
+    selected_instance = selection.get("selected_candidate_instance_id")
+    selected_path = selection.get("selected_source_path")
+    candidate = (plan.get("candidate", {}) or {})
+    site = (route.get("match_facts", {}) or {}).get("source_site", {}) or {}
+    plan_bindings = {
+        "candidate_id": selected_id,
+        "candidate_instance_id": selected_instance,
+        "kind": selection.get("candidate_kind"),
+        "source_path": selected_path,
+        "source_site_sha256": site.get("matched_source_sha256"),
+        "source_char_start": site.get("char_start"),
+        "source_char_end": site.get("char_end"),
+    }
+    for key, expected in plan_bindings.items():
+        if candidate.get(key) != expected:
+            raise CapabilityError(f"dry-run plan is not bound to selected candidate: {key}")
+
+    discovery_digest = snapshot.get("discovery_snapshot_digest")
+    target_revision_info = snapshot.get("target_revision", {}) or {}
+    target_revision = target_revision_info.get("git_head")
+    target_tree = target_revision_info.get("git_tree")
+    if (
+        target_revision_info.get("working_tree_clean") is not True
+        or target_revision_info.get("working_tree_status_observed") is not True
+    ):
+        raise CapabilityError("candidate provenance target was not observed clean")
+    candidate_set_digest = (snapshot.get("candidate_set", {}) or {}).get(
+        "candidate_set_digest"
+    )
+    selection_digest = selection.get("candidate_selection_digest")
+    contract_digest = route.get("capability_contract_digest")
+    if (
+        not isinstance(target_revision, str)
+        or not target_revision
+        or route.get("discovery_snapshot_digest") != discovery_digest
+        or route.get("candidate_set_digest") != candidate_set_digest
+        or route.get("selected_candidate_id") != selected_id
+        or route.get("selected_candidate_instance_id") != selected_instance
+        or selection.get("discovery_snapshot_digest") != discovery_digest
+        or selection.get("candidate_set_digest") != candidate_set_digest
+    ):
+        raise CapabilityError("candidate provenance lineage fields disagree")
+
+    summary = {
+        "candidate_provenance_digest": _canonical_digest(supplied),
+        "candidate_task_digest": _digest_text(task),
+        "resolution": selection.get("resolution"),
+        "target_revision": target_revision,
+        "target_tree": target_tree,
+        "target_revision_digest": target_revision_info.get("target_revision_digest"),
+        "working_tree_status_digest": target_revision_info.get(
+            "working_tree_status_digest"
+        ),
+        "shared_graph_content_signature": snapshot.get(
+            "shared_graph_content_signature"
+        ),
+        "discovery_snapshot_digest": discovery_digest,
+        "candidate_set_digest": candidate_set_digest,
+        "candidate_selection_digest": selection_digest,
+        "selected_candidate_id": selected_id,
+        "selected_candidate_instance_id": selected_instance,
+        "selected_source_path": selected_path,
+        "selected_symbol": selection.get("selected_symbol"),
+        "candidate_kind": selection.get("candidate_kind"),
+        "selection_basis": selection.get("selection_basis", []),
+        "selection_basis_digest": _canonical_digest(
+            {"selection_basis": selection.get("selection_basis", [])}
+        ),
+        "selection_confidence_boundary": selection.get(
+            "selection_confidence_boundary"
+        ),
+        "rejected_alternative_count": len(
+            selection.get("rejected_alternatives", []) or []
+        ),
+        "rejected_alternatives_digest": _canonical_digest(
+            {"rejected_alternatives": selection.get("rejected_alternatives", []) or []}
+        ),
+        "matched_capability_id": route.get("matched_capability_id"),
+        "capability_contract_digest": contract_digest,
+        "source_site_sha256": site.get("matched_source_sha256"),
+        "source_char_start": site.get("char_start"),
+        "source_char_end": site.get("char_end"),
+    }
+    expected_authorization = {
+        "candidate_provenance_digest": summary["candidate_provenance_digest"],
+        "candidate_task_digest": summary["candidate_task_digest"],
+        "target_revision": target_revision,
+        "target_tree": target_tree,
+        "target_revision_digest": summary["target_revision_digest"],
+        "working_tree_status_digest": summary[
+            "working_tree_status_digest"
+        ],
+        "shared_graph_content_signature": summary[
+            "shared_graph_content_signature"
+        ],
+        "discovery_snapshot_digest": discovery_digest,
+        "candidate_set_digest": candidate_set_digest,
+        "candidate_selection_digest": selection_digest,
+        "selected_candidate_id": selected_id,
+        "selected_candidate_instance_id": selected_instance,
+        "selected_source_path": selected_path,
+        "selected_symbol": summary["selected_symbol"],
+        "candidate_kind": summary["candidate_kind"],
+        "selection_basis_digest": summary["selection_basis_digest"],
+        "selection_confidence_boundary": summary[
+            "selection_confidence_boundary"
+        ],
+        "rejected_alternative_count": summary["rejected_alternative_count"],
+        "rejected_alternatives_digest": summary[
+            "rejected_alternatives_digest"
+        ],
+        "source_site_sha256": summary["source_site_sha256"],
+        "source_char_start": summary["source_char_start"],
+        "source_char_end": summary["source_char_end"],
+        "matched_capability_id": summary["matched_capability_id"],
+        "candidate_capability_contract_digest": contract_digest,
+    }
+    auth_binding = authorization.get("binding", {}) or {}
+    for key, expected in expected_authorization.items():
+        if auth_binding.get(key) != expected:
+            raise CapabilityError(
+                f"authorization does not bind selected candidate provenance: {key}"
+            )
+    return summary
+
+
 def _assert_argv(name: str, argv: Any) -> list[str]:
     if not isinstance(argv, list) or not argv:
         raise CapabilityError(f"validation command must be argv: {name}")
@@ -377,6 +536,7 @@ def apply_bounded_capability(
     ledger_path: Path,
     timeout_seconds: int,
     allow_pending: bool,
+    candidate_provenance_path: Path | None = None,
 ) -> Dict[str, Any]:
     root = root.resolve()
     _assert_system_temp_target(root, disposable_parent)
@@ -391,6 +551,8 @@ def apply_bounded_capability(
         (ledger_path, "authorization consumption ledger"),
     ):
         _require_outside_target(root, path, label)
+    if candidate_provenance_path is not None:
+        _require_outside_target(root, candidate_provenance_path, "candidate provenance")
 
     contract = _load(capability_contract_path)
     plan = _load(plan_path)
@@ -406,6 +568,27 @@ def apply_bounded_capability(
         authorization,
         contract_digest=contract_digest,
     )
+    if candidate_provenance_path is not None:
+        candidate_provenance = _verify_candidate_provenance(
+            root=root,
+            provenance_path=candidate_provenance_path,
+            plan=plan,
+            authorization=authorization,
+        )
+    else:
+        auth_binding = authorization.get("binding", {}) or {}
+        if any(
+            key in auth_binding
+            for key in (
+                "candidate_provenance_digest",
+                "candidate_selection_digest",
+                "discovery_snapshot_digest",
+            )
+        ):
+            raise CapabilityError(
+                "authorization binds candidate provenance but no provenance artifact was supplied"
+            )
+        candidate_provenance = None
 
     baseline_results = _revalidate_baseline_before_write(
         root=root,
@@ -434,7 +617,7 @@ def apply_bounded_capability(
     if (primitive.get("postconditions", {}) or {}).get("validated") is not False:
         raise CapabilityError("mutation primitive must stop before postconditions")
 
-    return {
+    receipt = {
         "schema_version": "plw-js-ts-v2-bounded-mutation-capability-receipt-v1",
         "status": "BOUNDED_MUTATION_CAPABILITY_APPLIED",
         "capability_id": CAPABILITY_ID,
@@ -473,6 +656,9 @@ def apply_bounded_capability(
         },
         "next_gate": "TEMP_WORKTREE_POSTCONDITION_VALIDATION_REFERENCE",
     }
+    if candidate_provenance is not None:
+        receipt["candidate_provenance"] = candidate_provenance
+    return receipt
 
 
 def main() -> int:
@@ -487,6 +673,7 @@ def main() -> int:
     parser.add_argument("--authorization", required=True)
     parser.add_argument("--disposable-boundary", required=True)
     parser.add_argument("--consumption-ledger", required=True)
+    parser.add_argument("--candidate-provenance")
     parser.add_argument("--output", required=True)
     parser.add_argument("--timeout-seconds", type=int, default=120)
     parser.add_argument("--allow-bounded-mutation", action="store_true")
@@ -518,6 +705,11 @@ def main() -> int:
             ledger_path=Path(args.consumption_ledger).resolve(),
             timeout_seconds=args.timeout_seconds,
             allow_pending=args.allow_pending_implementation,
+            candidate_provenance_path=(
+                Path(args.candidate_provenance).resolve()
+                if args.candidate_provenance
+                else None
+            ),
         )
     except (CapabilityError, json.JSONDecodeError) as exc:
         print(

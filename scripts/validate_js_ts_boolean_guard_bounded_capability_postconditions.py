@@ -142,6 +142,91 @@ def _bind_capability_receipt(
     if auth_binding.get("capability_contract_digest") != contract_digest:
         raise IntegrationError("authorization capability contract digest mismatch")
 
+    candidate_provenance = capability.get("candidate_provenance")
+    provenance_auth_keys = (
+        "candidate_provenance_digest",
+        "candidate_selection_digest",
+        "discovery_snapshot_digest",
+    )
+    if candidate_provenance is None and any(
+        key in auth_binding for key in provenance_auth_keys
+    ):
+        raise IntegrationError(
+            "authorization binds candidate provenance but capability receipt omitted it"
+        )
+    if candidate_provenance is not None:
+        if not isinstance(candidate_provenance, dict):
+            raise IntegrationError("candidate provenance receipt must be an object")
+        if candidate_provenance.get("resolution") != "RESOLVED":
+            raise IntegrationError("candidate provenance is not resolved")
+        if candidate_provenance.get("matched_capability_id") != CAPABILITY_ID:
+            raise IntegrationError("candidate provenance capability id mismatch")
+        expected_candidate_auth = {
+            "candidate_provenance_digest": candidate_provenance.get(
+                "candidate_provenance_digest"
+            ),
+            "candidate_task_digest": candidate_provenance.get(
+                "candidate_task_digest"
+            ),
+            "target_revision": candidate_provenance.get("target_revision"),
+            "target_tree": candidate_provenance.get("target_tree"),
+            "target_revision_digest": candidate_provenance.get(
+                "target_revision_digest"
+            ),
+            "working_tree_status_digest": candidate_provenance.get(
+                "working_tree_status_digest"
+            ),
+            "shared_graph_content_signature": candidate_provenance.get(
+                "shared_graph_content_signature"
+            ),
+            "discovery_snapshot_digest": candidate_provenance.get(
+                "discovery_snapshot_digest"
+            ),
+            "candidate_set_digest": candidate_provenance.get(
+                "candidate_set_digest"
+            ),
+            "candidate_selection_digest": candidate_provenance.get(
+                "candidate_selection_digest"
+            ),
+            "selected_candidate_id": candidate_provenance.get(
+                "selected_candidate_id"
+            ),
+            "selected_candidate_instance_id": candidate_provenance.get(
+                "selected_candidate_instance_id"
+            ),
+            "selected_source_path": candidate_provenance.get(
+                "selected_source_path"
+            ),
+            "selected_symbol": candidate_provenance.get("selected_symbol"),
+            "candidate_kind": candidate_provenance.get("candidate_kind"),
+            "selection_basis_digest": candidate_provenance.get(
+                "selection_basis_digest"
+            ),
+            "selection_confidence_boundary": candidate_provenance.get(
+                "selection_confidence_boundary"
+            ),
+            "rejected_alternative_count": candidate_provenance.get(
+                "rejected_alternative_count"
+            ),
+            "rejected_alternatives_digest": candidate_provenance.get(
+                "rejected_alternatives_digest"
+            ),
+            "source_site_sha256": candidate_provenance.get("source_site_sha256"),
+            "source_char_start": candidate_provenance.get("source_char_start"),
+            "source_char_end": candidate_provenance.get("source_char_end"),
+            "matched_capability_id": candidate_provenance.get(
+                "matched_capability_id"
+            ),
+            "candidate_capability_contract_digest": candidate_provenance.get(
+                "capability_contract_digest"
+            ),
+        }
+        for key, expected in expected_candidate_auth.items():
+            if expected is None or auth_binding.get(key) != expected:
+                raise IntegrationError(
+                    f"authorization candidate-provenance binding mismatch: {key}"
+                )
+
     primitive_wrapper = capability.get("primitive", {}) or {}
     if primitive_wrapper.get("status") != "TEMP_WORKTREE_APPLIED":
         raise IntegrationError("capability did not retain an applied primitive")
@@ -152,6 +237,37 @@ def _bind_capability_receipt(
         raise IntegrationError("unexpected embedded primitive receipt schema")
     if primitive.get("status") != "TEMP_WORKTREE_APPLIED":
         raise IntegrationError("embedded primitive is not TEMP_WORKTREE_APPLIED")
+    if candidate_provenance is not None:
+        plan_candidate = (_load(plan_path).get("candidate", {}) or {})
+        primitive_candidate = primitive.get("candidate", {}) or {}
+        primitive_target = primitive.get("target", {}) or {}
+        if primitive_candidate.get("candidate_id") != candidate_provenance.get(
+            "selected_candidate_id"
+        ):
+            raise IntegrationError("primitive candidate id does not match provenance")
+        if primitive_target.get("source_path") != candidate_provenance.get(
+            "selected_source_path"
+        ):
+            raise IntegrationError("primitive source path does not match provenance")
+        if primitive_target.get("revision") != candidate_provenance.get(
+            "target_revision"
+        ):
+            raise IntegrationError("primitive revision does not match provenance")
+        for key, expected in {
+            "candidate_id": candidate_provenance.get("selected_candidate_id"),
+            "candidate_instance_id": candidate_provenance.get(
+                "selected_candidate_instance_id"
+            ),
+            "kind": candidate_provenance.get("candidate_kind"),
+            "source_path": candidate_provenance.get("selected_source_path"),
+            "source_site_sha256": candidate_provenance.get("source_site_sha256"),
+            "source_char_start": candidate_provenance.get("source_char_start"),
+            "source_char_end": candidate_provenance.get("source_char_end"),
+        }.items():
+            if plan_candidate.get(key) != expected:
+                raise IntegrationError(
+                    f"plan candidate does not match provenance: {key}"
+                )
     expected_canonical = primitive_wrapper.get("canonical_receipt_digest")
     actual_canonical = _canonical_digest(primitive)
     if expected_canonical != actual_canonical:
@@ -180,6 +296,7 @@ def _bind_capability_receipt(
         "contract_digest": contract_digest,
         "capability_receipt_digest": _digest_file(capability_receipt_path),
         "primitive_canonical_digest": actual_canonical,
+        "candidate_provenance": candidate_provenance,
     }
 
 
@@ -230,6 +347,81 @@ def validate_bounded_capability_postconditions(
             validation_spec_path=validation_spec_path,
             timeout_seconds=timeout_seconds,
         )
+        candidate_provenance = bound.get("candidate_provenance")
+        if isinstance(candidate_provenance, dict):
+            validation_bindings = validation.setdefault("bindings", {})
+            validation_bindings.update(
+                {
+                    "candidate_provenance_digest": candidate_provenance[
+                        "candidate_provenance_digest"
+                    ],
+                    "candidate_task_digest": candidate_provenance[
+                        "candidate_task_digest"
+                    ],
+                    "candidate_target_revision": candidate_provenance[
+                        "target_revision"
+                    ],
+                    "candidate_target_tree": candidate_provenance[
+                        "target_tree"
+                    ],
+                    "candidate_target_revision_digest": candidate_provenance[
+                        "target_revision_digest"
+                    ],
+                    "candidate_working_tree_status_digest": candidate_provenance[
+                        "working_tree_status_digest"
+                    ],
+                    "candidate_shared_graph_content_signature": candidate_provenance[
+                        "shared_graph_content_signature"
+                    ],
+                    "discovery_snapshot_digest": candidate_provenance[
+                        "discovery_snapshot_digest"
+                    ],
+                    "candidate_set_digest": candidate_provenance[
+                        "candidate_set_digest"
+                    ],
+                    "candidate_selection_digest": candidate_provenance[
+                        "candidate_selection_digest"
+                    ],
+                    "selected_candidate_id": candidate_provenance[
+                        "selected_candidate_id"
+                    ],
+                    "selected_candidate_instance_id": candidate_provenance[
+                        "selected_candidate_instance_id"
+                    ],
+                    "selected_source_path": candidate_provenance[
+                        "selected_source_path"
+                    ],
+                    "selected_symbol": candidate_provenance["selected_symbol"],
+                    "candidate_kind": candidate_provenance["candidate_kind"],
+                    "selection_basis_digest": candidate_provenance[
+                        "selection_basis_digest"
+                    ],
+                    "selection_confidence_boundary": candidate_provenance[
+                        "selection_confidence_boundary"
+                    ],
+                    "rejected_alternative_count": candidate_provenance[
+                        "rejected_alternative_count"
+                    ],
+                    "rejected_alternatives_digest": candidate_provenance[
+                        "rejected_alternatives_digest"
+                    ],
+                    "source_site_sha256": candidate_provenance[
+                        "source_site_sha256"
+                    ],
+                    "source_char_start": candidate_provenance[
+                        "source_char_start"
+                    ],
+                    "source_char_end": candidate_provenance[
+                        "source_char_end"
+                    ],
+                    "matched_capability_id": candidate_provenance[
+                        "matched_capability_id"
+                    ],
+                    "candidate_capability_contract_digest": candidate_provenance[
+                        "capability_contract_digest"
+                    ],
+                }
+            )
         status = (
             "BOUNDED_MUTATION_CAPABILITY_POSTCONDITIONS_VALIDATED"
             if validation.get("status") == "POSTCONDITIONS_VALIDATED"
@@ -252,6 +444,7 @@ def validate_bounded_capability_postconditions(
                     validation
                 ),
             },
+            "candidate_provenance": candidate_provenance,
             "postcondition_validation": validation,
             "postconditions": {
                 "validated": status
