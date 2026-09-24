@@ -11,8 +11,9 @@ if [[ ! -f plw_cli.py ]]; then
   exit 2
 fi
 
-python -m pip install --upgrade pip
-python -m pip install "pyinstaller>=6.10,<7"
+BUILD_PYTHON="${PLW_BUILD_PYTHON:-python}"
+"$BUILD_PYTHON" -m pip install --upgrade pip
+"$BUILD_PYTHON" -m pip install "pyinstaller>=6.10,<7"
 
 rm -rf build dist
 rm -f plw.spec
@@ -25,7 +26,7 @@ if [[ -f VERSION ]]; then
   ARGS+=(--add-data "VERSION:.")
 fi
 
-python -m PyInstaller "${ARGS[@]}" plw_cli.py
+"$BUILD_PYTHON" -m PyInstaller "${ARGS[@]}" plw_cli.py
 
 mkdir -p artifacts
 cp dist/plw artifacts/plw-linux-x86_64
