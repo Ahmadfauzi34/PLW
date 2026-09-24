@@ -36,6 +36,9 @@ jobs:
       - name: Candidate selection provenance contract
         run: python scripts/check_js_ts_candidate_provenance.py
 
+      - name: Candidate selection agent handoff contract
+        run: python scripts/check_candidate_selection_agent_handoff.py
+
       - name: Shared-graph signature determinism
         run: python scripts/check_shared_graph_signature_determinism.py
 
