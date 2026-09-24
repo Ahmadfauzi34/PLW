@@ -1,6 +1,6 @@
 --- a/core/simplification_analyzer.py
 +++ b/core/simplification_analyzer.py
-@@ -676,41 +676,148 @@
+@@ -676,41 +676,154 @@
      return candidates
  
  
@@ -117,6 +117,8 @@
 +                "condition": raw_condition,
 +                "condition_digest": _sha(raw_condition),
 +                "source_span_digest": _sha(span_bytes),
++                "source_span_start_offset": if_start,
++                "source_span_end_offset": site_end,
 +                "inverse": inverse,
 +                "facts": facts,
 +            })
@@ -136,6 +138,8 @@
 +                "file": fn["file"],
 +                "line_start": site["line_start"],
 +                "line_end": site["line_end"],
++                "source_span_start_offset": site["source_span_start_offset"],
++                "source_span_end_offset": site["source_span_end_offset"],
 +                "source_span_digest": site["source_span_digest"],
 +            }
 +            candidate = _candidate(
@@ -155,6 +159,8 @@
 +                    "inverse": site["inverse"],
 +                    "polarity": "inverse" if site["inverse"] else "positive",
 +                    "condition_digest": site["condition_digest"],
++                    "source_span_start_offset": site["source_span_start_offset"],
++                    "source_span_end_offset": site["source_span_end_offset"],
 +                    "source_span_digest": site["source_span_digest"],
 +                    **site["facts"],
 +                    "authority": "bounded_js_structural_boolean_return_witness_only",
