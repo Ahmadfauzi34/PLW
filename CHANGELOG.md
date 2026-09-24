@@ -12,16 +12,18 @@ This file records user-facing changes in published PLW releases. Development wor
 - shared-graph semantic-usage ordering is canonical across Python hash seeds, keeping discovery snapshots reproducible across processes.
 - exact-site v3 candidate witnesses can feed the bounded rewrite planner while preserving candidate-instance and source-span bindings;
 - selection, discovery, and internal capability digests can be verified through single-use authorization and postcondition receipt issuance.
+- portable-agent evidence-driven capability projection can now advertise read-only `candidate` identity discovery for `semantic_scope`, with explicit proof limits and an embedded skill handoff; task text remains excluded from capability routing.
 
 ### Added
 
 - `plw candidate select` with revision, shared-graph, candidate-set, and selection digests;
 - `plw candidate capability-match` for read-only internal contract matching after resolved selection;
 - fail-closed ambiguity, exact source-symbol/path rationale, and standalone regression coverage.
+- a public read-only `candidate` semantic capability and `skills/candidate-selection-provenance-workflow.md`, so agents can discover why/when candidate identity evidence may be useful without exposing the internal mutation capability.
 
 ### Authority
 
-Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The bounded mutation capability remains outside public capability discovery.
+Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The public `candidate` semantic handoff is descriptive/read-only and does not automatically run selection. The bounded mutation capability remains outside public capability discovery.
 
 ## 0.2.1 — 2026-09-23
 

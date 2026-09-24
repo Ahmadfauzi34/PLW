@@ -62,3 +62,8 @@ grep -q 'def cmd_candidate' plw_cli.py
 apply_b64_overlay "shared_graph_determinism_v1"
 grep -q 'return sorted(set(usages))' core/shared_graph.py
 grep -q 'semantic_usages.*sorted(set(resolved_edge_usages' core/shared_graph.py
+
+apply_b64_overlay "candidate_agent_handoff_v1"
+grep -Fq '"candidate": _contract(' core/semantic_affordance.py
+grep -Fq '"capability": "candidate", "coverage": "CONDITIONAL_DISCOVERY"' core/capability_selection.py
+grep -Fq 'plw candidate select' skills/candidate-selection-provenance-workflow.md
