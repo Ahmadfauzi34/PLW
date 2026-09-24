@@ -1,0 +1,31 @@
+name: Export operation contract source
+
+on:
+  push:
+    branches:
+      - operation-contract-reference-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack verified runtime source
+        run: bash scripts/unpack_runtime_source.sh
+      - name: Export exact files
+        run: |
+          mkdir -p artifacts/operation-contract/core
+          cp core/semantic_affordance.py artifacts/operation-contract/core/
+          cp core/capability_selection.py artifacts/operation-contract/core/
+          cp hott_kernel.py artifacts/operation-contract/
+          cp plw_cli.py artifacts/operation-contract/
+          sha256sum artifacts/operation-contract/core/* artifacts/operation-contract/*.py > artifacts/operation-contract/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operation-contract-current-source
+          path: artifacts/operation-contract
+          if-no-files-found: error
