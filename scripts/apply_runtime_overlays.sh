@@ -77,3 +77,7 @@ apply_b64_overlay "operation_contract_reference_v1"
 grep -Fq 'OPERATION_CONTRACT_SCHEMA_VERSION = "plw-operation-contract-v1"' core/semantic_affordance.py
 grep -Fq '"operation_contract_available": bool(contract.get("operation_contracts"))' core/capability_selection.py
 grep -Fq '"operation_contract_count": int(row.get("operation_contract_count", 0) or 0)' hott_kernel.py
+
+apply_b64_overlay "operation_plan_preflight_v1"
+grep -Fq 'PLAN_SCHEMA_VERSION = "plw-operation-plan-v1"' core/operation_plan.py
+grep -Fq 'RESOLUTION_SCHEMA_VERSION = "plw-operation-plan-resolution-v1"' core/operation_plan.py
