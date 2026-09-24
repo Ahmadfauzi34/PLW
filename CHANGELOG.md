@@ -13,6 +13,7 @@ This file records user-facing changes in published PLW releases. Development wor
 - exact-site v3 candidate witnesses can feed the bounded rewrite planner while preserving candidate-instance and source-span bindings;
 - selection, discovery, and internal capability digests can be verified through single-use authorization and postcondition receipt issuance.
 - portable-agent evidence-driven capability projection can now advertise read-only `candidate` identity discovery for `semantic_scope`, with explicit proof limits and an embedded skill handoff; task text remains excluded from capability routing.
+- compact agent capability projection now carries bounded technical concepts, information role, expected information gain, and proof limits so an agent can judge why a call may be useful before invoking it without reopening the prior context-bloat failure mode.
 
 ### Added
 
@@ -23,7 +24,7 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ### Authority
 
-Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The public `candidate` semantic handoff is descriptive/read-only and does not automatically run selection. The bounded mutation capability remains outside public capability discovery.
+Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The public `candidate` semantic handoff is descriptive/read-only and does not automatically run selection. Semantic affordance projection is information-only, bounded for context, and remains non-recommendatory. The bounded mutation capability remains outside public capability discovery.
 
 ## 0.2.1 — 2026-09-23
 
