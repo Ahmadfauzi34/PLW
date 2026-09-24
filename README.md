@@ -164,9 +164,11 @@ A release binary must pass from the **built executable**, not only from Python s
 7. standalone portable-agent smoke;
 8. standalone JS/TS/TSX/JSX simplification smoke;
 9. standalone UI static analysis;
-10. Chromium/CDP reproduction when available;
-11. target-repository pollution checks;
-12. SHA-256 verification before release publication.
+10. argv round-trip and dirty Git-visible byte binding from the built binary;
+11. required Chromium/CDP proof from a separate job;
+12. pinned Vite target-first agent flow consuming the same binary artifact;
+13. target-repository pollution checks;
+14. SHA-256 verification before release publication.
 
 Pull requests produce temporary Actions artifacts. On `main`, a final semantic version in `VERSION` publishes exactly one validated GitHub Release from the same CI run; `*-dev` versions do not publish. Tag-triggered release remains available as a fallback.
 

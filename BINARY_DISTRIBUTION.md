@@ -64,11 +64,15 @@ Required gates include:
 
 - verified capsule digest;
 - verified overlay digest and dry-run;
+- portable capsule extraction without archive-owner `chown`;
 - binary-safety source guard;
 - standalone topology/impact;
 - standalone `plw simplify` on TS/TSX/JS/JSX;
 - standalone UI static analysis;
-- Chromium/CDP reproduction when available;
+- reference argv round-trip and dirty Git-visible content binding from the
+  built executable;
+- required Chromium/CDP proof and a pinned Vite target-first agent workflow in
+  separate jobs consuming the exact built artifact;
 - target repository cleanliness;
 - executable SHA-256 verification.
 

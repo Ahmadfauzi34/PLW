@@ -22,7 +22,9 @@ if [[ "$ACTUAL" != "$EXPECTED" ]]; then
   exit 1
 fi
 
-tar -xzf "$CAPSULE" -C "$ROOT"
+# Archive uid/gid are transport metadata, not a build requirement. Rootless
+# builders may be unable to chown even when every archive byte is valid.
+tar --no-same-owner -xzf "$CAPSULE" -C "$ROOT"
 
 echo "RUNTIME_SOURCE_CAPSULE: PASS sha256:$ACTUAL"
 

@@ -1,0 +1,161 @@
+--- a/core/operation_plan.py
++++ b/core/operation_plan.py
+@@ -19 +19,7 @@
+-    payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
++    serialized = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
++    try:
++        payload = serialized.encode("utf-8")
++    except UnicodeEncodeError:
++        # An escaped JSON surrogate must still get a stable plan digest so the
++        # resolver can reject its positional value with a structured result.
++        payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("ascii")
+@@ -82,0 +89,19 @@
++        # POSIX argv cannot contain NUL. A string is not an invokable input
++        # merely because it satisfies the operation contract's JSON type.
++        if isinstance(value, str):
++            try:
++                value.encode("utf-8")
++            except UnicodeEncodeError:
++                errors.append({
++                    "code": "INPUT_VALUE_UNREPRESENTABLE_IN_ARGV",
++                    "input": name,
++                    "detail": "input is not valid UTF-8 process argument text",
++                })
++                continue
++            if "\x00" in value:
++                errors.append({
++                    "code": "INPUT_VALUE_UNREPRESENTABLE_IN_ARGV",
++                    "input": name,
++                    "detail": "NUL byte is not representable in a process argument",
++                })
++                continue
+@@ -86,0 +112,6 @@
++        json_flag = invocation.get("json_flag")
++        if isinstance(json_flag, str) and json_flag:
++            argv.append(json_flag)
++        # Keep every positional input as data, including -h and --json. The
++        # flag must precede the end-of-options delimiter for argparse.
++        argv.append("--")
+@@ -97,3 +127,0 @@
+-        json_flag = invocation.get("json_flag")
+-        if isinstance(json_flag, str) and json_flag:
+-            argv.append(json_flag)
+--- a/core/candidate_provenance.py
++++ b/core/candidate_provenance.py
+@@ -10,0 +11 @@
++import os
+@@ -11,0 +13 @@
++import stat
+@@ -72,0 +75,82 @@
++def _dirty_content_evidence(root: Path, status: Optional[str]) -> Dict[str, Any]:
++    """Bind Git-visible dirty paths to their worktree bytes, without following links."""
++    if status is None:
++        return {"dirty_content_digest": None, "dirty_content_complete": False, "dirty_path_count": None}
++    if not status:
++        return {"dirty_content_digest": _digest([]), "dirty_content_complete": True, "dirty_path_count": 0}
++
++    paths: set[bytes] = set()
++    try:
++        for command in (
++            ("diff", "HEAD", "--name-only", "-z", "--no-ext-diff"),
++            ("ls-files", "--others", "--exclude-standard", "-z"),
++        ):
++            proc = subprocess.run(
++                ["git", "-C", str(root), *command], check=False,
++                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=10,
++            )
++            if proc.returncode:
++                raise OSError("dirty path enumeration failed")
++            paths.update(path for path in proc.stdout.split(b"\0") if path)
++    except (OSError, subprocess.TimeoutExpired):
++        return {"dirty_content_digest": None, "dirty_content_complete": False, "dirty_path_count": None}
++
++    rows: List[Dict[str, Any]] = []
++    complete = True
++    for raw_path in sorted(paths):
++        row: Dict[str, Any] = {"path_hex": raw_path.hex()}
++        # Git normally emits relative paths. Refuse traversal if a repository
++        # adapter ever returns an unexpected name instead of reading outside it.
++        if raw_path.startswith(b"/") or b".." in raw_path.split(b"/"):
++            row["kind"] = "path_outside_root"
++            complete = False
++            rows.append(row)
++            continue
++        path = root / os.fsdecode(raw_path)
++        try:
++            before = path.lstat()
++            if stat.S_ISLNK(before.st_mode):
++                data = os.fsencode(os.readlink(path))
++                after = path.lstat()
++                stable = (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) == (
++                    after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns
++                )
++                row.update(kind="symlink", sha256=hashlib.sha256(data).hexdigest(), size=len(data), stable_during_read=stable)
++                complete = complete and stable
++            elif stat.S_ISREG(before.st_mode):
++                h = hashlib.sha256()
++                size = 0
++                # O_NOFOLLOW prevents a path swapped to an external symlink
++                # after lstat from redirecting the byte read outside the repo.
++                fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
++                with os.fdopen(fd, "rb") as stream:
++                    opened = os.fstat(stream.fileno())
++                    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
++                        h.update(chunk)
++                        size += len(chunk)
++                    after_read = os.fstat(stream.fileno())
++                after = path.lstat()
++                identity = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
++                stable = (
++                    stat.S_ISREG(opened.st_mode)
++                    and identity(before) == identity(opened) == identity(after_read) == identity(after)
++                    and size == after.st_size
++                )
++                row.update(kind="file", sha256=h.hexdigest(), size=size, stable_during_read=stable)
++                complete = complete and stable
++            else:
++                row["kind"] = "non_file_unbound"
++                complete = False
++        except FileNotFoundError:
++            row["kind"] = "missing"
++        except OSError:
++            row["kind"] = "unreadable"
++            complete = False
++        rows.append(row)
++    return {
++        "dirty_content_digest": _digest(rows),
++        "dirty_content_complete": complete,
++        "dirty_path_count": len(rows),
++    }
++
++
+@@ -90,0 +175 @@
++    dirty_content = _dirty_content_evidence(root, status)
+@@ -100,0 +186 @@
++        **dirty_content,
+--- a/plw_cli.py
++++ b/plw_cli.py
+@@ -4311 +4311 @@
+-            print(json.dumps(result, indent=2, ensure_ascii=False))
++            print(json.dumps(result, indent=2, ensure_ascii=True))
+@@ -4319 +4319 @@
+-        print(json.dumps(result, indent=2, ensure_ascii=False))
++        print(json.dumps(result, indent=2, ensure_ascii=True))
+--- a/skills/operation-plan-preflight-workflow.md
++++ b/skills/operation-plan-preflight-workflow.md
+@@ -39,0 +40,6 @@
++The compiled list places `--json` before `--`, then preserves all positional
++inputs after the delimiter. A task such as `-h` is therefore task data rather
++than a CLI help flag. NUL and invalid Unicode are rejected as unrepresentable
++in argv. The agent
++must still decide whether to invoke the operation and inspect its domain result.
++
+--- a/skills/candidate-selection-provenance-workflow.md
++++ b/skills/candidate-selection-provenance-workflow.md
+@@ -14,0 +15,6 @@
++For a Git working tree with dirty tracked or untracked paths, the revision also
++binds readable file bytes and symlink targets through `dirty_content_digest`.
++Inspect `dirty_content_complete`: a false value means some dirty path could not
++be bound. A downstream effectful path still requires a clean target and its
++own exact provenance and authorization checks.
++

@@ -36,6 +36,27 @@ apply_b64_overlay() {
   echo "RUNTIME_OVERLAY_${overlay_name}: PASS sha256:$actual"
 }
 
+apply_reviewable_overlay() {
+  local overlay_name="$1"
+  local overlay_dir="runtime_overlay/$overlay_name"
+  local patch_file="$overlay_dir/change.patch"
+  local manifest="$overlay_dir/PATCH_SHA256"
+  if [[ ! -f "$patch_file" || ! -f "$manifest" ]]; then
+    echo "reviewable overlay missing: $overlay_name" >&2
+    exit 2
+  fi
+  local expected actual
+  expected="$(awk '{print $1}' "$manifest")"
+  actual="$(sha256sum "$patch_file" | awk '{print $1}')"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "runtime overlay digest mismatch: $overlay_name" >&2
+    exit 1
+  fi
+  patch --dry-run --batch --forward -p1 < "$patch_file" >/dev/null
+  patch --batch --forward -p1 < "$patch_file" >/dev/null
+  echo "RUNTIME_OVERLAY_${overlay_name}: PASS sha256:$actual"
+}
+
 apply_b64_overlay "js_ts_v2"
 grep -q 'self-simplification-v14-js-structural-v2' core/simplification_analyzer.py
 grep -q 'python_ast+js_structural_v2' core/simplification_analyzer.py
@@ -80,8 +101,11 @@ grep -Fq '"operation_contract_count": int(row.get("operation_contract_count", 0)
 
 apply_b64_overlay "operation_plan_preflight_v1"
 apply_b64_overlay "operation_plan_preflight_repair_v1"
+apply_reviewable_overlay "invocation_snapshot_v1"
 grep -Fq 'PLAN_SCHEMA_VERSION = "plw-operation-plan-v1"' core/operation_plan.py
 grep -Fq 'RESOLUTION_SCHEMA_VERSION = "plw-operation-plan-resolution-v1"' core/operation_plan.py
+grep -Fq 'INPUT_VALUE_UNREPRESENTABLE_IN_ARGV' core/operation_plan.py
+grep -Fq 'dirty_content_digest' core/candidate_provenance.py
 python -m py_compile core/operation_plan.py
 python - <<'PY'
 from core.operation_plan import resolve_operation_plan

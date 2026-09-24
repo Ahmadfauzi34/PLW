@@ -13,6 +13,11 @@ An overlay must:
 5. apply only to a freshly unpacked verified capsule;
 6. be covered by standalone binary smoke tests.
 
+The `invocation_snapshot_v1` overlay keeps its patch in readable `change.patch`
+and pins those exact bytes with `PATCH_SHA256`. The build verifies the digest,
+dry-runs the patch, then applies it after the earlier ordered overlays. This
+format makes the current invocation and snapshot changes directly reviewable.
+
 Candidate-selection updates must also bind exact source sites to the full
 discovery candidate-set digest. Internal candidate-capability matching may
 return `CAPABILITY_MATCHED`; it must not expose the mutation capability through
