@@ -8,8 +8,8 @@ trap 'rm -rf "$TMP"' EXIT
 TARGET="$TMP/target"
 mkdir -p "$TARGET/src" "$TMP/home" "$TMP/state" "$TMP/cache"
 
-cat > "$TARGET/src/positive.js" <<'JS'
-export function positive(kind) {
+cat > "$TARGET/src/a.js" <<'JS'
+export function positiveGuard(kind) {
   const keep = 1;
   if (kind === "map") {
     return true;
@@ -18,8 +18,8 @@ export function positive(kind) {
 }
 JS
 
-cat > "$TARGET/src/inverse.ts" <<'TS'
-export function inverse(name) {
+cat > "$TARGET/src/b.ts" <<'TS'
+export function inverseGuard(name) {
   if (name === "arguments") {
     return false;
   }
@@ -40,7 +40,7 @@ run_plw() {
 POS_TASK='Find a boolean guard using === with string literal in positive form'
 INV_TASK='Find a boolean guard using === with string literal in inverse form'
 GENERIC_TASK='Review boolean guard candidates'
-CONFLICT_TASK='Review positive in src/inverse.ts'
+CONFLICT_TASK='Review symbol positiveGuard in src/b.ts'
 MISSING_TASK='Review boolean guard using === in src/missing.js'
 
 run_plw candidate select "$POS_TASK" "$TARGET" --json > "$TMP/positive-select.json"
@@ -68,8 +68,8 @@ conflict = load("conflict.json")
 missing = load("missing.json")
 
 assert pos["status"] == "RESOLVED", pos
-assert pos["selected_candidate"]["symbol"] == "positive", pos
-assert pos["selected_candidate"]["source_path"] == "src/positive.js", pos
+assert pos["selected_candidate"]["symbol"] == "positiveGuard", pos
+assert pos["selected_candidate"]["source_path"] == "src/a.js", pos
 assert pos["selected_candidate"]["semantic_witness"]["polarity"] == "positive", pos
 assert posm["status"] == "CAPABILITY_MATCHED", posm
 assert posm["selection"]["selection_digest"] == pos["selection_digest"], (posm, pos)
@@ -77,8 +77,8 @@ assert posm["authority"]["authorization_granted"] is False, posm
 assert posm["authority"]["mutation_granted"] is False, posm
 
 assert inv["status"] == "RESOLVED", inv
-assert inv["selected_candidate"]["symbol"] == "inverse", inv
-assert inv["selected_candidate"]["source_path"] == "src/inverse.ts", inv
+assert inv["selected_candidate"]["symbol"] == "inverseGuard", inv
+assert inv["selected_candidate"]["source_path"] == "src/b.ts", inv
 assert inv["selected_candidate"]["semantic_witness"]["polarity"] == "inverse", inv
 assert invm["status"] == "CAPABILITY_MATCHED", invm
 
