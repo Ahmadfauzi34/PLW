@@ -1,0 +1,360 @@
+--- /dev/null
++++ b/core/candidate_selection.py
+@@ -0,0 +1,358 @@
++"""Task-bound candidate selection and internal capability matching.
++
++Selection is read-only. It binds one task decision to one exact simplification
++candidate snapshot and never grants authorization, mutation, execution, or
++accepted-evidence authority.
++"""
++from __future__ import annotations
++
++import hashlib
++import json
++import re
++import subprocess
++from pathlib import Path
++from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
++
++from core.simplification_analyzer import analyze_simplification
++
++SCHEMA_VERSION = "plw-candidate-selection-provenance-v1"
++CAPABILITY_CONTRACT = {
++    "capability_id": "js_boolean_guard.strict_equality_string.temp_worktree.v1",
++    "kind": "js_boolean_guard_return",
++    "source_extensions": [".js", ".ts"],
++    "condition_operator": "===",
++    "left_operand_class": "IDENT_OR_MEMBER_CHAIN_NO_OPTIONAL_CHAINING",
++    "right_operand_class": "STRING_LITERAL",
++    "polarity": ["positive", "inverse"],
++    "public_discovery_registered": False,
++    "authority": {
++        "match_classification_only": True,
++        "authorization_granted": False,
++        "execution_granted": False,
++        "mutation_granted": False,
++        "correctness_proven": False,
++        "evidence_acceptance_granted": False,
++        "truth_commit": False,
++    },
++}
++
++
++def _sha_bytes(data: bytes) -> str:
++    return "sha256:" + hashlib.sha256(data).hexdigest()
++
++
++def _sha_json(value: Any) -> str:
++    data = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
++    return _sha_bytes(data)
++
++
++def _git(root: Path, *args: str) -> Optional[str]:
++    proc = subprocess.run(
++        ["git", "-C", str(root), *args],
++        check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++    )
++    if proc.returncode != 0:
++        return None
++    return proc.stdout.rstrip("\n")
++
++
++def _candidate_instance_id(candidate: Mapping[str, Any]) -> str:
++    value = candidate.get("candidate_instance_id")
++    if isinstance(value, str) and value.startswith("sha256:"):
++        return value
++    return _sha_json(candidate)
++
++
++def _canonical_candidates(candidates: Iterable[Mapping[str, Any]]) -> List[Dict[str, Any]]:
++    rows = [dict(row) for row in candidates]
++    rows.sort(key=lambda row: (_candidate_instance_id(row), str(row.get("candidate_id", ""))))
++    return rows
++
++
++def build_discovery_snapshot(root: str = ".") -> Dict[str, Any]:
++    root_path = Path(root).resolve()
++    analysis = analyze_simplification(str(root_path))
++    candidates = _canonical_candidates(analysis.get("candidates", []) or [])
++    status = _git(root_path, "status", "--porcelain=v1", "--untracked-files=all")
++    head = _git(root_path, "rev-parse", "HEAD")
++    tree = _git(root_path, "rev-parse", "HEAD^{tree}")
++    bridge = analysis.get("canonical_anatomy_bridge", {}) or {}
++    candidate_set_digest = _sha_json(candidates)
++    identity = {
++        "target_root": str(root_path),
++        "git_head": head,
++        "git_tree": tree,
++        "working_tree_clean": status == "" if status is not None else None,
++        "working_tree_status_digest": _sha_bytes((status or "").encode("utf-8")),
++        "shared_graph_content_signature": bridge.get("shared_graph_content_signature"),
++        "candidate_set_digest": candidate_set_digest,
++        "candidate_count": len(candidates),
++    }
++    return {
++        "schema_version": SCHEMA_VERSION,
++        "root": str(root_path),
++        "analysis": analysis,
++        "candidates": candidates,
++        "identity": identity,
++        "discovery_snapshot_digest": _sha_json(identity),
++    }
++
++
++def _explicit_path_mentions(task: str, candidates: Iterable[Mapping[str, Any]]) -> List[str]:
++    paths = sorted({str(path) for row in candidates for path in (row.get("files", []) or [])})
++    return [path for path in paths if path and path in task]
++
++
++def _explicit_symbol_mentions(task: str, candidates: Iterable[Mapping[str, Any]]) -> List[str]:
++    names = sorted({str(name) for row in candidates for name in (row.get("names", []) or []) if name})
++    hits: List[str] = []
++    for name in names:
++        if re.search(rf"(?<![A-Za-z0-9_$]){re.escape(name)}(?![A-Za-z0-9_$])", task):
++            hits.append(name)
++    return hits
++
++
++def _task_constraints(task: str) -> Dict[str, Any]:
++    lower = task.lower()
++    constraints: Dict[str, Any] = {}
++    if "boolean guard" in lower or "boolean-guard" in lower:
++        constraints["kind"] = "js_boolean_guard_return"
++    if "===" in task or "strict equality" in lower:
++        constraints["condition_operator"] = "==="
++    if "string literal" in lower:
++        constraints["right_operand_class"] = "STRING_LITERAL"
++    if "positive form" in lower or "positive polarity" in lower or re.search(r"\bpositive\b", lower):
++        constraints["polarity"] = "positive"
++    if "inverse form" in lower or "inverse polarity" in lower or re.search(r"\binverse\b", lower):
++        constraints["polarity"] = "inverse"
++    return constraints
++
++
++def _matches_constraints(row: Mapping[str, Any], constraints: Mapping[str, Any]) -> bool:
++    witness = row.get("semantic_witness", {}) or {}
++    for key, value in constraints.items():
++        if key == "kind":
++            actual = row.get("kind")
++        else:
++            actual = witness.get(key)
++        if actual != value:
++            return False
++    return True
++
++
++def _selection_from_snapshot(task: str, snapshot: Mapping[str, Any]) -> Dict[str, Any]:
++    candidates = list(snapshot.get("candidates", []) or [])
++    path_mentions = _explicit_path_mentions(task, candidates)
++    symbol_mentions = _explicit_symbol_mentions(task, candidates)
++    constraints = _task_constraints(task)
++    basis: List[Dict[str, Any]] = []
++    pool = candidates
++
++    if path_mentions:
++        path_pool = [row for row in pool if any(path in path_mentions for path in (row.get("files", []) or []))]
++        basis.append({"type": "exact_source_path", "values": path_mentions})
++        if not path_pool:
++            return _decision("UNRESOLVED", task, snapshot, candidates, [], basis, "explicit path matches no candidate")
++        pool = path_pool
++
++    if symbol_mentions:
++        symbol_pool = [row for row in candidates if any(name in symbol_mentions for name in (row.get("names", []) or []))]
++        basis.append({"type": "exact_symbol", "values": symbol_mentions})
++        if path_mentions:
++            intersection = [row for row in pool if row in symbol_pool]
++            if not intersection:
++                return _decision("UNRESOLVED", task, snapshot, candidates, [], basis, "explicit path and symbol identify different candidates")
++            pool = intersection
++        else:
++            pool = symbol_pool
++        if not pool:
++            return _decision("UNRESOLVED", task, snapshot, candidates, [], basis, "explicit symbol matches no candidate")
++
++    if not path_mentions and not symbol_mentions:
++        if len(constraints) < 2:
++            return _decision("AMBIGUOUS", task, snapshot, candidates, candidates, basis, "task lacks two independent structural constraints")
++        basis.append({"type": "structural_constraints", "constraints": constraints})
++        pool = [row for row in candidates if _matches_constraints(row, constraints)]
++        if not pool:
++            return _decision("UNRESOLVED", task, snapshot, candidates, [], basis, "structural constraints match no candidate")
++
++    if len(pool) != 1:
++        return _decision("AMBIGUOUS", task, snapshot, candidates, pool, basis, f"selection retains {len(pool)} candidate instances")
++    return _decision("RESOLVED", task, snapshot, candidates, pool, basis, "task evidence uniquely identifies one candidate instance")
++
++
++def _decision(status: str, task: str, snapshot: Mapping[str, Any], all_candidates: List[Mapping[str, Any]], pool: List[Mapping[str, Any]], basis: List[Dict[str, Any]], reason: str) -> Dict[str, Any]:
++    selected = pool[0] if status == "RESOLVED" and len(pool) == 1 else None
++    selected_instance = _candidate_instance_id(selected) if selected is not None else None
++    rejected = [
++        {
++            "candidate_id": row.get("candidate_id"),
++            "candidate_instance_id": _candidate_instance_id(row),
++            "kind": row.get("kind"),
++            "source_path": (row.get("files", []) or [None])[0],
++            "symbol": (row.get("names", []) or [None])[0],
++        }
++        for row in all_candidates
++        if selected_instance is None or _candidate_instance_id(row) != selected_instance
++    ]
++    decision_core = {
++        "task": task,
++        "status": status,
++        "discovery_snapshot_digest": snapshot.get("discovery_snapshot_digest"),
++        "candidate_set_digest": (snapshot.get("identity", {}) or {}).get("candidate_set_digest"),
++        "selection_basis": basis,
++        "reason": reason,
++        "selected_candidate_id": selected.get("candidate_id") if selected else None,
++        "selected_candidate_instance_id": selected_instance,
++    }
++    result: Dict[str, Any] = {
++        "schema_version": SCHEMA_VERSION,
++        **decision_core,
++        "selection_digest": _sha_json(decision_core),
++        "rejected_alternative_count": len(rejected),
++        "rejected_alternatives": rejected,
++        "authority": {
++            "selection_only": True,
++            "authorization_granted": False,
++            "execution_granted": False,
++            "mutation_granted": False,
++            "correctness_proven": False,
++            "evidence_acceptance_granted": False,
++            "truth_commit": False,
++        },
++    }
++    if selected:
++        member = (selected.get("members", []) or [{}])[0]
++        result["selected_candidate"] = {
++            "candidate_id": selected.get("candidate_id"),
++            "candidate_instance_id": selected_instance,
++            "source_path": (selected.get("files", []) or [None])[0],
++            "symbol": (selected.get("names", []) or [None])[0],
++            "kind": selected.get("kind"),
++            "line_start": member.get("line_start"),
++            "line_end": member.get("line_end"),
++            "semantic_witness": selected.get("semantic_witness", {}),
++        }
++    else:
++        result["remaining_candidate_count"] = len(pool)
++        result["remaining_candidates"] = [
++            {
++                "candidate_id": row.get("candidate_id"),
++                "candidate_instance_id": _candidate_instance_id(row),
++                "kind": row.get("kind"),
++                "source_path": (row.get("files", []) or [None])[0],
++                "symbol": (row.get("names", []) or [None])[0],
++            }
++            for row in pool
++        ]
++    return result
++
++
++def select_candidate(task: str, root: str = ".") -> Dict[str, Any]:
++    snapshot = build_discovery_snapshot(root)
++    return _selection_from_snapshot(task, snapshot)
++
++
++def match_internal_capability(task: str, root: str = ".") -> Dict[str, Any]:
++    root_path = Path(root).resolve()
++    snapshot = build_discovery_snapshot(str(root_path))
++    selection = _selection_from_snapshot(task, snapshot)
++    if selection.get("status") != "RESOLVED":
++        return {
++            "schema_version": SCHEMA_VERSION,
++            "status": "CAPABILITY_NOT_MATCHED",
++            "selection": selection,
++            "capability": None,
++            "authority": CAPABILITY_CONTRACT["authority"],
++        }
++
++    # Deterministically recompute selection from the same immutable snapshot.
++    confirmation = _selection_from_snapshot(task, snapshot)
++    if confirmation.get("selection_digest") != selection.get("selection_digest"):
++        return {
++            "schema_version": SCHEMA_VERSION,
++            "status": "CAPABILITY_MATCH_REJECTED",
++            "reason": "selection recomputation mismatch",
++            "selection": selection,
++            "authority": CAPABILITY_CONTRACT["authority"],
++        }
++
++    selected_id = selection["selected_candidate_instance_id"]
++    row = next(row for row in snapshot["candidates"] if _candidate_instance_id(row) == selected_id)
++    member = (row.get("members", []) or [{}])[0]
++    source_path = str((row.get("files", []) or [""])[0])
++    absolute = (root_path / source_path).resolve()
++    try:
++        absolute.relative_to(root_path)
++    except ValueError:
++        return _capability_rejected(selection, "selected source escapes target root")
++    if not absolute.is_file():
++        return _capability_rejected(selection, "selected source file missing")
++    lines = absolute.read_text(encoding="utf-8").splitlines(keepends=True)
++    start = int(member.get("line_start", 0) or 0)
++    end = int(member.get("line_end", 0) or 0)
++    if start < 1 or end < start or end > len(lines):
++        return _capability_rejected(selection, "selected source span is invalid")
++    span = "".join(lines[start - 1:end])
++    witness = row.get("semantic_witness", {}) or {}
++    if witness.get("source_span_digest") != _sha_bytes(span.encode("utf-8")):
++        return _capability_rejected(selection, "selected source span digest mismatch")
++
++    extension = absolute.suffix
++    checks = {
++        "kind": row.get("kind") == CAPABILITY_CONTRACT["kind"],
++        "source_extension": extension in CAPABILITY_CONTRACT["source_extensions"],
++        "condition_operator": witness.get("condition_operator") == CAPABILITY_CONTRACT["condition_operator"],
++        "left_operand_class": witness.get("left_operand_class") == CAPABILITY_CONTRACT["left_operand_class"],
++        "right_operand_class": witness.get("right_operand_class") == CAPABILITY_CONTRACT["right_operand_class"],
++        "polarity": witness.get("polarity") in CAPABILITY_CONTRACT["polarity"],
++        "source_span_digest": True,
++        "selection_recomputed_same_snapshot": True,
++    }
++    if not all(checks.values()):
++        return _capability_rejected(selection, "selected candidate falls outside internal capability contract", checks=checks)
++    contract_digest = _sha_json(CAPABILITY_CONTRACT)
++    match_core = {
++        "selection_digest": selection.get("selection_digest"),
++        "discovery_snapshot_digest": selection.get("discovery_snapshot_digest"),
++        "candidate_set_digest": selection.get("candidate_set_digest"),
++        "selected_candidate_id": selection.get("selected_candidate_id"),
++        "selected_candidate_instance_id": selection.get("selected_candidate_instance_id"),
++        "capability_id": CAPABILITY_CONTRACT["capability_id"],
++        "capability_contract_digest": contract_digest,
++    }
++    return {
++        "schema_version": SCHEMA_VERSION,
++        "status": "CAPABILITY_MATCHED",
++        "selection": selection,
++        "capability": {
++            "capability_id": CAPABILITY_CONTRACT["capability_id"],
++            "contract_digest": contract_digest,
++            "public_discovery_registered": False,
++            "checks": checks,
++        },
++        "match_digest": _sha_json(match_core),
++        "provenance": match_core,
++        "authority": CAPABILITY_CONTRACT["authority"],
++    }
++
++
++def _capability_rejected(selection: Mapping[str, Any], reason: str, *, checks: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
++    return {
++        "schema_version": SCHEMA_VERSION,
++        "status": "CAPABILITY_MATCH_REJECTED",
++        "reason": reason,
++        "selection": dict(selection),
++        "checks": dict(checks or {}),
++        "authority": CAPABILITY_CONTRACT["authority"],
++    }
++
++
++__all__ = [
++    "SCHEMA_VERSION",
++    "CAPABILITY_CONTRACT",
++    "build_discovery_snapshot",
++    "select_candidate",
++    "match_internal_capability",
++]
