@@ -15,12 +15,16 @@ mkdir -p "$TMP/run" "$TMP/home" "$TMP/state" "$TMP/cache" "$TMP/target/src"
 cp "$BIN" "$TMP/run/plw"
 cat > "$TMP/target/src/guards.js" <<'EOF'
 function isOne(node) {
-  if (node.type === 'one') { return true; }
+  if (node.type === 'one') {
+    return true;
+  }
   return false;
 }
 
 function isTwo(node) {
-  if (node.type === 'two') { return true; }
+  if (node.type === 'two') {
+    return true;
+  }
   return false;
 }
 EOF
