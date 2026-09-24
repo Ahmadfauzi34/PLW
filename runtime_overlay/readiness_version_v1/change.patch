@@ -1,0 +1,42 @@
+--- a/core/portable_agent.py
++++ b/core/portable_agent.py
+@@ -262,0 +263,7 @@
++        "readiness": {
++            "portable_surface_ready": ready,
++            "ready_scope": "portable_interface_and_target_root_only",
++            "stable_target_topology_ready": ready and bool(target_support["topology_ready"]),
++            "stable_target_topology_reason": target_support["reason"],
++            "action_readiness": "NOT_ASSESSED",
++        },
+--- a/hott_kernel.py
++++ b/hott_kernel.py
+@@ -3171,0 +3172,5 @@
++            "readiness": {
++                "reference_pack": "BLOCKED",
++                "action": "NOT_READY",
++                "task_postcondition": "UNPROVEN",
++            },
+@@ -3334,0 +3340,5 @@
++        "readiness": {
++            "reference_pack": "RECOVERY_REQUIRED" if recovery_required else "READY",
++            "action": agent_decision_frame.get("action_readiness", "NOT_ESTABLISHED"),
++            "task_postcondition": "UNPROVEN",
++        },
+--- a/plw_cli.py
++++ b/plw_cli.py
+@@ -6,0 +7 @@
++  plw --version | plw version [--json]
+@@ -153,0 +155 @@
++        build_version as portable_build_version,
+@@ -4540,0 +4543,11 @@
++    if len(sys.argv) >= 2 and sys.argv[1] in ("--version", "-V", "version"):
++        options = sys.argv[2:]
++        if options not in ([], ["--json"]):
++            print("[PLW Error] version accepts only --json", file=sys.stderr)
++            sys.exit(2)
++        version = portable_build_version()
++        if options == ["--json"]:
++            print(json.dumps({"schema_version": "plw-version-v1", "version": version}))
++        else:
++            print(f"plw {version}")
++        sys.exit(0 if version != "unknown" else 1)

@@ -102,6 +102,10 @@ grep -Fq '"operation_contract_count": int(row.get("operation_contract_count", 0)
 apply_b64_overlay "operation_plan_preflight_v1"
 apply_b64_overlay "operation_plan_preflight_repair_v1"
 apply_reviewable_overlay "invocation_snapshot_v1"
+apply_reviewable_overlay "readiness_version_v1"
+grep -Fq '"stable_target_topology_ready"' core/portable_agent.py
+grep -Fq '"task_postcondition": "UNPROVEN"' hott_kernel.py
+grep -Fq '"plw-version-v1"' plw_cli.py
 grep -Fq 'PLAN_SCHEMA_VERSION = "plw-operation-plan-v1"' core/operation_plan.py
 grep -Fq 'RESOLUTION_SCHEMA_VERSION = "plw-operation-plan-resolution-v1"' core/operation_plan.py
 grep -Fq 'INPUT_VALUE_UNREPRESENTABLE_IN_ARGV' core/operation_plan.py

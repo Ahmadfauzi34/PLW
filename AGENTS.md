@@ -9,6 +9,12 @@ plw doctor /path/to/repo
 plw agent orient /path/to/repo --task "<task>" --json
 ```
 
+In doctor output, `ready` covers the portable interface and target root;
+`readiness.stable_target_topology_ready` is a separate source support check.
+In `plw work`, `work_status: ready` describes the reference pack only. The
+`readiness.action` and `readiness.task_postcondition` fields must be read before
+any action or outcome claim. `plw --version` reports the embedded build version.
+
 The orientation order is:
 
 ```text

@@ -4,6 +4,14 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ## Unreleased
 
+### Changed
+
+- `plw doctor` and `plw work` expose separate portable-interface, stable
+  topology, reference-pack, action, and task-postcondition readiness fields;
+  their legacy `ready`/`work_status` values keep their bounded meaning;
+- `plw --version` and `plw version --json` report the embedded build version
+  without a target checkout.
+
 ## 0.2.3 — 2026-09-24
 
 ### Changed

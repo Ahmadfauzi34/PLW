@@ -94,6 +94,9 @@ jobs:
       - name: Standalone portable agent smoke
         run: bash scripts/smoke_portable_agent.sh artifacts/plw-linux-x86_64
 
+      - name: Standalone readiness and version smoke
+        run: bash scripts/smoke_readiness_version.sh artifacts/plw-linux-x86_64
+
       - name: Standalone candidate semantic affordance smoke
         run: bash scripts/smoke_candidate_semantic_affordance.sh artifacts/plw-linux-x86_64
 
