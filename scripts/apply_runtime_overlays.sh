@@ -52,3 +52,13 @@ apply_b64_overlay "portable_topology_scope_v1"
 grep -q 'def target_topology_support' core/portable_agent.py
 grep -q 'TARGET_TOPOLOGY_LANGUAGE_UNSUPPORTED' plw_cli.py
 grep -q 'experimental_python_promoted' core/portable_agent.py
+
+apply_b64_overlay "candidate_selection_v1"
+grep -q 'candidate-selection-provenance-v1' core/candidate_provenance.py
+grep -q 'INTERNAL_CANDIDATE_CAPABILITIES' core/candidate_provenance.py
+grep -q '_raw_source_site_facts' core/candidate_provenance.py
+grep -q 'def cmd_candidate' plw_cli.py
+
+apply_b64_overlay "shared_graph_determinism_v1"
+grep -q 'return sorted(set(usages))' core/shared_graph.py
+grep -q 'semantic_usages.*sorted(set(resolved_edge_usages' core/shared_graph.py
