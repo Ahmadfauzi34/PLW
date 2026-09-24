@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/core/candidate_selection.py
-@@ -0,0 +1,358 @@
+@@ -0,0 +1,369 @@
 +"""Task-bound candidate selection and internal capability matching.
 +
 +Selection is read-only. It binds one task decision to one exact simplification
@@ -102,8 +102,20 @@
 +
 +
 +def _explicit_path_mentions(task: str, candidates: Iterable[Mapping[str, Any]]) -> List[str]:
-+    paths = sorted({str(path) for row in candidates for path in (row.get("files", []) or [])})
-+    return [path for path in paths if path and path in task]
++    # Parse path-shaped task anchors independently from the candidate set so an
++    # explicit nonexistent/conflicting path cannot silently fall back to structural
++    # selection. Matching remains case-sensitive.
++    candidate_paths = {str(path) for row in candidates for path in (row.get("files", []) or [])}
++    tokens = re.findall(
++        r"(?<![A-Za-z0-9_$./-])([A-Za-z0-9_.$@+~-]+(?:/[A-Za-z0-9_.$@+~-]+)+\.(?:js|ts|jsx|tsx))(?![A-Za-z0-9_$./-])",
++        task,
++    )
++    direct = [path for path in sorted(candidate_paths) if path and path in task]
++    ordered: List[str] = []
++    for path in [*tokens, *direct]:
++        if path not in ordered:
++            ordered.append(path)
++    return ordered
 +
 +
 +def _explicit_symbol_mentions(task: str, candidates: Iterable[Mapping[str, Any]]) -> List[str]:
@@ -134,10 +146,7 @@
 +def _matches_constraints(row: Mapping[str, Any], constraints: Mapping[str, Any]) -> bool:
 +    witness = row.get("semantic_witness", {}) or {}
 +    for key, value in constraints.items():
-+        if key == "kind":
-+            actual = row.get("kind")
-+        else:
-+            actual = witness.get(key)
++        actual = row.get("kind") if key == "kind" else witness.get(key)
 +        if actual != value:
 +            return False
 +    return True
@@ -184,7 +193,15 @@
 +    return _decision("RESOLVED", task, snapshot, candidates, pool, basis, "task evidence uniquely identifies one candidate instance")
 +
 +
-+def _decision(status: str, task: str, snapshot: Mapping[str, Any], all_candidates: List[Mapping[str, Any]], pool: List[Mapping[str, Any]], basis: List[Dict[str, Any]], reason: str) -> Dict[str, Any]:
++def _decision(
++    status: str,
++    task: str,
++    snapshot: Mapping[str, Any],
++    all_candidates: List[Mapping[str, Any]],
++    pool: List[Mapping[str, Any]],
++    basis: List[Dict[str, Any]],
++    reason: str,
++) -> Dict[str, Any]:
 +    selected = pool[0] if status == "RESOLVED" and len(pool) == 1 else None
 +    selected_instance = _candidate_instance_id(selected) if selected is not None else None
 +    rejected = [
@@ -269,7 +286,6 @@
 +            "authority": CAPABILITY_CONTRACT["authority"],
 +        }
 +
-+    # Deterministically recompute selection from the same immutable snapshot.
 +    confirmation = _selection_from_snapshot(task, snapshot)
 +    if confirmation.get("selection_digest") != selection.get("selection_digest"):
 +        return {
@@ -282,7 +298,6 @@
 +
 +    selected_id = selection["selected_candidate_instance_id"]
 +    row = next(row for row in snapshot["candidates"] if _candidate_instance_id(row) == selected_id)
-+    member = (row.get("members", []) or [{}])[0]
 +    source_path = str((row.get("files", []) or [""])[0])
 +    absolute = (root_path / source_path).resolve()
 +    try:
@@ -291,13 +306,15 @@
 +        return _capability_rejected(selection, "selected source escapes target root")
 +    if not absolute.is_file():
 +        return _capability_rejected(selection, "selected source file missing")
-+    lines = absolute.read_text(encoding="utf-8").splitlines(keepends=True)
-+    start = int(member.get("line_start", 0) or 0)
-+    end = int(member.get("line_end", 0) or 0)
-+    if start < 1 or end < start or end > len(lines):
-+        return _capability_rejected(selection, "selected source span is invalid")
-+    span = "".join(lines[start - 1:end])
++    source_text = absolute.read_text(encoding="utf-8")
 +    witness = row.get("semantic_witness", {}) or {}
++    start_offset = witness.get("source_span_start_offset")
++    end_offset = witness.get("source_span_end_offset")
++    if not isinstance(start_offset, int) or not isinstance(end_offset, int):
++        return _capability_rejected(selection, "selected source span offsets missing")
++    if start_offset < 0 or end_offset <= start_offset or end_offset > len(source_text):
++        return _capability_rejected(selection, "selected source span offsets invalid")
++    span = source_text[start_offset:end_offset]
 +    if witness.get("source_span_digest") != _sha_bytes(span.encode("utf-8")):
 +        return _capability_rejected(selection, "selected source span digest mismatch")
 +
