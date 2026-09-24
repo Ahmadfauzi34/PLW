@@ -77,3 +77,44 @@ apply_b64_overlay "operation_contract_reference_v1"
 grep -Fq 'OPERATION_CONTRACT_SCHEMA_VERSION = "plw-operation-contract-v1"' core/semantic_affordance.py
 grep -Fq '"operation_contract_available": bool(contract.get("operation_contracts"))' core/capability_selection.py
 grep -Fq '"operation_contract_count": int(row.get("operation_contract_count", 0) or 0)' hott_kernel.py
+
+apply_b64_overlay "operation_plan_preflight_v1"
+apply_b64_overlay "operation_plan_preflight_repair_v1"
+grep -Fq 'PLAN_SCHEMA_VERSION = "plw-operation-plan-v1"' core/operation_plan.py
+grep -Fq 'RESOLUTION_SCHEMA_VERSION = "plw-operation-plan-resolution-v1"' core/operation_plan.py
+python -m py_compile core/operation_plan.py
+python - <<'PY'
+from core.operation_plan import resolve_operation_plan
+
+exact = resolve_operation_plan({
+    "schema_version": "plw-operation-plan-v1",
+    "capability": "candidate",
+    "operation_id": "candidate.select.v1",
+    "inputs": {"task": "Select isOne in src/guards.js", "root": "."},
+})
+assert exact["status"] == "RESOLVED", exact
+assert exact["reason"] == "EXACT_OPERATION_BINDING_RESOLVED", exact
+assert exact["next_gate"] == "AGENT_MAY_CHOOSE_INVOCATION", exact
+assert exact["authority"]["invocation_authorized"] is False, exact
+assert exact["executes_operation"] is False, exact
+
+ambiguous = resolve_operation_plan({
+    "schema_version": "plw-operation-plan-v1",
+    "capability": "candidate",
+    "inputs": {"task": "Select isOne in src/guards.js", "root": "."},
+})
+assert ambiguous["status"] == "AMBIGUOUS", ambiguous
+assert ambiguous["next_gate"] == "SELECT_EXACT_OPERATION_ID", ambiguous
+assert ambiguous["authority"]["invocation_authorized"] is False, ambiguous
+
+rejected = resolve_operation_plan({
+    "schema_version": "unsupported",
+    "capability": "candidate",
+    "inputs": {},
+})
+assert rejected["status"] == "REJECTED", rejected
+assert rejected["reason"] == "PLAN_SCHEMA_UNSUPPORTED", rejected
+assert rejected["authority"]["invocation_authorized"] is False, rejected
+
+print("RUNTIME_OPERATION_PLAN_PREFLIGHT: PASS")
+PY

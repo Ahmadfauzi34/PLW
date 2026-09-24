@@ -154,7 +154,7 @@ if state == "REPRODUCED":
 elif (
     state == "UNRESOLVED"
     and reason == "browser_execution_unresolved"
-    and "timed out waiting for Chromium CDP endpoint" in error
+    and "timed out" in error.lower()
 ):
     print("RETRYABLE_CDP_STARTUP")
 else:
