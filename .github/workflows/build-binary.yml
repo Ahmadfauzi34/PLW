@@ -42,6 +42,9 @@ jobs:
       - name: Candidate semantic affordance projection contract
         run: python scripts/check_candidate_semantic_affordance_projection.py
 
+      - name: Candidate operation contract reference
+        run: python scripts/check_candidate_operation_contract.py
+
       - name: Shared-graph signature determinism
         run: python scripts/check_shared_graph_signature_determinism.py
 
@@ -81,6 +84,9 @@ jobs:
 
       - name: Standalone candidate semantic affordance smoke
         run: bash scripts/smoke_candidate_semantic_affordance.sh artifacts/plw-linux-x86_64
+
+      - name: Standalone candidate operation contract smoke
+        run: bash scripts/smoke_candidate_operation_contract.sh artifacts/plw-linux-x86_64
 
       - name: Standalone JS/TS simplification smoke
         run: bash scripts/smoke_simplify_js_ts.sh artifacts/plw-linux-x86_64

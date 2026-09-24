@@ -72,3 +72,8 @@ apply_b64_overlay "candidate_affordance_projection_v1"
 grep -Fq '"information_role": row.get("role")' hott_kernel.py
 grep -Fq '"expected_information_gain": list(row.get("expected_information_gain", []) or [])[:2]' hott_kernel.py
 grep -Fq '"information_role": row.get("information_role")' core/agent_communication.py
+
+apply_b64_overlay "operation_contract_reference_v1"
+grep -Fq 'OPERATION_CONTRACT_SCHEMA_VERSION = "plw-operation-contract-v1"' core/semantic_affordance.py
+grep -Fq '"operation_contract_available": bool(contract.get("operation_contracts"))' core/capability_selection.py
+grep -Fq '"operation_contract_count": int(row.get("operation_contract_count", 0) or 0)' hott_kernel.py

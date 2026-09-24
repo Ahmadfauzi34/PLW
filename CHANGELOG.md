@@ -14,6 +14,7 @@ This file records user-facing changes in published PLW releases. Development wor
 - selection, discovery, and internal capability digests can be verified through single-use authorization and postcondition receipt issuance.
 - portable-agent evidence-driven capability projection can now advertise read-only `candidate` identity discovery for `semantic_scope`, with explicit proof limits and an embedded skill handoff; task text remains excluded from capability routing.
 - compact agent capability projection now carries bounded technical concepts, information role, expected information gain, and proof limits so an agent can judge why a call may be useful before invoking it without reopening the prior context-bloat failure mode.
+- candidate discovery now exposes machine-readable operation contracts that separate invocation inputs, domain result states, capacity boundaries, process-failure classes, and authority; normal `RESOLVED`, `AMBIGUOUS`, `UNRESOLVED`, and capability-match states remain domain outcomes rather than process failures.
 
 ### Added
 
@@ -21,10 +22,11 @@ This file records user-facing changes in published PLW releases. Development wor
 - `plw candidate capability-match` for read-only internal contract matching after resolved selection;
 - fail-closed ambiguity, exact source-symbol/path rationale, and standalone regression coverage.
 - a public read-only `candidate` semantic capability and `skills/candidate-selection-provenance-workflow.md`, so agents can discover why/when candidate identity evidence may be useful without exposing the internal mutation capability.
+- generic `plw-operation-contract-v1` reference records for `candidate.select.v1` and `candidate.capability-match.v1`, recoverable through `plw capability describe candidate --json`; compact agent orientation advertises only contract availability/count to keep planning metadata bounded.
 
 ### Authority
 
-Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The public `candidate` semantic handoff is descriptive/read-only and does not automatically run selection. Semantic affordance projection is information-only, bounded for context, and remains non-recommendatory. The bounded mutation capability remains outside public capability discovery.
+Candidate selection and internal capability matching grant no authorization, execution, mutation, correctness, or evidence-acceptance authority. The public `candidate` semantic handoff is descriptive/read-only and does not automatically run selection. Semantic affordance projection is information-only, bounded for context, and remains non-recommendatory. Operation contracts describe how an operation can be invoked and interpreted but do not authorize or automatically execute it. The bounded mutation capability remains outside public capability discovery.
 
 ## 0.2.1 — 2026-09-23
 
