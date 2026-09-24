@@ -6,6 +6,14 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ### Changed
 
+- declarative operation plans now compile positional argv after `--`, reject
+  NUL/invalid-Unicode inputs, and prove CLI round trips for flag-looking tasks
+  on the binary;
+- candidate revision snapshots bind Git-visible dirty file and symlink bytes
+  with an explicit completeness marker;
+- rootless source extraction no longer attempts to restore archive ownership;
+- release gating now requires Chromium/CDP reproduction and a pinned Vite
+  target-first agent workflow against the built artifact.
 - repository governance and support documentation are being formalized for the post-0.2.1 development line.
 - boolean-guard candidates now bind to one exact source site instead of a whole-function greedy witness;
 - duplicate legacy candidate IDs receive distinct candidate-instance bindings and remain ambiguous when task evidence cannot distinguish them.

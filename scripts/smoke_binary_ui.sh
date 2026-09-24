@@ -132,11 +132,17 @@ if diagnosis.get("summary", {}).get("bug_candidate_count", 0) < 1:
 print("STANDALONE_UI_STATIC_SMOKE: PASS")
 PY
 
-if command -v chromium >/dev/null 2>&1 ||    command -v chromium-browser >/dev/null 2>&1 ||    command -v google-chrome >/dev/null 2>&1 ||    command -v google-chrome-stable >/dev/null 2>&1; then
+browser_args=()
+if [[ -n "${PLW_BROWSER_EXECUTABLE:-}" ]]; then
+  browser_args=(--browser "$PLW_BROWSER_EXECUTABLE")
+fi
+
+if [[ -n "${PLW_BROWSER_EXECUTABLE:-}" ]] || command -v chromium >/dev/null 2>&1 ||    command -v chromium-browser >/dev/null 2>&1 ||    command -v google-chrome >/dev/null 2>&1 ||    command -v google-chrome-stable >/dev/null 2>&1; then
   for attempt in 1 2 3; do
     ./plw ui reproduce "$TMP/diagnosis.json" \
       --root "$TMP/project" \
       --html-file "$TMP/project/page.html" \
+      "${browser_args[@]}" \
       --json > "$TMP/reproduction.json"
 
     classification="$(python - "$TMP/reproduction.json" <<'PY'
@@ -193,6 +199,10 @@ if result.get("authority", {}).get("root_cause_proven") is not False:
 print("STANDALONE_UI_BROWSER_SMOKE: PASS")
 PY
 else
+  if [[ "${PLW_REQUIRE_BROWSER:-0}" == "1" ]]; then
+    echo "STANDALONE_UI_BROWSER_SMOKE: FAIL browser_required_but_not_found" >&2
+    exit 1
+  fi
   echo "STANDALONE_UI_BROWSER_SMOKE: SKIP browser_not_found"
 fi
 

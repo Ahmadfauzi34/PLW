@@ -15,9 +15,19 @@ The command records:
 
 - Git HEAD and tree identities when available;
 - clean/dirty working-tree state and a digest of the status output;
+- for dirty Git-visible tracked/untracked paths, a digest of regular-file bytes
+  or symlink targets, with `dirty_content_complete` and `dirty_path_count`;
 - the shared-graph content signature;
 - a digest over the complete canonical candidate set;
 - a discovery snapshot digest over those values.
+
+The status digest alone cannot distinguish two contents of the same dirty
+README path. `dirty_content_digest` closes that gap for readable regular files
+and symlinks without following symlinks outside the target. Deleted paths are
+represented as missing. Unsupported/unreadable paths mark
+`dirty_content_complete=false`; callers must preserve that uncertainty.
+Ignored files are outside Git-visible dirty path coverage. Effectful candidate
+execution still requires a clean target and independent authorization.
 
 Boolean-guard candidates bind to one exact `if`/boolean-return source span.
 The candidate member line span now names that local site, while the enclosing
@@ -111,6 +121,14 @@ states and normally return process exit code 0. In the current implementation,
 an empty task, zero-candidate target, or even a nonexistent root may therefore
 produce domain `UNRESOLVED`; callers must not misclassify that normal result as
 a transport/process failure.
+
+`plw operation-plan resolve` emits a reference argv with `--json` before the
+end-of-options delimiter `--`, followed by positional input values. Tasks such
+as `-h` or `--json` therefore reach the candidate operation as task data. NUL
+and invalid Unicode in positional input are rejected as unrepresentable in
+process argv. A plan
+being `RESOLVED` remains separate from selection's own domain result and
+does not authorize invocation.
 
 For `candidate.capability-match.v1`, a resolved exact contract match yields
 `CAPABILITY_MATCHED`; ambiguous, unresolved, or otherwise unmatched selection

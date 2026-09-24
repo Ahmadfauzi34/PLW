@@ -91,6 +91,9 @@ jobs:
       - name: Standalone operation plan preflight smoke
         run: bash scripts/smoke_operation_plan.sh artifacts/plw-linux-x86_64
 
+      - name: Standalone dirty revision byte binding smoke
+        run: bash scripts/smoke_dirty_snapshot.sh artifacts/plw-linux-x86_64
+
       - name: Standalone JS/TS simplification smoke
         run: bash scripts/smoke_simplify_js_ts.sh artifacts/plw-linux-x86_64
 
@@ -107,9 +110,60 @@ jobs:
             artifacts/plw-linux-x86_64.sha256
           if-no-files-found: error
 
+  browser-x86_64:
+    needs: linux-x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download validated binary
+        uses: actions/download-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: artifacts
+
+      - name: Run required Chromium/CDP proof
+        shell: bash
+        run: |
+          (cd artifacts && sha256sum --check plw-linux-x86_64.sha256)
+          chmod +x artifacts/plw-linux-x86_64
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          test -n "$chrome"
+          PLW_REQUIRE_BROWSER=1 PLW_BROWSER_EXECUTABLE="$chrome" \
+            bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
+
+  real-target-agent:
+    needs: linux-x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout PLW
+        uses: actions/checkout@v4
+
+      - name: Checkout pinned Vite target
+        uses: actions/checkout@v4
+        with:
+          repository: vitejs/vite
+          ref: 1544bb1b7ac92f775e9d0dea97954c99cc6cbd43
+          path: external/vite
+          persist-credentials: false
+
+      - name: Download validated binary
+        uses: actions/download-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: artifacts
+
+      - name: Run real target agent workflow
+        shell: bash
+        run: |
+          (cd artifacts && sha256sum --check plw-linux-x86_64.sha256)
+          chmod +x artifacts/plw-linux-x86_64
+          bash scripts/smoke_real_target_agent.sh artifacts/plw-linux-x86_64 external/vite
+
   release-version:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: linux-x86_64
+    needs: [linux-x86_64, browser-x86_64, real-target-agent]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -161,11 +215,11 @@ jobs:
             release/plw-linux-x86_64.sha256 \
             --target "$GITHUB_SHA" \
             --title "PLW $RELEASE_TAG" \
-            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, operation-contract and operation-plan preflight smoke, JS/TS/TSX/JSX simplification smoke, UI/browser smoke, target-cleanliness checks, and SHA-256 verification."
+            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, operation-plan argv round-trip and dirty revision byte-binding smoke, JS/TS/TSX/JSX simplification smoke, required Chromium/CDP proof, pinned Vite agent workflow, target-cleanliness checks, and SHA-256 verification."
 
   release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: linux-x86_64
+    needs: [linux-x86_64, browser-x86_64, real-target-agent]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
