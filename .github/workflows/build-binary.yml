@@ -168,9 +168,11 @@ jobs:
             centos:7.9.2009 \
             /bin/bash -euc '
               test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.17"
+              mkdir -p /tmp/plw-target/src
+              printf "export const value = 1;\n" > /tmp/plw-target/src/value.ts
               /bin-artifacts/plw-linux-x86_64 help >/dev/null
-              /bin-artifacts/plw-linux-x86_64 doctor --json >/tmp/plw-doctor.json
-              test -s /tmp/plw-doctor.json
+              /bin-artifacts/plw-linux-x86_64 topology /tmp/plw-target --json >/tmp/plw-topology.json
+              test -s /tmp/plw-topology.json
               echo "GLIBC_2_17_BINARY: PASS"
             '
           docker run --rm --platform linux/amd64 \
@@ -178,9 +180,11 @@ jobs:
             ubuntu:20.04 \
             /bin/bash -euc '
               test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
+              mkdir -p /tmp/plw-target/src
+              printf "export const value = 1;\n" > /tmp/plw-target/src/value.ts
               /bin-artifacts/plw-linux-x86_64 help >/dev/null
-              /bin-artifacts/plw-linux-x86_64 doctor --json >/tmp/plw-doctor.json
-              test -s /tmp/plw-doctor.json
+              /bin-artifacts/plw-linux-x86_64 topology /tmp/plw-target --json >/tmp/plw-topology.json
+              test -s /tmp/plw-topology.json
               echo "UBUNTU_20_04_BINARY: PASS glibc=2.31"
             '
 
