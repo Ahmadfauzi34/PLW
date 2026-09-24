@@ -74,7 +74,19 @@ jobs:
           PY
 
       - name: Build standalone executable
-        run: bash scripts/build_binary.sh
+        shell: bash
+        run: |
+          docker run --rm --platform linux/amd64 \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp/plw-build-home \
+            -e PYINSTALLER_CONFIG_DIR=/tmp/plw-pyinstaller \
+            -e PLW_BUILD_PYTHON=py3.13 \
+            -v "$PWD:/work" -w /work \
+            ghcr.io/yt-dlp/manylinux2014_x86_64-shared@sha256:4faf3be022c04a457f9176ede4d086f0a8f5794cc6dc267bcb16ad6b903ec294 \
+            /bin/bash -c 'mkdir -p "$HOME" && test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.17" && bash scripts/build_binary.sh'
+
+      - name: Verify ELF GLIBC symbol ceiling
+        run: bash scripts/check_binary_glibc.sh artifacts/plw-linux-x86_64 2.17
 
       - name: Standalone topology and impact smoke
         run: bash scripts/smoke_binary.sh artifacts/plw-linux-x86_64
@@ -133,6 +145,49 @@ jobs:
           PLW_REQUIRE_BROWSER=1 PLW_BROWSER_EXECUTABLE="$chrome" \
             bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
 
+  older-glibc-compat:
+    needs: linux-x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download validated binary
+        uses: actions/download-artifact@v4
+        with:
+          name: plw-linux-x86_64
+          path: artifacts
+
+      - name: Execute binary with GLIBC 2.17 and Ubuntu 20.04
+        shell: bash
+        run: |
+          (cd artifacts && sha256sum --check plw-linux-x86_64.sha256)
+          chmod +x artifacts/plw-linux-x86_64
+          docker run --rm --platform linux/amd64 \
+            -v "$PWD/artifacts:/bin-artifacts:ro" \
+            centos:7.9.2009 \
+            /bin/bash -euc '
+              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.17"
+              mkdir -p /tmp/plw-target/src
+              printf "export const value = 1;\n" > /tmp/plw-target/src/value.ts
+              /bin-artifacts/plw-linux-x86_64 help >/dev/null
+              /bin-artifacts/plw-linux-x86_64 topology /tmp/plw-target --json >/tmp/plw-topology.json
+              test -s /tmp/plw-topology.json
+              echo "GLIBC_2_17_BINARY: PASS"
+            '
+          docker run --rm --platform linux/amd64 \
+            -v "$PWD/artifacts:/bin-artifacts:ro" \
+            ubuntu:20.04 \
+            /bin/bash -euc '
+              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
+              mkdir -p /tmp/plw-target/src
+              printf "export const value = 1;\n" > /tmp/plw-target/src/value.ts
+              /bin-artifacts/plw-linux-x86_64 help >/dev/null
+              /bin-artifacts/plw-linux-x86_64 topology /tmp/plw-target --json >/tmp/plw-topology.json
+              test -s /tmp/plw-topology.json
+              echo "UBUNTU_20_04_BINARY: PASS glibc=2.31"
+            '
+
   real-target-agent:
     needs: linux-x86_64
     runs-on: ubuntu-24.04
@@ -163,7 +218,7 @@ jobs:
 
   release-version:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [linux-x86_64, browser-x86_64, real-target-agent]
+    needs: [linux-x86_64, browser-x86_64, older-glibc-compat, real-target-agent]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -219,7 +274,7 @@ jobs:
 
   release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [linux-x86_64, browser-x86_64, real-target-agent]
+    needs: [linux-x86_64, browser-x86_64, older-glibc-compat, real-target-agent]
     runs-on: ubuntu-24.04
     permissions:
       contents: write

@@ -8,6 +8,7 @@ Current supported release target:
 
 - Linux x86_64
 - glibc-based runtime
+- baseline GLIBC 2.17 on Linux x86_64, subject to the required runtime compatibility gate
 - one-file PyInstaller executable
 - external Chromium/Chrome only for browser-backed UI execution
 
@@ -75,6 +76,15 @@ Required gates include:
   separate jobs consuming the exact built artifact;
 - target repository cleanliness;
 - executable SHA-256 verification.
+- ELF bootloader GLIBC symbol ceiling at 2.17, plus actual execution of the
+  same artifact on GLIBC 2.17 (CentOS 7) and GLIBC 2.31 (Ubuntu 20.04).
+
+The CI build runs PyInstaller with shared CPython 3.13 in a `manylinux2014`
+container. The host runner only executes tests and uploads artifacts. The
+ELF symbol check covers the one-file bootloader; actual older-GLIBC execution
+also checks the extracted Python and bundled libraries. This is a Linux
+x86_64 glibc baseline, not a promise for musl/Alpine, other CPU architectures,
+or arbitrary external Chromium/Chrome builds.
 
 Source tests alone are not sufficient release evidence.
 
