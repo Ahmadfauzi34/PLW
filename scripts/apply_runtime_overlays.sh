@@ -63,6 +63,22 @@ apply_raw_overlay_set() {
   done < "$manifest"
 }
 
+append_verified_overlay_file() {
+  local source_file="$1"
+  local expected="$2"
+  local target_file="$3"
+  local actual
+  actual="$(sha256sum "$source_file" | awk '{print $1}')"
+  if [[ "$actual" != "$expected" ]]; then
+    echo "runtime overlay append digest mismatch: $source_file" >&2
+    echo "expected=$expected" >&2
+    echo "actual=$actual" >&2
+    exit 1
+  fi
+  cat "$source_file" >> "$target_file"
+  echo "RUNTIME_OVERLAY_APPEND: PASS $source_file -> $target_file sha256:$actual"
+}
+
 apply_b64_overlay "js_ts_v2"
 grep -q 'self-simplification-v14-js-structural-v2' core/simplification_analyzer.py
 grep -q 'python_ast+js_structural_v2' core/simplification_analyzer.py
@@ -81,6 +97,10 @@ grep -q 'TARGET_TOPOLOGY_LANGUAGE_UNSUPPORTED' plw_cli.py
 grep -q 'experimental_python_promoted' core/portable_agent.py
 
 apply_raw_overlay_set "candidate_selection_v1"
+append_verified_overlay_file \
+  "runtime_overlay/candidate_selection_v1/module_suffix.txt" \
+  "f9416e09f78ba316c032568213b855ee756e41565d918f09519c81fd620f4060" \
+  "core/candidate_selection.py"
 grep -q 'plw-candidate-selection-provenance-v1' core/candidate_selection.py
 grep -q 'js_boolean_guard_return_v3_exact_span' core/simplification_analyzer.py
 grep -q 'plw candidate capability-match' plw_cli.py
