@@ -39,6 +39,9 @@ jobs:
       - name: Candidate selection agent handoff contract
         run: python scripts/check_candidate_selection_agent_handoff.py
 
+      - name: Candidate semantic affordance projection contract
+        run: python scripts/check_candidate_semantic_affordance_projection.py
+
       - name: Shared-graph signature determinism
         run: python scripts/check_shared_graph_signature_determinism.py
 
