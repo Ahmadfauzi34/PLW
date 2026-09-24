@@ -82,7 +82,7 @@ jobs:
             -e PYINSTALLER_CONFIG_DIR=/tmp/plw-pyinstaller \
             -e PLW_BUILD_PYTHON=py3.13 \
             -v "$PWD:/work" -w /work \
-            ghcr.io/yt-dlp/manylinux2014_x86_64-shared:latest \
+            ghcr.io/yt-dlp/manylinux2014_x86_64-shared@sha256:4faf3be022c04a457f9176ede4d086f0a8f5794cc6dc267bcb16ad6b903ec294 \
             /bin/bash -c 'mkdir -p "$HOME" && test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.17" && bash scripts/build_binary.sh'
 
       - name: Verify ELF GLIBC symbol ceiling

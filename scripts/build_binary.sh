@@ -4,14 +4,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-python scripts/check_binary_safety.py
+BUILD_PYTHON="${PLW_BUILD_PYTHON:-python}"
+"$BUILD_PYTHON" scripts/check_binary_safety.py
 
 if [[ ! -f plw_cli.py ]]; then
   echo "plw_cli.py is missing; import the clean runtime source before building." >&2
   exit 2
 fi
 
-BUILD_PYTHON="${PLW_BUILD_PYTHON:-python}"
 "$BUILD_PYTHON" -m pip install --upgrade pip
 "$BUILD_PYTHON" -m pip install "pyinstaller>=6.10,<7"
 
