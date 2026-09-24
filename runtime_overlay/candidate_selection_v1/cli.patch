@@ -1,0 +1,88 @@
+--- a/plw_cli.py
++++ b/plw_cli.py
+@@ -32,6 +32,8 @@
+   plw reconcile-outcomes [--record] [--json]
+   plw lineage <sha256:id> [--json]
+   plw simplify [root] [--reference stable-root] [--json]
++  plw candidate select <task> [root] [--json]
++  plw candidate capability-match <task> [root] [--json]
+   plw action-lease acquire [--store-dir DIR] --allow-state-change [--json]
+   plw action-lease status <sha256:lease-id> [--store-dir DIR] [--json]
+   plw action-outcome register [--store-dir DIR] --allow-state-change [--json]
+@@ -161,6 +163,7 @@
+     from memory.q_value_model import summarize_q_value_model
+     from core.outcome_reconciliation import refresh_outcome_reconciliation, record_reconciliation_accountability
+     from core.simplification_analyzer import analyze_simplification, compare_simplification
++    from core.candidate_selection import select_candidate, match_internal_capability
+     from codebase.angular_semantics import analyze_angular_ownership
+     from codebase.geometry_correspondence import (
+         GeometrySnapshotError,
+@@ -1402,6 +1405,59 @@
+     return 0
+ 
+ 
++def cmd_candidate(args: List[str]) -> int:
++    """Task-bound exact candidate selection and internal capability matching."""
++    if not args or args[0] in ("-h", "--help"):
++        print("Usage: plw candidate select <task> [root] [--json]")
++        print("       plw candidate capability-match <task> [root] [--json]")
++        return 0 if args else 2
++    mode = args[0].lower().replace("_", "-")
++    if mode not in ("select", "capability-match"):
++        print(f"[PLW Error] Unknown candidate subcommand: {args[0]}", file=sys.stderr)
++        return 2
++    if len(args) < 2:
++        print("[PLW Error] candidate task is required", file=sys.stderr)
++        return 2
++    task = args[1]
++    root = "."
++    as_json = False
++    for arg in args[2:]:
++        if arg == "--json":
++            as_json = True
++        elif arg.startswith("-"):
++            print(f"[PLW Error] Unknown candidate argument: {arg}", file=sys.stderr)
++            return 2
++        elif root == ".":
++            root = arg
++        else:
++            print(f"[PLW Error] Unexpected candidate argument: {arg}", file=sys.stderr)
++            return 2
++    try:
++        result = select_candidate(task, root) if mode == "select" else match_internal_capability(task, root)
++    except Exception as exc:
++        print(f"[PLW Error] candidate {mode} failed: {type(exc).__name__}: {exc}", file=sys.stderr)
++        return 1
++    if as_json:
++        print(json.dumps(result, indent=2, sort_keys=True))
++        return 0
++    print(f"# Candidate {mode}: {result.get('status')}")
++    selection = result if mode == "select" else result.get("selection", {}) or {}
++    if selection.get("selected_candidate"):
++        row = selection["selected_candidate"]
++        print(
++            f"# selected={row.get('candidate_id')} instance={row.get('candidate_instance_id')} "
++            f"kind={row.get('kind')} {row.get('source_path')}:{row.get('line_start')}-{row.get('line_end')} "
++            f"symbol={row.get('symbol')}"
++        )
++    else:
++        print(f"# reason={selection.get('reason', result.get('reason'))}")
++    if mode == "capability-match" and result.get("capability"):
++        capability = result["capability"]
++        print(f"# capability={capability.get('capability_id')} digest={capability.get('contract_digest')}")
++    print("# Authority: selection/match only; no authorization, execution, mutation, correctness, evidence acceptance, or truth.")
++    return 0
++
++
+ def cmd_lineage(args: List[str]) -> int:
+     """Trace explicit causal ancestors without inferring semantic causality."""
+     if not args or args[0] in ("-h", "--help"):
+@@ -4588,6 +4644,8 @@
+         sys.exit(cmd_doctor(sub_args))
+     elif cmd == "agent":
+         sys.exit(cmd_agent(sub_args))
++    elif cmd == "candidate":
++        sys.exit(cmd_candidate(sub_args))
+     elif cmd in ("capability", "capabilities"):
+         sys.exit(cmd_capability(sub_args))
+     elif cmd in ("skill", "skills"):
