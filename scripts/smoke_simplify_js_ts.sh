@@ -25,7 +25,9 @@ EOF
 
 cat > "$TMP/project/b.tsx" <<'EOF'
 function flag(x: boolean) {
-  if (x) { return true; }
+  if (x) {
+    return true;
+  }
   return false;
 }
 EOF
