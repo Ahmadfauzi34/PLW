@@ -118,3 +118,20 @@ assert rejected["authority"]["invocation_authorized"] is False, rejected
 
 print("RUNTIME_OPERATION_PLAN_PREFLIGHT: PASS")
 PY
+
+apply_b64_overlay "operation_invocation_admission_v1"
+grep -Fq 'ADMISSION_SCHEMA_VERSION = "plw-operation-invocation-admission-v1"' core/operation_invocation_admission.py
+grep -Fq 'AUTHORIZATION_SCOPE = "ONE_RESOLVED_PLAN_ONE_OPERATION_ONE_ARGV"' core/operation_invocation_admission.py
+grep -Fq 'def consume_jsonl_once(' core/single_use_authority.py
+grep -Fq 'COMMAND_CONTRACTS["operation-invocation"]' core/semantic_affordance.py
+grep -Fq 'cmd_operation_invocation' plw_cli.py
+python -m py_compile core/single_use_authority.py core/operation_invocation_admission.py core/semantic_affordance.py plw_cli.py
+python - <<'PY'
+from core.semantic_affordance import describe_command
+contract = describe_command("operation-invocation")
+assert contract["known"] is True, contract
+assert contract["state_change"] is True, contract
+assert set(contract["possible_outcomes"]) == {"ADMITTED", "UNRESOLVED", "REJECTED"}, contract
+assert "operation execution" in contract["does_not_prove"], contract
+print("RUNTIME_OPERATION_INVOCATION_ADMISSION: PASS")
+PY
