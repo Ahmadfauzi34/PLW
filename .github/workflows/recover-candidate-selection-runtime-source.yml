@@ -1,0 +1,40 @@
+name: Recover candidate selection runtime source
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/recover-candidate-selection-runtime-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-bundle:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Unpack verified runtime source
+        run: bash scripts/unpack_runtime_source.sh
+      - name: Package exact relevant runtime source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/source/core artifacts/source/scripts
+          cp core/simplification_analyzer.py artifacts/source/core/
+          cp core/portable_agent.py artifacts/source/core/
+          cp plw_cli.py artifacts/source/
+          cp scripts/smoke_simplify_js_ts.sh artifacts/source/scripts/
+          cp scripts/smoke_portable_agent.sh artifacts/source/scripts/
+          git rev-parse HEAD > artifacts/source/HEAD_SHA.txt
+          (
+            cd artifacts/source
+            sha256sum core/*.py plw_cli.py scripts/*.sh > SHA256SUMS.txt
+          )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate-selection-runtime-source
+          path: artifacts/source
+          if-no-files-found: error
