@@ -107,11 +107,15 @@ with tempfile.TemporaryDirectory(prefix="plw-operation-contract-") as tmp:
     target.mkdir()
     (target / "guards.js").write_text(
         "function isOne(node) {\n"
-        "  if (node.type === 'one') { return true; }\n"
+        "  if (node.type === 'one') {\n"
+        "    return true;\n"
+        "  }\n"
         "  return false;\n"
         "}\n\n"
         "function isTwo(node) {\n"
-        "  if (node.type === 'two') { return true; }\n"
+        "  if (node.type === 'two') {\n"
+        "    return true;\n"
+        "  }\n"
         "  return false;\n"
         "}\n",
         encoding="utf-8",
