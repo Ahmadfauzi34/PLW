@@ -115,6 +115,9 @@ jobs:
       - name: Standalone UI smoke
         run: bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
 
+      - name: Standalone browserless Angular UI smoke
+        run: bash scripts/smoke_ui_static.sh artifacts/plw-linux-x86_64
+
       - name: Upload binary artifact
         if: always()
         uses: actions/upload-artifact@v4

@@ -78,6 +78,9 @@ PLW currently exposes several bounded analysis surfaces:
 - **Simplification** — mechanically witnessed simplification candidates; never automatic source mutation.
 - **UI mapping** — rendered geometry, overlap, clipping, viewport and ownership mapping.
 - **UI bug analysis** — cross-domain diagnosis from rendered symptom to bounded structural candidates.
+- **Browserless Angular UI discovery** — `plw ui static "Sign in" /path/to/app --json`
+  finds template controls, component owners and declared styles from exact source;
+  it reports ambiguous matches and missing runtime geometry explicitly.
 - **Runtime reproduction** — Chromium/CDP exact-scenario reproduction.
 - **Causal isolation / bounded fix verification** — counterfactual support and post-fix recapture without equating symptom removal with global proof.
 
