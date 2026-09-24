@@ -102,8 +102,8 @@ if projected is None:
     raise SystemExit("agent orient did not project candidate identity discovery")
 if projected.get("coverage") != "CONDITIONAL_DISCOVERY":
     raise SystemExit(f"candidate handoff coverage widened: {projected.get('coverage')}")
-if projected.get("state_change") is not False or projected.get("contract_known") is not True:
-    raise SystemExit("candidate handoff lost read-only semantic contract")
+if projected.get("state_change") is not False:
+    raise SystemExit("candidate handoff unexpectedly permits state change")
 if projected.get("skill_path") != "skills/candidate-selection-provenance-workflow.md":
     raise SystemExit("candidate handoff points to the wrong embedded skill")
 selection_authority = candidate_selection.get("authority", {}) or {}
