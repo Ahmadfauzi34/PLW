@@ -1,5 +1,11 @@
 --- a/core/candidate_selection.py
 +++ b/core/candidate_selection.py
-@@ -368,1 +368,2 @@
+@@ -368,7 +368,7 @@
  __all__ = [
+-]
+     "SCHEMA_VERSION",
+     "CAPABILITY_CONTRACT",
+     "build_discovery_snapshot",
+     "select_candidate",
+     "match_internal_capability",
 +]
