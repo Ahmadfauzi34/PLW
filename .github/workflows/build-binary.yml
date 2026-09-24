@@ -67,6 +67,9 @@ jobs:
       - name: Standalone JS/TS simplification smoke
         run: bash scripts/smoke_simplify_js_ts.sh artifacts/plw-linux-x86_64
 
+      - name: Standalone candidate selection provenance smoke
+        run: bash scripts/smoke_candidate_selection.sh artifacts/plw-linux-x86_64
+
       - name: Standalone UI smoke
         run: bash scripts/smoke_binary_ui.sh artifacts/plw-linux-x86_64
 
@@ -134,7 +137,7 @@ jobs:
             release/plw-linux-x86_64.sha256 \
             --target "$GITHUB_SHA" \
             --title "PLW $RELEASE_TAG" \
-            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, JS/TS/TSX/JSX simplification smoke, UI/browser smoke, target-cleanliness checks, and SHA-256 verification."
+            --notes "PLW $RELEASE_VERSION validated standalone binary release. Built from main after verified runtime extraction/overlay, binary-safety checks, topology/impact smoke, portable-agent doctor/orient/embedded-skill smoke, JS/TS/TSX/JSX simplification smoke, candidate-selection provenance smoke, UI/browser smoke, target-cleanliness checks, and SHA-256 verification."
 
   release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
