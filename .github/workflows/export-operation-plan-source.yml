@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir -p artifacts/operation-plan/core artifacts/operation-plan/skills
           cp plw_cli.py hott_kernel.py artifacts/operation-plan/
-          cp core/semantic_affordance.py core/capability_selection.py core/portable_agent.py core/agent_communication.py artifacts/operation-plan/core/
+          cp core/semantic_affordance.py core/capability_selection.py core/portable_agent.py core/agent_communication.py core/operation_plan.py artifacts/operation-plan/core/
           cp skills/semantic-affordance-workflow.md artifacts/operation-plan/skills/
           find artifacts/operation-plan -type f -print0 | sort -z | xargs -0 sha256sum > artifacts/operation-plan/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
