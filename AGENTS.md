@@ -32,6 +32,13 @@ plw capability describe <command> --json
 plw skill show <command> --json
 ```
 
+For an Angular UI question without a browser snapshot, use `plw ui static
+"<visible text or control>" /path/to/repo --json`. A source match establishes
+only a template declaration; inspect `decision`, `unresolved_templates`, and
+`authority` before claiming an element rendered or a layout issue exists.
+`plw capability describe ui-static --json` and `plw skill show ui-static --json`
+expose its self-contained contract.
+
 Authority boundaries are strict:
 
 ```text

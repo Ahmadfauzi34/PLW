@@ -22,6 +22,11 @@ The `readiness_version_v1` overlay follows the same readable, digest-pinned
 patch format and separates reference-pack readiness from target topology and
 action readiness. It also adds direct embedded version discovery.
 
+The `browserless_ui_reference_v1` readable, digest-pinned overlay adds a
+source-only Angular UI lookup and embedded skill. It never supplies geometry
+or a runtime observation. Its binary smoke checks ambiguous targets, template
+digests, inline templates, unavailable styles and explicit authority flags.
+
 Candidate-selection updates must also bind exact source sites to the full
 discovery candidate-set digest. Internal candidate-capability matching may
 return `CAPABILITY_MATCHED`; it must not expose the mutation capability through

@@ -4,6 +4,12 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ## Unreleased
 
+### Added
+
+- `plw ui static` locates Angular template controls and their source owners
+  without Chromium, binding external/inline templates to exact digests and
+  distinguishing ambiguous or unreadable sources from observed UI geometry.
+
 ### Changed
 
 - `plw doctor` and `plw work` expose separate portable-interface, stable

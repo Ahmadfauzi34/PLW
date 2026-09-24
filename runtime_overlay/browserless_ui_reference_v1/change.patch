@@ -1,0 +1,333 @@
+--- /dev/null
++++ b/codebase/static_ui_reference.py
+@@ -0,0 +1,228 @@
++"""Source-only Angular UI discovery, with explicit runtime evidence gaps."""
++from __future__ import annotations
++
++import hashlib
++import json
++import re
++from html.parser import HTMLParser
++from pathlib import Path
++from typing import Any, Dict, List, Optional
++
++from codebase.angular_semantics import (
++    _object_properties,
++    _string_literal,
++    analyze_angular_ownership,
++)
++
++SCHEMA_VERSION = "plw-static-ui-reference-v1"
++MAX_TEMPLATE_BYTES = 1024 * 1024
++INTERACTIVE_TAGS = {"a", "button", "input", "label", "select", "textarea"}
++VISIBLE_ATTRIBUTES = {"href", "routerlink", "[routerlink]", "type", "name",
++                      "formcontrolname", "aria-label", "placeholder", "id", "class"}
++QUERY_STOPWORDS = {"the", "for", "and", "with", "from", "where", "which", "what",
++                   "find", "locate", "check", "assess", "ui", "page", "link",
++                   "button", "component", "mobile", "responsive", "overlap", "layout",
++                   "navigation", "element", "tautan", "tombol", "yang", "dan"}
++
++
++def _sha(data: bytes) -> str:
++    return "sha256:" + hashlib.sha256(data).hexdigest()
++
++
++def _words(value: str) -> List[str]:
++    return re.findall(r"[a-z0-9]+", value.casefold())
++
++
++class _Elements(HTMLParser):
++    def __init__(self) -> None:
++        super().__init__(convert_charrefs=True)
++        self.stack: List[Dict[str, Any]] = []
++        self.elements: List[Dict[str, Any]] = []
++
++    def handle_starttag(self, tag: str, attrs: List[tuple[str, Optional[str]]]) -> None:
++        row = {"tag": tag, "line": self.getpos()[0],
++               "attributes": {k: v for k, v in attrs if k in VISIBLE_ATTRIBUTES and v is not None},
++               "text_parts": []}
++        if tag in {"input", "br", "img", "hr", "meta", "link"}:
++            self.elements.append(row)
++        else:
++            self.stack.append(row)
++
++    def handle_startendtag(self, tag: str, attrs: List[tuple[str, Optional[str]]]) -> None:
++        self.handle_starttag(tag, attrs)
++        if self.stack and self.stack[-1]["tag"] == tag:
++            self.elements.append(self.stack.pop())
++
++    def handle_data(self, data: str) -> None:
++        for row in self.stack:
++            row["text_parts"].append(data)
++
++    def handle_endtag(self, tag: str) -> None:
++        for index in range(len(self.stack) - 1, -1, -1):
++            if self.stack[index]["tag"] == tag:
++                self.elements.extend(reversed(self.stack[index:]))
++                del self.stack[index:]
++                return
++
++
++def _template(component: Dict[str, Any], file_map: Dict[str, str], root: Path) -> tuple[Optional[str], Optional[str], str]:
++    anchor = component.get("template", {})
++    kind = anchor.get("kind")
++    if kind == "external":
++        resource = anchor.get("resource", {})
++        path = anchor.get("resolved_path")
++        if resource.get("proof_class") != "EXACT" or not path:
++            return None, None, "TEMPLATE_RESOURCE_UNRESOLVED"
++        candidate = Path(path).resolve()
++        if not candidate.is_relative_to(root):
++            return None, None, "TEMPLATE_OUTSIDE_TARGET"
++        try:
++            if candidate.stat().st_size > MAX_TEMPLATE_BYTES:
++                return None, None, "TEMPLATE_TOO_LARGE"
++            raw = candidate.read_bytes()
++            if _sha(raw) != resource.get("sha256"):
++                return None, None, "TEMPLATE_CHANGED_DURING_QUERY"
++            return raw.decode("utf-8"), str(candidate), "EXACT"
++        except (OSError, UnicodeError):
++            return None, None, "TEMPLATE_UNREADABLE"
++    if kind == "inline" and anchor.get("proof_class") == "EXACT":
++        source = file_map.get(component.get("file"), "")
++        span = component.get("decorator", {}).get("span", {})
++        snippet = source[span.get("start", 0):span.get("end", 0)]
++        open_brace = snippet.find("{")
++        close_brace = snippet.rfind("}")
++        if open_brace >= 0 and close_brace > open_brace:
++            metadata = _object_properties(snippet[open_brace:close_brace + 1])
++            value = _string_literal(metadata.get("template", "")) if metadata else None
++            if value is not None and _sha(value.encode("utf-8")) == anchor.get("sha256"):
++                return value, component["file"], "EXACT_INLINE"
++        return None, None, "INLINE_TEMPLATE_UNRESOLVED"
++    return None, None, "TEMPLATE_NOT_STATIC"
++
++
++def _score(query: str, tag: str, label: str, attrs: Dict[str, str]) -> tuple[int, List[str]]:
++    searchable = " ".join([label, *attrs.values()]).casefold()
++    tokens = {word for word in _words(query) if len(word) >= 3 and word not in QUERY_STOPWORDS}
++    matched = sorted(word for word in tokens if word in _words(searchable))
++    if not matched:
++        return 0, []
++    score = 2 * len(matched) + (3 if tag in INTERACTIVE_TAGS else 0)
++    label_words = _words(label)
++    query_words = _words(query)
++    if label_words and len(label_words) <= 6 and len(label_words) > 1:
++        needle = " ".join(label_words)
++        if needle in " ".join(query_words):
++            score += 12
++    elif label_words and label_words[0] in query_words and len(label_words) == 1:
++        score += 4
++    return score, matched
++
++
++def _global_styles(root: Path) -> List[Dict[str, Any]]:
++    config = root / "angular.json"
++    try:
++        if config.stat().st_size > MAX_TEMPLATE_BYTES:
++            return [{"status": "CONFIG_TOO_LARGE"}]
++        projects = json.loads(config.read_text(encoding="utf-8")).get("projects", {})
++    except (OSError, UnicodeError, ValueError, AttributeError):
++        return [{"status": "CONFIG_UNAVAILABLE"}]
++    rows: List[Dict[str, Any]] = []
++    for project_name, project in sorted(projects.items()):
++        if not isinstance(project, dict):
++            continue
++        build = (project.get("architect") or project.get("targets") or {}).get("build", {})
++        for item in build.get("options", {}).get("styles", []):
++            path = item if isinstance(item, str) else item.get("input") if isinstance(item, dict) else None
++            if not isinstance(path, str):
++                continue
++            absolute = (root / path).resolve()
++            if not absolute.is_relative_to(root):
++                rows.append({"project": project_name, "declared_path": path, "status": "OUTSIDE_TARGET"})
++                continue
++            try:
++                raw = absolute.read_bytes() if absolute.stat().st_size <= MAX_TEMPLATE_BYTES else None
++            except OSError:
++                raw = None
++            rows.append({"project": project_name, "declared_path": path,
++                         "status": "EXACT" if raw is not None else "UNAVAILABLE",
++                         "sha256": _sha(raw) if raw is not None else None})
++    return rows
++
++
++def static_ui_reference(query: str, graph: Dict[str, Any], *, selector: Optional[str] = None,
++                        max_candidates: int = 8) -> Dict[str, Any]:
++    if not query.strip():
++        raise ValueError("query must not be empty")
++    if not 1 <= max_candidates <= 100:
++        raise ValueError("max_candidates must be between 1 and 100")
++    ownership = analyze_angular_ownership(graph, selector_filter=selector, read_resources=True)
++    root = Path(graph.get("scan_root") or ".").resolve()
++    global_styles = _global_styles(root)
++    candidates: List[Dict[str, Any]] = []
++    unresolved: List[Dict[str, str]] = []
++    for component in ownership["components"]:
++        content, path, proof = _template(component, graph.get("file_map", {}), root)
++        if content is None:
++            unresolved.append({"component_file": component["file"], "reason": proof})
++            continue
++        elements = _Elements()
++        elements.feed(content)
++        lines = content.splitlines()
++        for element in elements.elements:
++            full_label = " ".join(" ".join(element["text_parts"]).split())
++            label = full_label[:160]
++            attrs = element["attributes"]
++            score, matches = _score(query, element["tag"], label, attrs)
++            if not score:
++                continue
++            line = element["line"]
++            candidates.append({
++                "component_file": component["file"],
++                "component_class": component["class_name"],
++                "component_selector": component.get("selector", {}).get("value"),
++                "template_file": path,
++                "template_sha256": _sha(content.encode("utf-8")),
++                "template_proof": proof,
++                "template_line": line if proof == "EXACT" else None,
++                "template_declaration_line": component["decorator"]["span"]["start_position"]["line"] if proof == "EXACT_INLINE" else None,
++                "source_line": lines[line - 1] if proof == "EXACT" and 0 < line <= len(lines) and len(lines[line - 1]) <= 480 else None,
++                "source_line_omitted": proof == "EXACT" and 0 < line <= len(lines) and len(lines[line - 1]) > 480,
++                "element": {"tag": element["tag"], "label": label,
++                            "label_truncated": len(full_label) > 160, "attributes": attrs},
++                "declared_component_styles": component.get("styles", []),
++                "matched_terms": matches,
++                "score": score,
++                "render_condition": "UNPROVEN",
++                "geometry": "UNOBSERVED",
++            })
++    candidates.sort(key=lambda row: (-row["score"],
++                row["component_file"], row["template_line"] or 0, row["element"]["tag"]))
++    top = candidates[0]["score"] if candidates else None
++    ties = sum(1 for row in candidates if row["score"] == top)
++    status = "RESOLVED" if candidates and ties == 1 and not unresolved else ("AMBIGUOUS" if candidates else "UNRESOLVED")
++    reason = ("unique_source_match" if status == "RESOLVED" else
++              "unresolved_templates_may_contain_candidate" if candidates and unresolved else
++              "equally_ranked_source_matches" if candidates else "no_verified_template_match")
++    return {
++        "schema_version": SCHEMA_VERSION,
++        "query": query,
++        "scan_root": str(root),
++        "graph_content_signature": ownership.get("graph_content_signature"),
++        "angular_ownership_digest": ownership.get("ownership_digest"),
++        "decision": {"status": status, "reason": reason,
++                     "selected": candidates[0] if status == "RESOLVED" else None,
++                     "matching_candidate_count": len(candidates),
++                     "omitted_candidate_count": max(0, len(candidates) - max_candidates)},
++        "candidates": candidates[:max_candidates],
++        "declared_global_styles": global_styles,
++        "unresolved_templates": unresolved[:max_candidates],
++        "unresolved_templates_omitted": max(0, len(unresolved) - max_candidates),
++        "next_evidence": {
++            "source": "inspect the matched template and declared styles or global stylesheet for a proposed edit",
++            "conditional_rendering": "establish route, UI state, and template control-flow branch externally",
++            "geometry": "obtain a real scenario-bound browser or host geometry capture before any overlap claim",
++        },
++        "authority": {"source_only": True, "browser_executed": False, "rendered_dom_observed": False,
++                      "geometry_observed": False, "runtime_behavior_proven": False,
++                      "overlap_proven": False, "mutation_authority": False, "task_postcondition_proven": False},
++    }
+--- a/core/semantic_affordance.py
++++ b/core/semantic_affordance.py
+@@ -130,0 +131,12 @@
++    ),
++    "ui-static": _contract(
++        "Browserless Angular UI Source Reference",
++        ["static template analysis", "source provenance", "component ownership", "bounded candidate selection"],
++        ["find in templates", "symbol ownership lookup"],
++        ["rendered DOM capture", "layout analysis", "screenshot interpretation"],
++        "A UI question names visible text or a control but no runtime geometry snapshot exists.",
++        "Which Angular component and exact template line declare matching controls, which alternatives remain, and what runtime evidence is still missing.",
++        ["source-bound UI candidates", "ambiguity", "template digest", "runtime evidence obligations"],
++        ["RESOLVED", "AMBIGUOUS", "UNRESOLVED"],
++        ["rendered presence", "active conditional branch", "pixel geometry", "overlap", "behavior", "postcondition"],
++        "skills/ui-static-reference-workflow.md",
+--- a/plw_cli.py
++++ b/plw_cli.py
+@@ -45,0 +46 @@
++  plw ui static <query> [root] [--selector SELECTOR] [--max-candidates N] [--json]
+@@ -169,0 +171 @@
++    from codebase.static_ui_reference import static_ui_reference
+@@ -2926,0 +2929,32 @@
++def cmd_ui_static(args: List[str]) -> int:
++    """Locate Angular UI source witnesses without a browser or geometry snapshot."""
++    import argparse
++    parser = argparse.ArgumentParser(prog="plw ui static")
++    parser.add_argument("query")
++    parser.add_argument("root", nargs="?", default=".")
++    parser.add_argument("--selector")
++    parser.add_argument("--max-candidates", type=int, default=8)
++    parser.add_argument("--json", action="store_true", dest="as_json")
++    opts = parser.parse_args(args)
++    try:
++        graph = hott_kernel._build_kernel_graph(opts.root)
++        result = static_ui_reference(opts.query, graph,
++                                     selector=opts.selector, max_candidates=opts.max_candidates)
++    except ValueError as exc:
++        print(json.dumps({"error": str(exc), "error_code": "invalid_static_ui_query"})
++              if opts.as_json else f"[PLW Error] {exc}", file=sys.stderr)
++        return 2
++    if opts.as_json:
++        print(json.dumps(result, indent=2, ensure_ascii=False))
++    else:
++        decision = result["decision"]
++        print("# [PLW UI Static Reference]")
++        print("# Status: " + decision["status"])
++        print("# Candidates: " + str(decision["matching_candidate_count"]))
++        for item in result["candidates"]:
++            print(f"- {item['component_file']} -> {item['template_file']}:{item['template_line']} "
++                  f"{item['element']['tag']} {item['element']['label']!r}")
++        print("# Runtime geometry: UNOBSERVED; browser execution: false")
++    return 0
++
++
+@@ -2929 +2963 @@
+-        print("Usage: plw ui <map|inspect|scenarios|diff|hunt|diagnose|reproduce|probe-plan|isolate|fix-plan|verify-fix|capture-script> ...", file=sys.stderr); return 2
++        print("Usage: plw ui <static|map|inspect|scenarios|diff|hunt|diagnose|reproduce|probe-plan|isolate|fix-plan|verify-fix|capture-script> ...", file=sys.stderr); return 2
+@@ -2930,0 +2965 @@
++    if sub == "static": return cmd_ui_static(args)
+@@ -4638,0 +4674 @@
++  plw ui static <query> [root] [--selector SELECTOR] [--max-candidates N] [--json]
+@@ -4759,0 +4796,2 @@
++    elif cmd in ("ui-static", "ui_static"):
++        sys.exit(cmd_ui_static(sub_args))
+--- /dev/null
++++ b/skills/ui-static-reference-workflow.md
+@@ -0,0 +1,35 @@
++# Browserless UI source reference
++
++**Load when:** an agent has an Angular UI question but no verified browser or geometry snapshot.
++
++```bash
++plw capability describe ui-static --json
++plw ui static "Sign in navigation link" /path/to/angular-project --json
++plw ui static "Sign in" /path/to/angular-project --selector app-layout-header --json
++```
++
++The reference machine reuses the current TS/JS graph and Angular ownership
++sidecar, reads only statically declared template resources, checks their exact
++SHA-256 against the ownership result, then enumerates source text and control
++attributes. Inline literal templates are checked against their source digest.
++The returned `decision` is `RESOLVED` for a unique highest-scoring source
++candidate, `AMBIGUOUS` for tied candidates, or `UNRESOLVED` when nothing
++verified matches. Every candidate names the source owner, template, exact
++digest, source line when external, and query terms that matched. A source
++candidate is never a rendered element identity.
++
++Read `unresolved_templates` and `omitted_candidate_count` before concluding
++anything about absence. A file excluded from a bounded result may still
++contain the relevant UI. A dynamic template or a changed resource remains
++unresolved.
++
++For an edit, inspect the selected template line, declared styles and relevant
++global CSS. Angular control flow such as `@if`, routing, data and responsive
++styles require their own witnesses. The output explicitly marks render
++condition `UNPROVEN` and geometry `UNOBSERVED`. Before claiming overlap or
++visual correctness, capture the exact route, viewport, UI state and fixture
++with an external browser or another trusted geometry host, then use `plw ui
++map` / `plw ui-reference` and runtime provenance as appropriate.
++
++No browser, source mutation, runtime execution, action authority, or task
++postcondition proof is granted by `ui static`.
