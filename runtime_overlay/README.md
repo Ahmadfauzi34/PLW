@@ -37,6 +37,11 @@ for Angular control-flow blocks and inherited structural guards. Unsupported
 or malformed control flow remains unresolved; route, state, and rendered
 presence require external witnesses.
 
+The `ui_style_reference_v1` overlay maps exact Angular CSS resources to bounded
+selector-rule candidates. Missing global or component CSS, imports and
+unsupported source syntax keep the style status unknown; no cascade or media
+activation is inferred.
+
 Candidate-selection updates must also bind exact source sites to the full
 discovery candidate-set digest. Internal candidate-capability matching may
 return `CAPABILITY_MATCHED`; it must not expose the mutation capability through
