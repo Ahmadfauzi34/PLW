@@ -81,6 +81,9 @@ PLW currently exposes several bounded analysis surfaces:
 - **Browserless Angular UI discovery** — `plw ui static "Sign in" /path/to/app --json`
   finds template controls, component owners and declared styles from exact source;
   it reports ambiguous matches and missing runtime geometry explicitly.
+  `plw agent orient /path/to/app --task "Sign in navigation link" --json`
+  includes a bounded `ui_source_handoff`; narrow ambiguous declarations with
+  `--ui-selector` and pass a verified component hint to `plw work --target`.
 - **Runtime reproduction** — Chromium/CDP exact-scenario reproduction.
 - **Causal isolation / bounded fix verification** — counterfactual support and post-fix recapture without equating symptom removal with global proof.
 

@@ -1,0 +1,157 @@
+--- /dev/null
++++ b/core/ui_agent_handoff.py
+@@ -0,0 +1,83 @@
++"""Bounded source witness from an Angular UI question to a work target hint."""
++from __future__ import annotations
++
++from pathlib import Path
++from typing import Any, Dict, Optional
++
++from codebase.static_ui_reference import static_ui_reference
++
++
++def build_ui_agent_handoff(task: str, graph: Dict[str, Any], *,
++                           selector: Optional[str] = None) -> Dict[str, Any]:
++    root = Path(graph.get("scan_root") or ".").resolve()
++    vertices = {str(Path(node).resolve()) for node in graph.get("vertices", []) or []}
++    has_angular = any("@Component" in str(content)
++                      for content in (graph.get("file_map") or {}).values())
++    base: Dict[str, Any] = {
++        "schema_version": "plw-ui-agent-handoff-v1",
++        "status": "NOT_APPLICABLE",
++        "selection_scope": "source_declaration_only",
++        "authority": {"read_only": True, "target_hint_only": True,
++                      "rendered_dom_observed": False, "geometry_observed": False,
++                      "execute_runtime": False, "mutate_source": False,
++                      "commit_truth": False},
++    }
++    if not has_angular:
++        return base
++    reference = static_ui_reference(task, graph, selector=selector, max_candidates=8)
++    decision = reference["decision"]
++    base.update({
++        "status": decision["status"],
++        "reason": decision["reason"],
++        "query": task,
++        "selector": selector,
++        "graph_content_signature": reference["graph_content_signature"],
++        "angular_ownership_digest": reference["angular_ownership_digest"],
++        "matching_candidate_count": decision["matching_candidate_count"],
++        "omitted_candidate_count": decision["omitted_candidate_count"],
++        "unresolved_templates": reference["unresolved_templates"],
++        "unresolved_templates_omitted": reference["unresolved_templates_omitted"],
++        "candidates": [{"component_file": row["component_file"],
++                        "component_selector": row["component_selector"],
++                        "template_file": row["template_file"],
++                        "template_sha256": row["template_sha256"],
++                        "template_line": row["template_line"],
++                        "label": row["element"]["label"],
++                        "matched_terms": row["matched_terms"],
++                        "score": row["score"]}
++                       for row in reference["candidates"]],
++        "next_ui_static_argv": ["plw", "ui", "static", task, str(root)]
++                               + (["--selector", selector] if selector else []) + ["--json"],
++        "next_capability_argv": ["plw", "capability", "describe", "ui-static", "--json"],
++        "next_skill_argv": ["plw", "skill", "show", "ui-static", "--json"],
++    })
++    selected = decision.get("selected")
++    if selected:
++        component = Path(selected["component_file"]).resolve()
++        if str(component) in vertices and component.is_relative_to(root):
++            target = component.relative_to(root).as_posix()
++            base["source_target_hint"] = {
++                "component_file": target,
++                "component_selector": selected["component_selector"],
++                "template_file": selected["template_file"],
++                "template_sha256": selected["template_sha256"],
++                "template_line": selected["template_line"],
++                "match_evidence": selected["match_evidence"],
++                "template_condition": selected["template_condition"],
++                "style_status": selected["style_reference"]["status"],
++            }
++            base["suggested_work_argv"] = ["plw", "work", task, str(root),
++                                           "--target", target]
++            base["next_reasoning"] = (
++                "Inspect the exact UI source reference, then use the hinted component "
++                "as an explicit work target if it matches the task. Neither call proves rendering."
++            )
++        else:
++            base["status"] = "AMBIGUOUS"
++            base["reason"] = "selected_component_not_in_current_graph"
++    if not base.get("source_target_hint"):
++        base["next_reasoning"] = (
++            "Inspect all source candidates and unresolved templates with ui static; "
++            "supply a grounded selector or explicit target only after disambiguation."
++        )
++    return base
+--- a/hott_kernel.py
++++ b/hott_kernel.py
+@@ -110,0 +111,5 @@
++
++try:
++    from core.ui_agent_handoff import build_ui_agent_handoff
++except ImportError:
++    build_ui_agent_handoff = None
+@@ -2993,0 +2999 @@
++    ui_selector: Optional[str] = None,
+@@ -3093,0 +3100,2 @@
++    if ui_selector is not None and (not isinstance(ui_selector, str) or not ui_selector.strip()):
++        return _kernel_error("invalid_ui_selector", "ui_selector must be a non-empty selector.")
+@@ -3125,0 +3134,4 @@
++    ui_source_handoff = (
++        build_ui_agent_handoff(task, graph, selector=ui_selector)
++        if build_ui_agent_handoff is not None else {"status": "UNAVAILABLE"}
++    )
+@@ -3135,0 +3148,11 @@
++    if targets and ui_source_handoff.get("source_target_hint"):
++        selected_work_targets = list(
++            (target_resolution.get("resolution") or {}).get("selected_targets", []) or []
++        )
++        hinted_target = ui_source_handoff["source_target_hint"]["component_file"]
++        ui_source_handoff["explicit_target_alignment"] = {
++            "status": "MATCH" if selected_work_targets == [hinted_target] else "MISMATCH",
++            "selected_work_targets": selected_work_targets,
++            "hinted_component_file": hinted_target,
++            "scope": "source_identity_comparison_only",
++        }
+@@ -3178,0 +3202 @@
++            "ui_source_handoff": ui_source_handoff,
+@@ -3348,0 +3373 @@
++        "ui_source_handoff": ui_source_handoff,
+@@ -3804,0 +3830 @@
++        ui_selector = None
+@@ -3843,0 +3870,2 @@
++            elif arg == "--ui-selector" and i + 1 < len(sys.argv):
++                ui_selector = sys.argv[i + 1]
+@@ -3859,0 +3888 @@
++            ui_selector=ui_selector,
+--- a/plw_cli.py
++++ b/plw_cli.py
+@@ -4497,0 +4498 @@
++    parser.add_argument("--ui-selector", default=None)
+@@ -4507,0 +4509 @@
++        ui_selector=opts.ui_selector,
+@@ -4536,0 +4539,5 @@
++            ui_handoff = result.get("ui_source_handoff", {}) or {}
++            if ui_handoff.get("status") != "NOT_APPLICABLE":
++                print("# UI source handoff: " + str(ui_handoff.get("status", "unknown")))
++                if ui_handoff.get("source_target_hint"):
++                    print("# UI source target hint: " + str(ui_handoff["source_target_hint"]["component_file"]))
+--- a/skills/ui-static-reference-workflow.md
++++ b/skills/ui-static-reference-workflow.md
+@@ -8,0 +9,2 @@
++plw agent orient /path/to/angular-project --task "Sign in navigation link" --json
++plw agent orient /path/to/angular-project --task "Sign in navigation link" --ui-selector app-layout-header --json
+@@ -19,0 +22,12 @@
++
++`agent orient` and `work` expose `ui_source_handoff` from the same graph
++snapshot used for target resolution. Inspect `status`, `candidates`,
++`unresolved_templates` and `next_ui_static_argv`. `AMBIGUOUS` and `UNRESOLVED`
++have no target hint. For `RESOLVED`, check the selected template SHA-256 and
++condition with `ui static`, then use `suggested_work_argv` or choose an explicit
++target yourself. The hint names a component in the current TS/JS graph; it
++does not silently select that target, change graph resolution, prove the
++component renders, or make `work_status: ready` an action authorization. A
++grounded `--ui-selector` narrows source candidates when multiple components
++declare the same text. Re-run orientation after editing source to get fresh
++digests.

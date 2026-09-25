@@ -62,6 +62,11 @@ cd "$TMP/run"
 "$BIN" skill show ui-static --json > "$TMP/skill.json"
 "$BIN" ui static 'Sign in' "$TMP/project" --json > "$TMP/ambiguous.json"
 "$BIN" ui static 'Sign in' "$TMP/project" --selector app-header --json > "$TMP/header.json"
+"$BIN" agent orient "$TMP/project" --task 'Sign in navigation link' --json > "$TMP/orient-ambiguous.json"
+"$BIN" agent orient "$TMP/project" --task 'Sign in navigation link' --ui-selector app-header --json > "$TMP/orient-header.json"
+"$BIN" work 'Sign in navigation link' "$TMP/project" --target src/app/header.component.ts --ui-selector app-header > "$TMP/work-header.json"
+"$BIN" work 'Sign in navigation link' "$TMP/project" --target src/app/article.component.ts --ui-selector app-header > "$TMP/work-mismatch.json"
+"$BIN" agent orient "$TMP/project" --task 'nonexistent widget zzz' --json > "$TMP/orient-missing.json"
 "$BIN" ui-static 'Sign in' "$TMP/project" --selector app-article --json > "$TMP/inline.json"
 "$BIN" ui static 'nonexistent widget zzz' "$TMP/project" --json > "$TMP/missing.json"
 "$BIN" ui static 'register' "$TMP/project" --selector app-header --json > "$TMP/attribute.json"
@@ -92,6 +97,10 @@ cat >> "$TMP/project/src/global.css" <<'EOF'
 @import url('other.css');
 EOF
 "$BIN" ui static 'Sign in' "$TMP/project" --selector app-header --json > "$TMP/with-import.json"
+cat >> "$TMP/project/src/app/header.component.html" <<'EOF'
+<!-- source changed after the first handoff -->
+EOF
+"$BIN" agent orient "$TMP/project" --task 'Sign in navigation link' --ui-selector app-header --json > "$TMP/orient-changed.json"
 
 python - "$TMP" "$BIN" <<'PY'
 import hashlib
@@ -107,6 +116,20 @@ assert read("skill")["known"] is True
 assert read("ambiguous")["decision"]["status"] == "AMBIGUOUS"
 assert read("ambiguous")["decision"]["selected"] is None
 assert read("ambiguous")["decision"]["top_score_tie_count"] == 2
+ambiguous_handoff = read("orient-ambiguous")["ui_source_handoff"]
+assert ambiguous_handoff["status"] == "AMBIGUOUS" and "source_target_hint" not in ambiguous_handoff
+assert read("orient-ambiguous")["target_resolution"]["resolution"]["state"] != "RESOLVED"
+handoff = read("orient-header")["ui_source_handoff"]
+assert handoff["status"] == "RESOLVED" and handoff["source_target_hint"]["component_file"] == "src/app/header.component.ts"
+assert handoff["source_target_hint"]["template_sha256"] == read("header")["decision"]["selected"]["template_sha256"]
+assert handoff["suggested_work_argv"][-2:] == ["--target", "src/app/header.component.ts"]
+assert handoff["authority"]["rendered_dom_observed"] is False
+assert read("work-header")["ui_source_handoff"]["source_target_hint"] == handoff["source_target_hint"]
+assert read("work-header")["ui_source_handoff"]["explicit_target_alignment"]["status"] == "MATCH"
+assert read("work-mismatch")["ui_source_handoff"]["explicit_target_alignment"]["status"] == "MISMATCH"
+assert read("orient-changed")["ui_source_handoff"]["source_target_hint"]["template_sha256"] != handoff["source_target_hint"]["template_sha256"]
+assert read("work-header")["readiness"]["task_postcondition"] == "UNPROVEN"
+assert read("orient-missing")["ui_source_handoff"]["status"] == "UNRESOLVED"
 header = read("header")
 assert header["decision"]["status"] == "RESOLVED"
 selected = header["decision"]["selected"]
@@ -123,7 +146,9 @@ assert any(row["element"]["label"] == "Sign up" and
            for row in header["candidates"])
 assert selected["element"]["attributes"]["routerlink"] == "/login"
 assert selected["template_line"] == 1
-expected = "sha256:" + hashlib.sha256((root / "project/src/app/header.component.html").read_bytes()).hexdigest()
+initial_template = (root / "project/src/app/header.component.html").read_bytes().split(
+    b"<!-- source changed after the first handoff -->", 1)[0]
+expected = "sha256:" + hashlib.sha256(initial_template).hexdigest()
 assert selected["template_sha256"] == expected
 assert header["declared_global_styles"][0]["status"] == "UNAVAILABLE"
 style = selected["style_reference"]
