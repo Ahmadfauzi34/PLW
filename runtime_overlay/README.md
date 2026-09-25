@@ -32,6 +32,11 @@ text with its immediate element or nearest interactive control, and exposes
 the exact label/attribute terms and source ranking policy used for selection.
 Its standalone smoke checks nested controls and ambiguous owners.
 
+The `ui_render_conditions_v1` overlay adds source-only containment witnesses
+for Angular control-flow blocks and inherited structural guards. Unsupported
+or malformed control flow remains unresolved; route, state, and rendered
+presence require external witnesses.
+
 Candidate-selection updates must also bind exact source sites to the full
 discovery candidate-set digest. Internal candidate-capability matching may
 return `CAPABILITY_MATCHED`; it must not expose the mutation capability through

@@ -1,0 +1,232 @@
+--- /dev/null
++++ b/codebase/template_control_flow.py
+@@ -0,0 +1,164 @@
++"""Bounded Angular template branch witnesses; never evaluates expressions."""
++from __future__ import annotations
++
++import bisect
++import re
++from typing import Any, Dict, List
++
++BLOCKS = {"if", "else", "for", "empty", "switch", "case", "default",
++          "defer", "placeholder", "loading", "error"}
++SUPPORTED = {"if", "else", "for", "empty"}
++MAX_DEPTH = 64
++
++
++def _location(starts: List[int], offset: int) -> Dict[str, int]:
++    line = bisect.bisect_right(starts, offset)
++    return {"line": line, "column": offset - starts[line - 1] + 1}
++
++
++def _skip_tag(source: str, offset: int) -> int:
++    """Ignore braces in HTML tags, including quoted Angular object bindings."""
++    quote = None
++    index = offset + 1
++    while index < len(source):
++        char = source[index]
++        if quote:
++            if char == quote:
++                quote = None
++        elif char in "\"'":
++            quote = char
++        elif char == ">":
++            return index + 1
++        index += 1
++    return len(source)
++
++
++def _header(source: str, offset: int, kind: str) -> tuple[int, str] | None:
++    index = offset + len(kind) + 1
++    while index < len(source) and source[index].isspace():
++        index += 1
++    if kind == "else" and source.startswith("if", index) and (index + 2 == len(source) or
++                             not (source[index + 2].isalnum() or source[index + 2] == "_")):
++        index += 2
++        while index < len(source) and source[index].isspace():
++            index += 1
++        kind = "else if"
++    expression = ""
++    if index < len(source) and source[index] == "(":
++        start = index + 1
++        depth, quote = 1, None
++        index += 1
++        while index < len(source) and depth:
++            char = source[index]
++            if quote:
++                if char == "\\":
++                    index += 2
++                    continue
++                if char == quote:
++                    quote = None
++            elif char in "\"'`":
++                quote = char
++            elif char == "(":
++                depth += 1
++            elif char == ")":
++                depth -= 1
++            index += 1
++        if depth:
++            return None
++        expression = source[start:index - 1].strip()
++    elif kind in {"if", "for", "switch", "case", "else if"}:
++        return None
++    while index < len(source) and source[index].isspace():
++        index += 1
++    if index >= len(source) or source[index] != "{":
++        return None
++    return index, expression
++
++
++def template_branches(source: str) -> Dict[str, Any]:
++    """Record containing source spans; malformed nesting makes conditions unknown."""
++    starts = [0] + [m.end() for m in re.finditer("\n", source)]
++    blocks: List[Dict[str, Any]] = []
++    label_mask: List[tuple[int, int]] = []
++    stack: List[Dict[str, Any] | None] = []
++    errors: List[str] = []
++    index = 0
++    while index < len(source):
++        if source.startswith("<!--", index):
++            end = source.find("-->", index + 4)
++            if end < 0:
++                errors.append("UNCLOSED_COMMENT")
++                break
++            index = end + 3
++            continue
++        if source[index] == "<" and index + 1 < len(source) and re.match(r"[a-zA-Z/!?]", source[index + 1]):
++            tag_end = _skip_tag(source, index)
++            tag = re.match(r"<\s*(script|style)\b", source[index:tag_end], re.I)
++            if tag:
++                close = re.search(r"</\s*" + tag.group(1) + r"\s*>", source[tag_end:], re.I)
++                if close:
++                    index = tag_end + close.end()
++                    continue
++            index = tag_end
++            continue
++        if source.startswith("{{", index):
++            end = source.find("}}", index + 2)
++            if end < 0:
++                errors.append("UNCLOSED_INTERPOLATION")
++                break
++            index = end + 2
++            continue
++        if source.startswith("@@", index):
++            index += 2
++            continue
++        if source[index] == "@" and (index == 0 or not (source[index - 1].isalnum() or source[index - 1] in "_.")):
++            match = re.match(r"@([a-z]+)\b", source[index:])
++            if match and match.group(1) in BLOCKS:
++                kind = match.group(1)
++                header = _header(source, index, kind)
++                if header is None:
++                    errors.append("MALFORMED_" + kind.upper())
++                    index += len(match.group())
++                    continue
++                open_brace, expression = header
++                branch = ("ELSE_IF" if kind == "else" and
++                          re.match(r"@else\s+if\b", source[index:open_brace]) else kind.upper())
++                entry = {"kind": branch, "expression": expression[:240] if expression else None,
++                         "expression_truncated": len(expression) > 240,
++                         "source_location": _location(starts, index), "start": open_brace + 1,
++                         "end": None, "supported": kind in SUPPORTED}
++                blocks.append(entry)
++                label_mask.append((index, open_brace + 1))
++                stack.append(entry)
++                if len(stack) > MAX_DEPTH:
++                    errors.append("CONTROL_DEPTH_EXCEEDED")
++                    break
++                index = open_brace + 1
++                continue
++        if source[index] == "{":
++            stack.append(None)
++        elif source[index] == "}" and stack:
++            closed = stack.pop()
++            if closed is not None:
++                closed["end"] = index
++                label_mask.append((index, index + 1))
++        index += 1
++    if any(item is not None for item in stack):
++        errors.append("UNCLOSED_CONTROL_BLOCK")
++    return {"blocks": blocks, "errors": sorted(set(errors)), "label_mask": label_mask}
++
++
++def condition_for_offset(parsed: Dict[str, Any], offset: int, guards: List[Dict[str, Any]]) -> Dict[str, Any]:
++    containing = [{k: value for k, value in block.items() if k not in {"start", "end", "supported"}}
++                  for block in parsed["blocks"]
++                  if block["end"] is not None and block["start"] <= offset < block["end"]]
++    unsupported = any(not block["supported"] and block["end"] is not None and
++                      block["start"] <= offset < block["end"] for block in parsed["blocks"])
++    errors = list(parsed["errors"])
++    if len(containing) > MAX_DEPTH or len(guards) > MAX_DEPTH:
++        errors.append("GUARD_DEPTH_EXCEEDED")
++    status = ("UNRESOLVED_CONTROL_FLOW" if errors or unsupported else
++              "CONDITIONAL_SOURCE" if containing or guards else "NO_LOCAL_GUARD_FOUND")
++    return {"status": status, "angular_blocks": containing[:MAX_DEPTH],
++            "structural_guards": guards[:MAX_DEPTH], "parse_issues": sorted(set(errors)),
++            "active_branch_proven": False, "route_activation_proven": False}
+--- a/codebase/static_ui_reference.py
++++ b/codebase/static_ui_reference.py
+@@ -6,0 +7 @@
++from html import unescape
+@@ -15,0 +17 @@
++from codebase.template_control_flow import condition_for_offset, template_branches
+@@ -37,2 +39,4 @@
+-    def __init__(self) -> None:
+-        super().__init__(convert_charrefs=True)
++    def __init__(self, content: str, label_mask: List[tuple[int, int]]) -> None:
++        super().__init__(convert_charrefs=False)
++        self.line_starts = [0] + [match.end() for match in re.finditer("\n", content)]
++        self.label_mask = label_mask
+@@ -42,0 +47,7 @@
++        line, column = self.getpos()
++        guards = list(self.stack[-1]["guards"]) if self.stack else []
++        for name, value in attrs:
++            if name in {"*ngif", "*ngfor", "[hidden]"}:
++                guards.append({"kind": name, "expression": value[:240] if value else None,
++                               "expression_truncated": len(value or "") > 240,
++                               "source_location": {"line": line, "column": column + 1}})
+@@ -43,0 +55,2 @@
++               "column": column + 1, "offset": self.line_starts[line - 1] + column,
++               "guards": guards,
+@@ -56,0 +70,17 @@
++        line, column = self.getpos()
++        offset = self.line_starts[line - 1] + column
++        if self.label_mask:
++            chars = list(data)
++            for start, end in self.label_mask:
++                for index in range(max(0, start - offset), min(len(chars), end - offset)):
++                    chars[index] = " "
++            data = "".join(chars)
++        self._record_text(data)
++
++    def handle_entityref(self, name: str) -> None:
++        self._record_text(unescape("&" + name + ";"))
++
++    def handle_charref(self, name: str) -> None:
++        self._record_text(unescape("&#" + name + ";"))
++
++    def _record_text(self, data: str) -> None:
+@@ -185 +215,2 @@
+-        elements = _Elements()
++        control_flow = template_branches(content)
++        elements = _Elements(content, control_flow["label_mask"])
+@@ -216,0 +248 @@
++                "template_condition": condition_for_offset(control_flow, element["offset"], element["guards"]),
+@@ -245 +277 @@
+-            "conditional_rendering": "establish route, UI state, and template control-flow branch externally",
++            "conditional_rendering": "inspect template_condition source branches, then establish route, UI state, and active branch externally",
+--- a/skills/ui-static-reference-workflow.md
++++ b/skills/ui-static-reference-workflow.md
+@@ -42,0 +43,11 @@
++`template_condition` is a bounded source witness. It lists enclosing `@if`,
++`@else`, `@for`, and `@empty` branches with their raw expressions and source
++locations, plus inherited `*ngIf`, `*ngFor`, or `[hidden]` attributes. Its
++branch delimiters are excluded from the source label used for ranking. Its
++`CONDITIONAL_SOURCE` status means these declarations contain the candidate;
++`NO_LOCAL_GUARD_FOUND` means this scan found no guard around it. Unsupported
++blocks or malformed nesting return `UNRESOLVED_CONTROL_FLOW` with parse issues.
++No status proves that a route was activated, an expression was true, a loop
++had items, an element was visible, or the rendered DOM contained the control.
++Confirm the route and state in a real scenario before those claims.
++
