@@ -104,6 +104,7 @@ apply_b64_overlay "operation_plan_preflight_repair_v1"
 apply_reviewable_overlay "invocation_snapshot_v1"
 apply_reviewable_overlay "readiness_version_v1"
 apply_reviewable_overlay "browserless_ui_reference_v1"
+apply_reviewable_overlay "ui_source_precision_v1"
 grep -Fq '"stable_target_topology_ready"' core/portable_agent.py
 grep -Fq '"task_postcondition": "UNPROVEN"' hott_kernel.py
 grep -Fq '"plw-version-v1"' plw_cli.py

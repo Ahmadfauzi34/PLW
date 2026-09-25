@@ -1,0 +1,73 @@
+--- a/codebase/static_ui_reference.py
++++ b/codebase/static_ui_reference.py
+@@ -45 +45 @@
+-               "text_parts": []}
++               "text_parts": [], "label_sources": []}
+@@ -57,2 +57,8 @@
+-        for row in self.stack:
+-            row["text_parts"].append(data)
++        if not self.stack or not data.strip():
++            return
++        # A nested span contributes to its nearest link/button label. Other
++        # text belongs to its immediate element, not every enclosing layout.
++        owner = next((row for row in reversed(self.stack) if row["tag"] in INTERACTIVE_TAGS),
++                     self.stack[-1])
++        owner["text_parts"].append(data)
++        owner["label_sources"].append("direct" if owner is self.stack[-1] else "nested")
+@@ -103,4 +109,11 @@
+-def _score(query: str, tag: str, label: str, attrs: Dict[str, str]) -> tuple[int, List[str]]:
+-    searchable = " ".join([label, *attrs.values()]).casefold()
+-    tokens = {word for word in _words(query) if len(word) >= 3 and word not in QUERY_STOPWORDS}
+-    matched = sorted(word for word in tokens if word in _words(searchable))
++def _score(query: str, tag: str, label: str, attrs: Dict[str, str]) -> tuple[int, List[str], Dict[str, Any]]:
++    tokens = {word for word in _words(query) if len(word) >= 2 and word not in QUERY_STOPWORDS}
++    label_words = _words(label)
++    label_matches = sorted(tokens.intersection(label_words))
++    # Short words may distinguish labels such as "Sign in" and "Sign up", but
++    # matching one in a long placeholder is weak evidence of control identity.
++    attribute_tokens = {word for word in tokens if len(word) >= 3}
++    attribute_matches = {name: sorted(attribute_tokens.intersection(_words(value)))
++                         for name, value in sorted(attrs.items())}
++    attribute_matches = {name: matches for name, matches in attribute_matches.items() if matches}
++    matched = sorted(set(label_matches).union(*(set(values) for values in attribute_matches.values())))
+@@ -108 +121 @@
+-        return 0, []
++        return 0, [], {}
+@@ -110 +122,0 @@
+-    label_words = _words(label)
+@@ -111,0 +124 @@
++    phrase_match = False
+@@ -115,0 +129 @@
++            phrase_match = True
+@@ -118 +132,4 @@
+-    return score, matched
++        phrase_match = True
++    return score, matched, {"label_terms": label_matches,
++                             "attribute_terms": attribute_matches,
++                             "label_phrase_in_query": phrase_match}
+@@ -175 +192 @@
+-            score, matches = _score(query, element["tag"], label, attrs)
++            score, matches, match_evidence = _score(query, element["tag"], label, attrs)
+@@ -191 +208,4 @@
+-                            "label_truncated": len(full_label) > 160, "attributes": attrs},
++                            "label_truncated": len(full_label) > 160, "attributes": attrs,
++                            "label_provenance": ("NESTED_TEXT_IN_INTERACTIVE_CONTROL"
++                                                 if "nested" in element["label_sources"] else
++                                                 "DIRECT_ELEMENT_TEXT" if label else "NO_TEXT_LABEL")},
+@@ -193,0 +214 @@
++                "match_evidence": match_evidence,
+@@ -213,0 +235,2 @@
++                     "selection_policy": "unique_highest_source_score_without_unresolved_templates",
++                     "top_score_tie_count": ties,
+--- a/skills/ui-static-reference-workflow.md
++++ b/skills/ui-static-reference-workflow.md
+@@ -20,0 +21,9 @@
++`element.label_provenance` attributes direct text to its element and nested
++text to the nearest interactive control. A layout parent does not inherit its
++children's labels. `match_evidence` separates label terms, attribute terms,
++and a complete label phrase in the query. Inspect `decision.selection_policy`,
++`top_score_tie_count`, all `candidates`, and `omitted_candidate_count`: a
++unique top score ranks source declarations, while lower-scoring controls may
++still be relevant. Short query words distinguish labels such as “Sign in” and
++“Sign up”; standalone short matches in attributes do not identify a control.
++
