@@ -12,6 +12,9 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ### Changed
 
+- `plw ui static` attributes nested text to its interactive control instead of
+  matching every layout ancestor; candidates now expose label and attribute
+  match evidence, ranking policy, and top-score tie count.
 - `plw doctor` and `plw work` expose separate portable-interface, stable
   topology, reference-pack, action, and task-postcondition readiness fields;
   their legacy `ready`/`work_status` values keep their bounded meaning;

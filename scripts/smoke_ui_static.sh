@@ -12,7 +12,7 @@ import { Component } from '@angular/core';
 export class HeaderComponent {}
 EOF
 cat > "$TMP/project/src/app/header.component.html" <<'EOF'
-<nav><a routerLink="/login">Sign in</a><a routerLink="/register">Sign up</a></nav>
+<nav><a routerLink="/login"><span>Sign in</span></a><a routerLink="/register">Sign up</a></nav>
 EOF
 cat > "$TMP/project/src/app/article.component.ts" <<'EOF'
 import { Component } from '@angular/core';
@@ -31,6 +31,7 @@ cd "$TMP/run"
 "$BIN" ui static 'Sign in' "$TMP/project" --selector app-header --json > "$TMP/header.json"
 "$BIN" ui-static 'Sign in' "$TMP/project" --selector app-article --json > "$TMP/inline.json"
 "$BIN" ui static 'missing exact control' "$TMP/project" --json > "$TMP/missing.json"
+"$BIN" ui static 'register' "$TMP/project" --selector app-header --json > "$TMP/attribute.json"
 cat > "$TMP/project/src/app/broken.component.ts" <<'EOF'
 import { Component } from '@angular/core';
 @Component({ selector: 'app-broken', templateUrl: './missing.component.html' })
@@ -51,10 +52,21 @@ assert read("capability")["known"] is True
 assert read("skill")["known"] is True
 assert read("ambiguous")["decision"]["status"] == "AMBIGUOUS"
 assert read("ambiguous")["decision"]["selected"] is None
+assert read("ambiguous")["decision"]["top_score_tie_count"] == 2
 header = read("header")
 assert header["decision"]["status"] == "RESOLVED"
 selected = header["decision"]["selected"]
 assert selected["component_class"] == "HeaderComponent"
+assert selected["element"]["tag"] == "a"
+assert selected["element"]["label"] == "Sign in"
+assert selected["element"]["label_provenance"] == "NESTED_TEXT_IN_INTERACTIVE_CONTROL"
+assert selected["match_evidence"]["label_terms"] == ["in", "sign"]
+assert selected["match_evidence"]["label_phrase_in_query"] is True
+assert all(row["element"]["tag"] not in {"nav", "span"} for row in header["candidates"])
+assert any(row["element"]["label"] == "Sign up" and
+           row["score"] < selected["score"] and
+           row["match_evidence"]["label_phrase_in_query"] is False
+           for row in header["candidates"])
 assert selected["element"]["attributes"]["routerlink"] == "/login"
 assert selected["template_line"] == 1
 expected = "sha256:" + hashlib.sha256((root / "project/src/app/header.component.html").read_bytes()).hexdigest()
@@ -67,6 +79,9 @@ assert inline["decision"]["status"] == "RESOLVED"
 assert inline["decision"]["selected"]["template_proof"] == "EXACT_INLINE"
 assert inline["decision"]["selected"]["template_line"] is None
 assert read("missing")["decision"]["status"] == "UNRESOLVED"
+attribute = read("attribute")["decision"]["selected"]
+assert attribute["element"]["attributes"]["routerlink"] == "/register"
+assert attribute["match_evidence"]["attribute_terms"] == {"routerlink": ["register"]}
 unreadable = read("unreadable")
 assert unreadable["decision"]["status"] == "AMBIGUOUS"
 assert unreadable["decision"]["reason"] == "unresolved_templates_may_contain_candidate"
