@@ -19,6 +19,36 @@ import { Component } from '@angular/core';
 @Component({ selector: 'app-article', template: `<a routerLink="/login">Sign in</a>` })
 export class ArticleComponent {}
 EOF
+cat > "$TMP/project/src/app/conditions.component.ts" <<'EOF'
+import { Component } from '@angular/core';
+@Component({ selector: 'app-conditions', templateUrl: './conditions.component.html' })
+export class ConditionsComponent {}
+EOF
+cat > "$TMP/project/src/app/conditions.component.html" <<'EOF'
+@if (authState$ | async; as state) {
+  @if (state === 'guest') {
+    <button [hidden]="isLoading">Conditional action</button>
+  } @else if (state === 'admin') {
+    <a routerLink="/admin">Admin area</a>
+  } @else {
+    @for (item of items; track item.id) {
+      <a routerLink="/details">Saved item</a>
+    } @empty {
+      <span>Nothing saved</span>
+    }
+  }
+}
+EOF
+cat > "$TMP/project/src/app/unsupported.component.ts" <<'EOF'
+import { Component } from '@angular/core';
+@Component({ selector: 'app-unsupported', template: `@switch (mode) { @case ('x') { <a>Unknown control</a> } }` })
+export class UnsupportedComponent {}
+EOF
+cat > "$TMP/project/src/app/malformed.component.ts" <<'EOF'
+import { Component } from '@angular/core';
+@Component({ selector: 'app-malformed', template: `@if (ready) { <a>Broken branch</a>` })
+export class MalformedComponent {}
+EOF
 cat > "$TMP/project/angular.json" <<'EOF'
 {"projects":{"example":{"architect":{"build":{"options":{"styles":["src/global.css"]}}}}}}
 EOF
@@ -30,8 +60,15 @@ cd "$TMP/run"
 "$BIN" ui static 'Sign in' "$TMP/project" --json > "$TMP/ambiguous.json"
 "$BIN" ui static 'Sign in' "$TMP/project" --selector app-header --json > "$TMP/header.json"
 "$BIN" ui-static 'Sign in' "$TMP/project" --selector app-article --json > "$TMP/inline.json"
-"$BIN" ui static 'missing exact control' "$TMP/project" --json > "$TMP/missing.json"
+"$BIN" ui static 'nonexistent widget zzz' "$TMP/project" --json > "$TMP/missing.json"
 "$BIN" ui static 'register' "$TMP/project" --selector app-header --json > "$TMP/attribute.json"
+"$BIN" ui static 'Conditional action' "$TMP/project" --selector app-conditions --json > "$TMP/conditional.json"
+"$BIN" ui static 'Saved item' "$TMP/project" --selector app-conditions --json > "$TMP/for.json"
+"$BIN" ui static 'Admin area' "$TMP/project" --selector app-conditions --json > "$TMP/else-if.json"
+"$BIN" ui static 'Nothing saved' "$TMP/project" --selector app-conditions --json > "$TMP/empty.json"
+"$BIN" ui static 'Unknown control' "$TMP/project" --selector app-unsupported --json > "$TMP/unsupported.json"
+"$BIN" ui static 'Broken branch' "$TMP/project" --selector app-malformed --json > "$TMP/malformed.json"
+"$BIN" ui static 'authState' "$TMP/project" --selector app-conditions --json > "$TMP/control-syntax.json"
 cat > "$TMP/project/src/app/broken.component.ts" <<'EOF'
 import { Component } from '@angular/core';
 @Component({ selector: 'app-broken', templateUrl: './missing.component.html' })
@@ -82,6 +119,25 @@ assert read("missing")["decision"]["status"] == "UNRESOLVED"
 attribute = read("attribute")["decision"]["selected"]
 assert attribute["element"]["attributes"]["routerlink"] == "/register"
 assert attribute["match_evidence"]["attribute_terms"] == {"routerlink": ["register"]}
+conditional = read("conditional")["decision"]["selected"]
+flow = conditional["template_condition"]
+assert flow["status"] == "CONDITIONAL_SOURCE"
+assert [(b["kind"], b["source_location"]["line"]) for b in flow["angular_blocks"]] == [
+    ("IF", 1), ("IF", 2)]
+assert flow["structural_guards"][0]["kind"] == "[hidden]"
+assert flow["active_branch_proven"] is False and flow["route_activation_proven"] is False
+assert conditional["render_condition"] == "UNPROVEN"
+assert [b["kind"] for b in read("for")["decision"]["selected"]["template_condition"]["angular_blocks"]] == [
+    "IF", "ELSE", "FOR"]
+assert [b["kind"] for b in read("else-if")["decision"]["selected"]["template_condition"]["angular_blocks"]] == [
+    "IF", "ELSE_IF"]
+assert [b["kind"] for b in read("empty")["decision"]["selected"]["template_condition"]["angular_blocks"]] == [
+    "IF", "ELSE", "EMPTY"]
+assert read("unsupported")["decision"]["selected"]["template_condition"]["status"] == "UNRESOLVED_CONTROL_FLOW"
+malformed = read("malformed")["decision"]["selected"]["template_condition"]
+assert malformed["status"] == "UNRESOLVED_CONTROL_FLOW"
+assert "UNCLOSED_CONTROL_BLOCK" in malformed["parse_issues"]
+assert read("control-syntax")["decision"]["status"] == "UNRESOLVED"
 unreadable = read("unreadable")
 assert unreadable["decision"]["status"] == "AMBIGUOUS"
 assert unreadable["decision"]["reason"] == "unresolved_templates_may_contain_candidate"
@@ -90,6 +146,7 @@ bad = subprocess.run([binary, "ui", "static", "", str(root / "project"), "--json
                      text=True, capture_output=True)
 assert bad.returncode == 2 and "invalid_static_ui_query" in bad.stderr
 assert sorted(p.name for p in (root / "project/src/app").iterdir()) == [
-    "article.component.ts", "broken.component.ts", "header.component.html", "header.component.ts"]
-print("UI_STATIC_SMOKE: PASS ambiguity=retained template=exact inline=bound browser=unused")
+    "article.component.ts", "broken.component.ts", "conditions.component.html", "conditions.component.ts",
+    "header.component.html", "header.component.ts", "malformed.component.ts", "unsupported.component.ts"]
+print("UI_STATIC_SMOKE: PASS ambiguity=retained conditions=source-only browser=unused")
 PY

@@ -6,6 +6,10 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ### Added
 
+- `plw ui static` now reports the source branch path around each Angular UI
+  candidate (`@if`, `@else`, `@for`, `@empty`, structural guards, and `[hidden]`),
+  excludes branch syntax from text labels, and keeps runtime activation and
+  rendered presence unproven.
 - `plw ui static` locates Angular template controls and their source owners
   without Chromium, binding external/inline templates to exact digests and
   distinguishing ambiguous or unreadable sources from observed UI geometry.
