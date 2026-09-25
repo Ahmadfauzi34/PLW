@@ -38,6 +38,11 @@ only a template declaration; inspect `decision`, `unresolved_templates`, and
 `authority` before claiming an element rendered or a layout issue exists.
 `plw capability describe ui-static --json` and `plw skill show ui-static --json`
 expose its self-contained contract.
+`plw agent orient` also emits `ui_source_handoff` when an Angular component is
+present. An ambiguous match has no target hint; narrow it with
+`--ui-selector <grounded-selector>`, inspect `next_ui_static_argv`, then pass the
+verified `source_target_hint.component_file` explicitly to `plw work`. The
+handoff is a source declaration hint and does not change graph target resolution.
 
 Authority boundaries are strict:
 
