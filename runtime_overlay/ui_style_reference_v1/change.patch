@@ -1,0 +1,359 @@
+--- /dev/null
++++ b/codebase/static_style_reference.py
+@@ -0,0 +1,310 @@
++"""Bounded CSS source references for Angular template candidates; no cascade proof."""
++from __future__ import annotations
++
++import hashlib
++import re
++from pathlib import Path
++from typing import Any, Dict, List, Optional
++
++from codebase.angular_semantics import _array_items, _object_properties, _string_literal
++
++MAX_STYLE_BYTES = 1024 * 1024
++MAX_STYLESHEETS = 16
++MAX_RULES = 2000
++MAX_MATCHES = 20
++
++
++def _sha(raw: bytes) -> str:
++    return "sha256:" + hashlib.sha256(raw).hexdigest()
++
++
++def _mask_comments(source: str) -> tuple[str, List[str]]:
++    chars = list(source)
++    issues: List[str] = []
++    index = 0
++    quote = None
++    while index < len(source):
++        if quote:
++            if source[index] == "\\":
++                index += 2
++                continue
++            if source[index] == quote:
++                quote = None
++            index += 1
++        elif source[index] in "\"'":
++            quote = source[index]
++            index += 1
++        elif source.startswith("/*", index):
++            end = source.find("*/", index + 2)
++            if end < 0:
++                issues.append("UNCLOSED_COMMENT")
++                end = len(source) - 2
++            for offset in range(index, min(len(source), end + 2)):
++                if chars[offset] != "\n":
++                    chars[offset] = " "
++            index = end + 2
++        else:
++            index += 1
++    return "".join(chars), issues
++
++
++def _next_boundary(source: str, start: int) -> tuple[int, str]:
++    quote, parentheses, brackets = None, 0, 0
++    index = start
++    while index < len(source):
++        char = source[index]
++        if quote:
++            if char == "\\":
++                index += 2
++                continue
++            if char == quote:
++                quote = None
++        elif char in "\"'":
++            quote = char
++        elif char == "(":
++            parentheses += 1
++        elif char == ")":
++            parentheses = max(0, parentheses - 1)
++        elif char == "[":
++            brackets += 1
++        elif char == "]":
++            brackets = max(0, brackets - 1)
++        elif not parentheses and not brackets and char in "{};":
++            return index, char
++        index += 1
++    return len(source), ""
++
++
++def _close_brace(source: str, opening: int) -> int:
++    depth, index = 1, opening + 1
++    while index < len(source):
++        boundary, token = _next_boundary(source, index)
++        if not token:
++            return -1
++        depth += 1 if token == "{" else -1 if token == "}" else 0
++        if not depth:
++            return boundary
++        index = boundary + 1
++    return -1
++
++
++def _split_selectors(value: str) -> List[str]:
++    parts: List[str] = []
++    quote, depth, start = None, 0, 0
++    for index, char in enumerate(value):
++        if quote:
++            if char == quote:
++                quote = None
++        elif char in "\"'":
++            quote = char
++        elif char in "([":
++            depth += 1
++        elif char in ")]":
++            depth = max(0, depth - 1)
++        elif char == "," and not depth:
++            parts.append(value[start:index].strip())
++            start = index + 1
++    parts.append(value[start:].strip())
++    return [item for item in parts if item]
++
++
++def _declarations(source: str) -> tuple[List[Dict[str, Any]], List[str]]:
++    rows: List[Dict[str, Any]] = []
++    issues: List[str] = []
++    cursor = 0
++    while cursor < len(source):
++        boundary, token = _next_boundary(source, cursor)
++        if token and token in "{}":
++            issues.append("NESTED_DECLARATION_UNRESOLVED")
++            break
++        text = source[cursor:boundary].strip()
++        if text:
++            match = re.fullmatch(r"((?:--[\w-]+|[a-zA-Z_][\w-]*))\s*:\s*(.+)", text, re.S)
++            if match:
++                value = match.group(2).strip()
++                rows.append({"property": match.group(1), "value": value[:160],
++                             "value_truncated": len(value) > 160})
++            else:
++                issues.append("DECLARATION_UNPARSED")
++        if len(rows) >= 24:
++            if source[boundary + 1:].strip():
++                issues.append("DECLARATION_LIMIT_EXCEEDED")
++            break
++        if not token:
++            break
++        cursor = boundary + 1
++    return rows, issues
++
++
++def parse_stylesheet(content: str) -> Dict[str, Any]:
++    source, issues = _mask_comments(content)
++    rules: List[Dict[str, Any]] = []
++
++    def walk(start: int, stop: int, contexts: List[str]) -> None:
++        cursor = start
++        while cursor < stop and len(rules) < MAX_RULES:
++            boundary, token = _next_boundary(source, cursor)
++            if boundary >= stop:
++                if source[cursor:stop].strip():
++                    issues.append("UNPARSED_TRAILING_SOURCE")
++                break
++            head = source[cursor:boundary].strip()
++            if token == ";":
++                if head.startswith("@import") or head.startswith("@use") or head.startswith("@forward"):
++                    issues.append("UNRESOLVED_IMPORT")
++                cursor = boundary + 1
++                continue
++            if token == "}":
++                issues.append("UNMATCHED_CLOSING_BRACE")
++                return
++            closing = _close_brace(source, boundary)
++            if closing < 0 or closing >= stop:
++                issues.append("UNCLOSED_RULE")
++                return
++            if head.startswith("@"):
++                name = head.split(None, 1)[0].lower()
++                if name in {"@media", "@supports", "@container", "@layer"}:
++                    walk(boundary + 1, closing, contexts + [head[:240]])
++                elif name in {"@keyframes", "@-webkit-keyframes", "@font-face"}:
++                    pass
++                else:
++                    issues.append("UNSUPPORTED_AT_RULE")
++            elif head:
++                declarations, declaration_issues = _declarations(source[boundary + 1:closing])
++                issues.extend(declaration_issues)
++                rules.append({"selectors": _split_selectors(head),
++                              "line": content.count("\n", 0, cursor + len(source[cursor:boundary]) - len(source[cursor:boundary].lstrip())) + 1,
++                              "contexts": contexts[:],
++                              "declarations": declarations})
++            cursor = closing + 1
++        if len(rules) >= MAX_RULES:
++            issues.append("RULE_LIMIT_EXCEEDED")
++
++    walk(0, len(source), [])
++    return {"rules": rules, "issues": sorted(set(issues))}
++
++
++def _selector_match(selector: str, element: Dict[str, Any]) -> Optional[str]:
++    # Only literal classes, IDs and tags are witnessed. Ancestor selectors,
++    # pseudo states and dynamic Angular class bindings remain possible context.
++    if any(token in selector for token in (":is(", ":not(", ":has(", "[", "*")):
++        return None
++    tail = re.split(r"\s+|[>+~]", selector.strip())[-1]
++    if not tail:
++        return None
++    base = re.split(r"::?[a-zA-Z-]+", tail, 1)[0]
++    if not base or not re.fullmatch(r"(?:[a-zA-Z][\w-]*)?(?:[.#][a-zA-Z_][\w-]*)*", base):
++        return None
++    tag_match = re.match(r"[a-zA-Z][\w-]*", base)
++    if tag_match and tag_match.group().lower() != element["tag"]:
++        return None
++    attrs = element["attributes"]
++    classes = set(attrs.get("class", "").split())
++    if not set(re.findall(r"\.([a-zA-Z_][\w-]*)", base)).issubset(classes):
++        return None
++    ids = re.findall(r"#([a-zA-Z_][\w-]*)", base)
++    if ids and any(item != attrs.get("id") for item in ids):
++        return None
++    if not tag_match and not classes.intersection(re.findall(r"\.([a-zA-Z_][\w-]*)", base)) and not ids:
++        return None
++    return ("LOCAL_COMPOUND_MATCH" if selector.strip() == base else
++            "POSSIBLE_CONTEXT")
++
++
++def _read_external(root: Path, path: str, expected: Optional[str]) -> tuple[Optional[str], str]:
++    candidate = Path(path).resolve()
++    if not candidate.is_relative_to(root):
++        return None, "OUTSIDE_TARGET"
++    try:
++        if candidate.stat().st_size > MAX_STYLE_BYTES:
++            return None, "TOO_LARGE"
++        raw = candidate.read_bytes()
++        if len(raw) > MAX_STYLE_BYTES:
++            return None, "TOO_LARGE"
++        if not expected or _sha(raw) != expected:
++            return None, "CHANGED_DURING_QUERY"
++        return raw.decode("utf-8"), "EXACT"
++    except (OSError, UnicodeError):
++        return None, "UNAVAILABLE"
++
++
++def _inline_styles(component: Dict[str, Any], file_map: Dict[str, str]) -> List[str]:
++    source = file_map.get(component.get("file"), "")
++    span = component.get("decorator", {}).get("span", {})
++    snippet = source[span.get("start", 0):span.get("end", 0)]
++    opening, closing = snippet.find("{"), snippet.rfind("}")
++    if opening < 0 or closing <= opening:
++        return []
++    metadata = _object_properties(snippet[opening:closing + 1]) or {}
++    values = _array_items(metadata.get("styles", "")) or []
++    return [literal for item in values if (literal := _string_literal(item)) is not None]
++
++
++def style_reference(component: Dict[str, Any], global_styles: List[Dict[str, Any]],
++                    element: Dict[str, Any], root: Path, file_map: Dict[str, str]) -> Dict[str, Any]:
++    stylesheets: List[Dict[str, Any]] = []
++    matches: List[Dict[str, Any]] = []
++    issues: List[str] = []
++    declared = [("component", row) for row in component.get("styles", [])]
++    declared += [("global", row) for row in global_styles]
++    inline_styles = _inline_styles(component, file_map) if any(row.get("kind") == "inline" for _, row in declared) else []
++    global_projects = {row.get("project") for row in global_styles if row.get("project")}
++    if len(global_projects) > 1:
++        issues.append("GLOBAL_PROJECT_SCOPE_UNRESOLVED")
++    if len(declared) > MAX_STYLESHEETS:
++        issues.append("STYLESHEET_LIMIT_EXCEEDED")
++    for scope, row in declared[:MAX_STYLESHEETS]:
++        path = row.get("resolved_path") if scope == "component" else row.get("declared_path")
++        digest = (row.get("resource") or {}).get("sha256") if scope == "component" else row.get("sha256")
++        kind = row.get("kind") if scope == "component" else "external"
++        content, status = None, "UNRESOLVED"
++        if scope == "global" and row.get("status") != "EXACT":
++            status = row.get("status") or "UNRESOLVED"
++        elif scope == "component" and kind == "external" and row.get("content_proof_class") != "EXACT":
++            status = (row.get("resource") or {}).get("reason", "UNRESOLVED").upper()
++        if kind == "inline" and row.get("proof_class") == "EXACT":
++            content = next((value for value in inline_styles if _sha(value.encode()) == row.get("sha256")), None)
++            status = "EXACT" if content is not None else "UNRESOLVED"
++            if content is not None and len(content.encode()) > MAX_STYLE_BYTES:
++                content, status = None, "TOO_LARGE"
++        elif kind == "external" and path and digest:
++            absolute = (root / path).resolve() if scope == "global" else Path(path).resolve()
++            if absolute.suffix.lower() in {".scss", ".sass", ".less"}:
++                status = "PREPROCESSOR_UNRESOLVED"
++            else:
++                content, status = _read_external(root, str(absolute), digest)
++        sheet = {"scope": scope, "project": row.get("project") if scope == "global" else None,
++                 "config_sha256": row.get("config_sha256") if scope == "global" else None,
++                 "declared_path": row.get("declared_path"),
++                 "source_file": (component.get("file") if kind == "inline" else path) if scope == "component" else str((root / path).resolve()) if path else None,
++                 "declaration_line": component.get("decorator", {}).get("span", {}).get("start_position", {}).get("line") if kind == "inline" else None,
++                 "sha256": digest, "status": status}
++        stylesheets.append(sheet)
++        if content is None:
++            issues.append("STYLESHEET_" + status)
++            continue
++        parsed = parse_stylesheet(content)
++        if parsed["issues"]:
++            issues.extend(parsed["issues"])
++        for rule in parsed["rules"]:
++            for selector in rule["selectors"]:
++                match = _selector_match(selector, element)
++                if match:
++                    if len(selector) > 240:
++                        issues.append("SELECTOR_TRUNCATED")
++                    matches.append({"source_file": sheet["source_file"], "scope": scope,
++                                    "sha256": digest, "line": rule["line"],
++                                    "line_basis": "INLINE_CSS_LITERAL" if kind == "inline" else "STYLESHEET_FILE",
++                                    "declaration_line": sheet["declaration_line"],
++                                    "selector": selector[:240], "selector_truncated": len(selector) > 240,
++                                    "selector_relation": "POSSIBLE_CONTEXT" if scope == "global" and len(global_projects) > 1 else match,
++                                    "contexts": rule["contexts"],
++                                    "declarations": rule["declarations"]})
++    return {"status": "UNKNOWN" if issues else "BOUNDED_SOURCE",
++            "stylesheets": stylesheets,
++            "candidate_rules": matches[:MAX_MATCHES],
++            "omitted_rule_count": max(0, len(matches) - MAX_MATCHES),
++            "issues": sorted(set(issues)),
++            "cascade_proven": False, "media_active_proven": False,
++            "computed_style_observed": False, "geometry_observed": False,
++            "absence_of_other_relevant_rules_proven": False}
+--- a/codebase/static_ui_reference.py
++++ b/codebase/static_ui_reference.py
+@@ -17,0 +18 @@
++from codebase.static_style_reference import style_reference
+@@ -173 +174,4 @@
+-        projects = json.loads(config.read_text(encoding="utf-8")).get("projects", {})
++        raw_config = config.read_bytes()
++        if len(raw_config) > MAX_TEMPLATE_BYTES:
++            return [{"status": "CONFIG_TOO_LARGE"}]
++        projects = json.loads(raw_config).get("projects", {})
+@@ -187 +191,2 @@
+-                rows.append({"project": project_name, "declared_path": path, "status": "OUTSIDE_TARGET"})
++                rows.append({"project": project_name, "declared_path": path,
++                             "config_sha256": _sha(raw_config), "status": "OUTSIDE_TARGET"})
+@@ -193,0 +199 @@
++                         "config_sha256": _sha(raw_config),
+@@ -243,0 +250 @@
++                "style_reference": style_reference(component, global_styles, element, root, graph.get("file_map", {})),
+--- a/core/semantic_affordance.py
++++ b/core/semantic_affordance.py
+@@ -134 +134 @@
+-        ["static template analysis", "source provenance", "component ownership", "bounded candidate selection"],
++        ["static template analysis", "source provenance", "component ownership", "bounded candidate selection", "CSS source rule references"],
+@@ -138,2 +138,2 @@
+-        "Which Angular component and exact template line declare matching controls, which alternatives remain, and what runtime evidence is still missing.",
+-        ["source-bound UI candidates", "ambiguity", "template digest", "runtime evidence obligations"],
++        "Which Angular component and exact template line declare matching controls, which CSS rules can be related to their literal selectors, and what runtime evidence is still missing.",
++        ["source-bound UI candidates", "ambiguity", "template digest", "style digest and selector candidates", "runtime evidence obligations"],
+@@ -141 +141 @@
+-        ["rendered presence", "active conditional branch", "pixel geometry", "overlap", "behavior", "postcondition"],
++        ["rendered presence", "active conditional branch", "CSS cascade", "active media query", "computed style", "pixel geometry", "overlap", "behavior", "postcondition"],
+--- a/skills/ui-static-reference-workflow.md
++++ b/skills/ui-static-reference-workflow.md
+@@ -53,0 +54,12 @@
++`style_reference` lists declared component and global stylesheets with exact
++hashes when available, and bounded selector-rule candidates for the element's
++literal tag, class, or ID. `LOCAL_COMPOUND_MATCH` relates a simple selector to
++the source declaration; `POSSIBLE_CONTEXT` requires an unverified ancestor,
++pseudo state, media context, or project scope. An inline CSS rule's `line` is
++relative to the CSS literal, with the component decorator line recorded
++separately. `UNKNOWN` lists missing stylesheets, imports, preprocessors,
++unsupported syntax, or bounds in `issues`; known rules are still returned.
++`BOUNDED_SOURCE` means all declared stylesheet source in this bounded scan was
++read and parsed. Neither state proves the effective cascade, active media
++query, inherited styles, computed style, missing-rule irrelevance, or geometry.
++

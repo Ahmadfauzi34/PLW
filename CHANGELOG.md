@@ -6,6 +6,9 @@ This file records user-facing changes in published PLW releases. Development wor
 
 ### Added
 
+- `plw ui static` now supplies digest-bound component/global CSS rule candidates,
+  media contexts and missing-stylesheet status for Angular controls, without
+  claiming an effective cascade or computed geometry.
 - `plw ui static` now reports the source branch path around each Angular UI
   candidate (`@if`, `@else`, `@for`, `@empty`, structural guards, and `[hidden]`),
   excludes branch syntax from text labels, and keeps runtime activation and
